@@ -33,7 +33,7 @@ import java.util.List;
  * Class responsible for holding rows, their values and textual
  * representation.
  */
-final class Table {
+public final class Table {
     private final List<Row> rows = new ArrayList<>();
     private final List<Field> fields = new ArrayList<>();
 

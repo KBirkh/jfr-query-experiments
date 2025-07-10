@@ -1,8 +1,11 @@
 package me.bechberger;
 
 import me.bechberger.jfr.tool.*;
+import me.bechberger.jfr.wrap.*;
 import picocli.CommandLine;
 
+import java.text.ParseException;
+import java.util.List;
 import java.util.concurrent.Callable;
 
 @CommandLine.Command(
@@ -60,7 +63,7 @@ public class Main implements Callable<Integer> {
     }
 
     public static void main(String[] args) {
-        CommandLine cli = new CommandLine(new Main());
+        /* CommandLine cli = new CommandLine(new Main());
         cli.getSubcommands().forEach((subcommandName, command) -> {
             if (command.getCommand() instanceof Footerable f) {
                 command.getCommandSpec().usageMessage().footer(f.footer());
@@ -69,6 +72,21 @@ public class Main implements Callable<Integer> {
         int exitCode = cli.execute(args);
         if (exitCode != EXIT_OK) {
             System.exit(exitCode);
+        } */
+        String tmp = "SELECT col FROM table";
+        String query = "SELECT 10 + 2, hallo FROM events";
+        Lexer lexer = new Lexer(query);
+        List<Token> tokens = lexer.tokenize();
+        Parser parser = new Parser(tokens);
+        ProgramNode result = null;
+        try {
+            result = parser.parse();
+        } catch (ParseException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
         }
+
+        System.out.println(result.toString(0));
+        
     }
 }

@@ -26,7 +26,7 @@ package me.bechberger.jfr.query;
 
 import java.util.Arrays;
 
-final class Row {
+public final class Row {
     private final Object[] values;
     private final String[] texts;
 
