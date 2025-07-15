@@ -4,9 +4,21 @@ public class ArithmeticNode extends AstNode {
     private ArithmeticNode left;
     private String op;
     private ArithmeticNode right;
+    private String alias;
 
     public ArithmeticNode() {
 
+    }
+
+    public void setAlias(String alias) {
+        if (alias == null || alias.isEmpty()) {
+            throw new IllegalArgumentException("Alias cannot be null or empty");
+        }
+        this.alias = alias;
+    }
+
+    public String getAlias() {
+        return alias;
     }
 
     public void setLeft(ArithmeticNode left) {

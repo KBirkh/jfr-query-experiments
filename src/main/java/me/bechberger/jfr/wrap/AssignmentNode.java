@@ -12,11 +12,11 @@ public class AssignmentNode extends AstNode {
         this.identifier = identifier;
     }
 
-    public void setQuery(QueryNode query) {
+    public void setQuery(AstNode query) {
         if (query == null) {
             throw new IllegalArgumentException("Query cannot be null");
         }
-        this.query = query;
+        this.query = (QueryNode) query;
     }
 
     public String toString(int indent) {

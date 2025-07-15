@@ -13,7 +13,7 @@ public class IdentifierNode extends AstNode {
     public String getIdentifier() {
         return identifier;
     }
-
+    @Override
     public String toString(int indent) {
         StringBuilder sb = new StringBuilder();
         String dent = "  ".repeat(indent);

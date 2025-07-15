@@ -9,7 +9,7 @@ public class GroupByNode extends AstNode {
         }
         this.identifier = identifier;
     }
-
+    @Override
     public String toString(int indent) {
         StringBuilder sb = new StringBuilder();
         String dent = "  ".repeat(indent);

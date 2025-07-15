@@ -21,6 +21,8 @@ public class Lexer {
         Map.entry("LIMIT", TokenType.LIMIT),
         Map.entry("VIEW", TokenType.VIEW),
         Map.entry("AS", TokenType.AS),
+        Map.entry("TRUE", TokenType.BOOLEAN),
+        Map.entry("FALSE", TokenType.BOOLEAN),
         Map.entry("COLUMN", TokenType.COLUMN),
         Map.entry("FORMAT", TokenType.FORMAT),
         Map.entry("HAVING", TokenType.HAVING),
@@ -136,6 +138,9 @@ public class Lexer {
                     case '^':
                         tokens.add(new Token(TokenType.EXP, String.valueOf(advance())));
                         break;
+                    case '.':
+                        tokens.add(new Token(TokenType.DOT, String.valueOf(advance())));
+                        break; 
                     default:   
                         throw new RuntimeException("Unexpected character: " + c);
                 }

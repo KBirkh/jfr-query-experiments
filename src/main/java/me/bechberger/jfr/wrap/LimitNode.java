@@ -1,6 +1,6 @@
 package me.bechberger.jfr.wrap;
 
-public class LimitNode {
+public class LimitNode extends AstNode {
     private int count;
 
     public void setCount(String count) {
@@ -13,7 +13,7 @@ public class LimitNode {
             throw new IllegalArgumentException("Count must be a valid integer", e);
         }
     }
-
+    @Override
     public String toString(int indent) {
         StringBuilder sb = new StringBuilder();
         String dent = "  ".repeat(indent);

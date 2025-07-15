@@ -1,6 +1,6 @@
 package me.bechberger.jfr.wrap;
 
-public class ColumnNode {
+public class ColumnNode extends AstNode {
     private String name;
     private ColumnNode columnTail;
 
@@ -14,7 +14,7 @@ public class ColumnNode {
     public void setTail(ColumnNode columnTail) {
         this.columnTail = columnTail;
     }
-
+    @Override
     public String toString(int indent) {
         StringBuilder sb = new StringBuilder();
         String dent = "  ".repeat(indent);
@@ -24,6 +24,11 @@ public class ColumnNode {
         }
         return sb.toString();
 
+    }
+
+    public void addColumn(String lexeme) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'addColumn'");
     }
 
 }

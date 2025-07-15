@@ -1,6 +1,6 @@
 package me.bechberger.jfr.wrap;
 
-public class SelectListNode {
+public class SelectListNode extends AstNode {
     private SelectListNode selectList;
     private ExpressionNode expression;
     public boolean isStar;
@@ -16,7 +16,7 @@ public class SelectListNode {
         }
         this.expression = expression;
     }
-
+    @Override
     public String toString(int indent) {
         StringBuilder sb = new StringBuilder();
         String dent = "  ".repeat(indent);

@@ -74,19 +74,18 @@ public class Main implements Callable<Integer> {
             System.exit(exitCode);
         } */
         String tmp = "SELECT col FROM table";
-        String query = "SELECT 10 + 2, hallo FROM events";
+        String query = "@SELECT col+2 FROM table WHERE 12 == +11 AND lipstick.beforeGC != red OR meme < meiemi";
         Lexer lexer = new Lexer(query);
         List<Token> tokens = lexer.tokenize();
         Parser parser = new Parser(tokens);
-        ProgramNode result = null;
         try {
-            result = parser.parse();
+            ProgramNode res = (ProgramNode) parser.parse();
+            System.out.println(res.toString(0));
         } catch (ParseException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
 
-        System.out.println(result.toString(0));
         
     }
 }

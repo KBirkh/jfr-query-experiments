@@ -6,7 +6,7 @@ public class NumberNode extends AstNode {
     public NumberNode(String value) {
         this.value = value;
     }
-
+    @Override
     public String toString(int indent) {
         StringBuilder sb = new StringBuilder();
         String dent = "  ".repeat(indent);

@@ -6,7 +6,7 @@ public class SourceNode extends AstNode {
     private QueryNode subquery;
     public boolean isSubQuery;
 
-    public void setName(String name) {
+    public void setSource(String name) {
         if (name == null || name.isEmpty()) {
             throw new IllegalArgumentException("Name cannot be null or empty");
         }
@@ -20,14 +20,14 @@ public class SourceNode extends AstNode {
         this.alias = lexeme;
     }
 
-    public void setSubquery(QueryNode query) {
+    public void setSource(AstNode query) {
         if (query == null) {
             throw new IllegalArgumentException("Subquery cannot be null");
         }
-        this.subquery = query;
+        this.subquery = (QueryNode) query;
         isSubQuery = true;
     }
-
+    @Override
     public String toString(int indent) {
         StringBuilder sb = new StringBuilder();
         String dent = "  ".repeat(indent);

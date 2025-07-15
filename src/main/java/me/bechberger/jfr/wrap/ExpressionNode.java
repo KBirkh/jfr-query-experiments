@@ -41,7 +41,7 @@ public class ExpressionNode extends AstNode {
         }
         this.query = query;
     }
-
+    @Override
     public String toString(int indent) {
         StringBuilder sb = new StringBuilder();
         sb.append("\n").append("  ".repeat(indent)).append(this.getClass().getSimpleName()).append(":");

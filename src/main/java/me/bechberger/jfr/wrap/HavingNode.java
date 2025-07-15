@@ -19,7 +19,7 @@ public class HavingNode extends AstNode {
             throw new IllegalStateException("HavingNode can only have one condition tail");
         }
     }
-
+    @Override
     public String toString(int indent) {
         StringBuilder sb = new StringBuilder();
         String dent = "  ".repeat(indent);

@@ -11,13 +11,13 @@ public class ViewDefinitionNode extends AstNode {
         this.name = name;
     }
 
-    public void setQuery(QueryNode query) {
+    public void setQuery(AstNode query) {
         if (query == null) {
             throw new IllegalArgumentException("Query cannot be null");
         }
-        this.query = query;
+        this.query = (QueryNode) query;
     }
-
+    @Override
     public String toString(int indent) {
         StringBuilder sb = new StringBuilder();
         String dent = "  ".repeat(indent);

@@ -17,7 +17,7 @@ public class FunctionNode extends AstNode {
         }
         this.argument = argument;
     }
-    
+    @Override
     public String toString(int indent) {
         StringBuilder sb = new StringBuilder();
         String dent = "  ".repeat(indent);
