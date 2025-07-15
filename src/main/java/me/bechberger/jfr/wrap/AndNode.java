@@ -11,7 +11,11 @@ public class AndNode extends AstNode {
         this.left = left;
         this.right = right;
     }
-    
+
+    public AndNode() {
+        
+    }
+
     public void setLeft(AstNode left) {
         if (left == null) {
             throw new IllegalArgumentException("Left node cannot be null");

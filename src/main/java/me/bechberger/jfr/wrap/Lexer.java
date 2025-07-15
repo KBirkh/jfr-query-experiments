@@ -59,6 +59,10 @@ public class Lexer {
         return input.charAt(pos++);
     }
 
+    private char lookahead() {
+        return pos + 1 < length ? input.charAt(pos + 1) : '\0';
+    }
+
     private boolean match(char expected) {
         if (peek() == expected) {
             pos++;
@@ -71,6 +75,13 @@ public class Lexer {
         List<Token> tokens = new ArrayList<>();
         while (pos < length) {
             char c = peek();
+            if(c=='\n' && lookahead() == '\n') {
+                pos += 2; // Empty line -> End of Query
+                if(tokens.getLast().type != TokenType.EOQ) {
+                    tokens.add(new Token(TokenType.EOQ, ""));
+                }
+                continue;
+            }
             if (Character.isWhitespace(c)) {
                 pos++;
                 continue;
@@ -124,7 +135,7 @@ public class Lexer {
                         tokens.add(new Token(TokenType.COMMA, String.valueOf(advance())));
                         break;
                     case ';':
-                        tokens.add(new Token(TokenType.SEMICOLON, String.valueOf(advance())));
+                        tokens.add(new Token(TokenType.EOQ, String.valueOf(advance())));
                         break;
                     case '@':
                         tokens.add(new Token(TokenType.AT, String.valueOf(advance())));
@@ -140,7 +151,7 @@ public class Lexer {
                         break;
                     case '.':
                         tokens.add(new Token(TokenType.DOT, String.valueOf(advance())));
-                        break; 
+                        break;
                     default:   
                         throw new RuntimeException("Unexpected character: " + c);
                 }

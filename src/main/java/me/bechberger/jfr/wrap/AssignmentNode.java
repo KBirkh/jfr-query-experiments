@@ -22,13 +22,13 @@ public class AssignmentNode extends AstNode {
     public String toString(int indent) {
         StringBuilder sb = new StringBuilder();
         String dent = "  ".repeat(indent);
-        sb.append(dent).append(this.getClass().getSimpleName()).append(":\n");
-        sb.append(dent).append("  Identifier: ").append(identifier).append("\n");
+        sb.append("\n").append(dent).append(this.getClass().getSimpleName()).append(":");
+        sb.append("\n").append(dent).append("  Identifier: ").append(identifier);
         if (query != null) {
-            sb.append(query.toString(indent + 1)).append("\n");
+            sb.append(query.toString(indent + 1));
         }
         if (expression != null) {
-            sb.append(expression.toString(indent + 1)).append("\n");
+            sb.append(expression.toString(indent + 1));
         }
         return sb.toString();
     }

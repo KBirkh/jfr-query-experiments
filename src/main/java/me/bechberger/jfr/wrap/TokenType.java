@@ -14,6 +14,9 @@ public enum TokenType {
     // Literals
     IDENTIFIER, NUMBER, TEXT, FUNCTION, FIELD, BOOLEAN, STRING, 
 
+    // End of query
+    EOQ,
+    
     // End of file
     EOF
 }

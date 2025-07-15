@@ -27,10 +27,15 @@ public class Parser {
     
     private AstNode statementList() throws ParseException {
         ProgramNode programNode = new ProgramNode();
-        while (isIn(TokenType.IDENTIFIER, TokenType.VIEW, TokenType.AT, TokenType.SELECT)) {
-            programNode.addStatement(statement());
-        }
         if(isIn(TokenType.EOF)) {
+            return programNode;
+        }
+        else if(isIn(TokenType.IDENTIFIER, TokenType.VIEW, TokenType.AT, TokenType.SELECT)) {
+            programNode.addStatement(statement());
+            while(isIn(TokenType.EOQ)) {
+                advance();
+                programNode.addStatement(statement());
+            }
             return programNode;
         }
         throw new ParseException("Expected IDENTIFIER, VIEW, AT, SELECT, or EOF, found " + peek().type, pos);
@@ -189,7 +194,7 @@ public class Parser {
             advance();
             source(node);
         }
-        if(isIn(TokenType.WHERE, TokenType.GROUP_BY, TokenType.ORDER_BY, TokenType.LIMIT, TokenType.EOF)) {
+        if(isIn(TokenType.WHERE, TokenType.GROUP_BY, TokenType.ORDER_BY, TokenType.LIMIT, TokenType.EOQ, TokenType.EOF)) {
             return;
         } else {
             throw new ParseException("Expected COMMA, WHERE, GROUP, ORDER, LIMIT, or EOF after source, found " + peek().type, pos);
@@ -304,7 +309,7 @@ public class Parser {
                 advance();
                 expect(TokenType.IDENTIFIER);
             }
-            if(isIn(TokenType.HAVING, TokenType.ORDER_BY, TokenType.LIMIT, TokenType.EOF)) {
+            if(isIn(TokenType.HAVING, TokenType.ORDER_BY, TokenType.LIMIT, TokenType.EOQ, TokenType.EOF)) {
                 return;
             } else {
                 throw new ParseException("Expected HAVING, ORDER BY, LIMIT, or EOF after GROUP BY, found " + peek().type, pos);
@@ -320,7 +325,7 @@ public class Parser {
                 advance();
                 condition();
             }
-            if(isIn(TokenType.ORDER_BY, TokenType.LIMIT, TokenType.EOF)) {
+            if(isIn(TokenType.ORDER_BY, TokenType.LIMIT, TokenType.EOQ, TokenType.EOF)) {
                 return;
             } else {
                 throw new ParseException("Expected ORDER BY, LIMIT, or EOF after HAVING condition, found " + peek().type, pos);
@@ -344,7 +349,7 @@ public class Parser {
                     advance(); // Optional ASC or DESC
                 }
             }
-            if(isIn(TokenType.LIMIT, TokenType.EOF)) {
+            if(isIn(TokenType.LIMIT, TokenType.EOQ, TokenType.EOF)) {
                 return;
             } else {
                 throw new ParseException("Expected LIMIT or EOF after ORDER BY, found " + peek().type, pos);
@@ -358,7 +363,7 @@ public class Parser {
         if(isIn(TokenType.LIMIT)) {
             advance();
             expression();
-        } else if(isIn(TokenType.EOF)) {
+        } else if(isIn(TokenType.EOQ, TokenType.EOF)) {
             return; // No LIMIT clause
         } else {
             throw new ParseException("Expected LIMIT keyword or EOF, found " + peek().type, pos);
@@ -366,11 +371,11 @@ public class Parser {
     }
 
     private AstNode arithmetic() throws ParseException {
-        if(isIn(TokenType.PLUS, TokenType.MINUS, TokenType.LPAREN, TokenType.IDENTIFIER, TokenType.NUMBER)) {
+        if(isIn(TokenType.FUNCTION, TokenType.PLUS, TokenType.MINUS, TokenType.LPAREN, TokenType.IDENTIFIER, TokenType.NUMBER)) {
             AstNode left = term();
             return arithmeticPrime(left);
         } else {
-            throw new ParseException("Expected PLUS, MINUS, LPAREN, IDENTIFIER, or NUMBER for arithmetic expression, found " + peek().type, pos);
+            throw new ParseException("Expected PLUS, MINUS, LPAREN, FUNCTION, IDENTIFIER, or NUMBER for arithmetic expression, found " + peek().type, pos);
         }
     }
 
@@ -379,7 +384,7 @@ public class Parser {
             String operator = expect(TokenType.PLUS, TokenType.MINUS).lexeme;
             AstNode right = term();
             return new BinaryOpNode(operator, left, right);
-        } else if(isIn(TokenType.EE, TokenType.NEQ, TokenType.LT, TokenType.GT, TokenType.LE, TokenType.GE, TokenType.LIKE, TokenType.IN, TokenType.AND, TokenType.OR, TokenType.RPAREN, TokenType.COMMA, TokenType.AS, TokenType.FROM, TokenType.GROUP_BY, TokenType.ORDER_BY, TokenType.HAVING, TokenType.LIMIT, TokenType.EOF)){
+        } else if(isIn(TokenType.EE, TokenType.NEQ, TokenType.LT, TokenType.GT, TokenType.LE, TokenType.GE, TokenType.LIKE, TokenType.IN, TokenType.AND, TokenType.OR, TokenType.RPAREN, TokenType.COMMA, TokenType.AS, TokenType.FROM, TokenType.GROUP_BY, TokenType.ORDER_BY, TokenType.HAVING, TokenType.LIMIT, TokenType.EOQ, TokenType.EOF)){
             return left;
         } else {
             throw new ParseException("Expected PLUS, MINUS, EE, NEQ, LT, GT, LE, GE, LIKE, IN, AND, OR, RPAREN, COMMA, AS, or EOF after term, found " + peek().type, pos);
@@ -387,11 +392,11 @@ public class Parser {
     }
 
     private AstNode term() throws ParseException {
-        if(isIn(TokenType.LPAREN, TokenType.MINUS, TokenType.PLUS, TokenType.IDENTIFIER, TokenType.NUMBER)) {
+        if(isIn(TokenType.FUNCTION, TokenType.LPAREN, TokenType.MINUS, TokenType.PLUS, TokenType.IDENTIFIER, TokenType.NUMBER)) {
             AstNode left = factor();
             return termPrime(left);
         } else  {
-            throw new ParseException("Expected LPAREN, IDENTIFIER, NUMBER, or FUNCTION for term, found " + peek().type, pos);
+            throw new ParseException("Expected LPAREN, IDENTIFIER, FUNCTION, NUMBER, or FUNCTION for term, found " + peek().type, pos);
         }
     }
 
@@ -400,7 +405,7 @@ public class Parser {
             String operator = expect(TokenType.MULT, TokenType.DIV).lexeme;
             AstNode right = factor();
             return new BinaryOpNode(operator, left, right);
-        } else if(isIn(TokenType.PLUS, TokenType.MINUS, TokenType.EE, TokenType.NEQ, TokenType.LT, TokenType.GT, TokenType.LE, TokenType.GE, TokenType.LIKE, TokenType.IN, TokenType.AND, TokenType.OR, TokenType.RPAREN, TokenType.COMMA, TokenType.AS, TokenType.FROM, TokenType.GROUP_BY, TokenType.ORDER_BY, TokenType.HAVING, TokenType.LIMIT, TokenType.EOF)) {
+        } else if(isIn(TokenType.PLUS, TokenType.MINUS, TokenType.EE, TokenType.NEQ, TokenType.LT, TokenType.GT, TokenType.LE, TokenType.GE, TokenType.LIKE, TokenType.IN, TokenType.AND, TokenType.OR, TokenType.RPAREN, TokenType.COMMA, TokenType.AS, TokenType.FROM, TokenType.GROUP_BY, TokenType.ORDER_BY, TokenType.HAVING, TokenType.LIMIT, TokenType.EOQ, TokenType.EOF)) {
             return left; // No more terms
         } else {
             throw new ParseException("Expected MULT, DIV, PLUS, MINUS, EE, NEQ, LT, GT, LE, GE, LIKE, IN, AND, OR, RPAREN, COMMA, AS or EOF after factor term, got " + peek().type, pos);
@@ -408,11 +413,11 @@ public class Parser {
     }
 
     private AstNode factor() throws ParseException {
-        if(isIn(TokenType.PLUS, TokenType.MINUS, TokenType.LPAREN, TokenType.IDENTIFIER, TokenType.NUMBER)) {
+        if(isIn(TokenType.FUNCTION, TokenType.PLUS, TokenType.MINUS, TokenType.LPAREN, TokenType.IDENTIFIER, TokenType.NUMBER)) {
             AstNode right = power();
             return factorPrime(right);
         } else {
-            throw new ParseException("Expected PLUS, MINUS, LPAREN, IDENTIFIER, or NUMBER for factor, found " + peek().type, pos);
+            throw new ParseException("Expected PLUS, MINUS, LPAREN, FUNCTION, IDENTIFIER, or NUMBER for factor, found " + peek().type, pos);
         }
     }
 
@@ -421,7 +426,7 @@ public class Parser {
             String operator = expect(TokenType.EXP).lexeme;
             AstNode left = power();
             return new BinaryOpNode(operator, left, right);
-        } else if(isIn(TokenType.MULT, TokenType.DIV, TokenType.PLUS, TokenType.MINUS, TokenType.EE, TokenType.NEQ, TokenType.LT, TokenType.GT, TokenType.LE, TokenType.GE, TokenType.LIKE, TokenType.IN, TokenType.AND, TokenType.OR, TokenType.RPAREN, TokenType.COMMA, TokenType.AS, TokenType.FROM, TokenType.GROUP_BY, TokenType.ORDER_BY, TokenType.HAVING, TokenType.LIMIT, TokenType.EOF)) {
+        } else if(isIn(TokenType.MULT, TokenType.DIV, TokenType.PLUS, TokenType.MINUS, TokenType.EE, TokenType.NEQ, TokenType.LT, TokenType.GT, TokenType.LE, TokenType.GE, TokenType.LIKE, TokenType.IN, TokenType.AND, TokenType.OR, TokenType.RPAREN, TokenType.COMMA, TokenType.AS, TokenType.FROM, TokenType.GROUP_BY, TokenType.ORDER_BY, TokenType.HAVING, TokenType.LIMIT, TokenType.EOQ, TokenType.EOF)) {
             return right; // No more factors
         } else {
             throw new ParseException("Expected EXP, MULT, DIV, PLUS, MINUS, EE, NEQ, LT, GT, LE, GE, LIKE, IN, AND, OR, RPAREN, COMMA, AS or EOF after power factor, got " + peek().type, pos);
@@ -429,10 +434,10 @@ public class Parser {
     }
 
     private AstNode power() throws ParseException {
-        if(isIn(TokenType.PLUS, TokenType.MINUS, TokenType.LPAREN, TokenType.IDENTIFIER, TokenType.NUMBER)) {
+        if(isIn(TokenType.FUNCTION, TokenType.PLUS, TokenType.MINUS, TokenType.LPAREN, TokenType.IDENTIFIER, TokenType.NUMBER)) {
             return unary();
         } else {
-            throw new ParseException("Expected PLUS, MINUS, LPAREN, IDENTIFIER, or NUMBER for power, found " + peek().type, pos);
+            throw new ParseException("Expected PLUS, MINUS, LPAREN, IDENTIFIER, FUnCTION, or NUMBER for power, found " + peek().type, pos);
         }
     }
 
@@ -441,10 +446,10 @@ public class Parser {
             String operator = expect(TokenType.PLUS, TokenType.MINUS).lexeme;
             AstNode operand = primary();
             return new UnaryOpNode(operator, operand);
-        } else if(isIn(TokenType.LPAREN, TokenType.IDENTIFIER, TokenType.NUMBER)) {
+        } else if(isIn(TokenType.FUNCTION, TokenType.LPAREN, TokenType.IDENTIFIER, TokenType.NUMBER)) {
             return primary();
         } else {
-            throw new ParseException("Expected PLUS, MINUS, LPAREN, IDENTIFIER, or NUMBER for unary operation, found " + peek().type, pos);
+            throw new ParseException("Expected PLUS, MINUS, LPAREN, IDENTIFIER, FUNCTION, or NUMBER for unary operation, found " + peek().type, pos);
         }
     }
 
@@ -459,9 +464,28 @@ public class Parser {
             expect(TokenType.RPAREN);
             return arithmeticNode;
         } else if(isIn(TokenType.FUNCTION)) {
-            throw new ParseException("Functions are not implemented yet. Please do not use them", pos);
+            return functionCall();
         } else {
             throw new ParseException("Expected IDENTIFIER, NUMBER, LPAREN, or FUNCTION for primary expression, found " + peek().type, pos);
+        }
+    }
+
+    private FunctionNode functionCall() throws ParseException {
+        FunctionNode functionNode = new FunctionNode();
+        if(isIn(TokenType.FUNCTION)) {
+            functionNode.setName(expect(TokenType.FUNCTION).lexeme);
+            expect(TokenType.LPAREN);
+            if(isIn(TokenType.IDENTIFIER, TokenType.NUMBER, TokenType.STRING, TokenType.BOOLEAN, TokenType.PLUS, TokenType.MINUS, TokenType.LPAREN, TokenType.LSPAREN)) {
+                functionNode.addArgument(expression());
+                while(isIn(TokenType.COMMA)) {
+                    advance();
+                    functionNode.addArgument(expression());
+                }
+            }
+            expect(TokenType.RPAREN);
+            return functionNode;
+        } else {
+            throw new ParseException("Expected FUNCTION keyword, found " + peek().type, pos);
         }
     }
 

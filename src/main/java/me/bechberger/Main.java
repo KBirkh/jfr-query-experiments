@@ -74,7 +74,7 @@ public class Main implements Callable<Integer> {
             System.exit(exitCode);
         } */
         String tmp = "SELECT col FROM table";
-        String query = "@SELECT col+2 FROM table WHERE 12 == +11 AND lipstick.beforeGC != red OR meme < meiemi";
+        String query = "@SELECT col+2, SUM(col, col) FROM table, tablo WHERE 12 == +11 AND lipstick.beforeGC != p99(1+1) OR meme < meiemi; x=@SELECT * FROM events";
         Lexer lexer = new Lexer(query);
         List<Token> tokens = lexer.tokenize();
         Parser parser = new Parser(tokens);
