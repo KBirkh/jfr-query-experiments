@@ -4,6 +4,18 @@ public class OrNode extends AstNode {
     private AstNode left;
     private AstNode right;
 
+    public OrNode() {
+
+    }
+
+    public OrNode(AstNode left, AstNode right) {
+        if (left == null || right == null) {
+            throw new IllegalArgumentException("Left and right nodes cannot be null");
+        }
+        this.left = left;
+        this.right = right;
+    }
+
     public void setLeft(AstNode left) {
         if (left == null) {
             throw new IllegalArgumentException("Left node cannot be null");

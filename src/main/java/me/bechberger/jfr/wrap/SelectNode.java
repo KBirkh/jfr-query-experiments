@@ -10,6 +10,16 @@ public class SelectNode extends AstNode {
         columns = new java.util.ArrayList<AstNode>();
     }
 
+    public SelectNode(AstNode... columns) {
+        this();
+        if (columns == null || columns.length == 0) {
+            throw new IllegalArgumentException("Columns cannot be null or empty");
+        }
+        for (AstNode column : columns) {
+            addColumn(column);
+        }
+    }
+
     @Override
     public String toString(int indent) {
         StringBuilder sb = new StringBuilder();

@@ -3,12 +3,15 @@ package me.bechberger.jfr.wrap;
 import java.text.ParseException;
 import java.util.*;
 
+
 public class Parser {
     private final List<Token> tokens;
+    private final String input;
     private int pos = 0;
 
-    public Parser(List<Token> tokens) {
+    public Parser(List<Token> tokens, String input) {
         this.tokens = tokens;
+        this.input = input;
     }
 
     public AstNode parse() throws ParseException {
@@ -48,6 +51,8 @@ public class Parser {
             return viewDefinition();
         } else if(isIn(TokenType.SELECT, TokenType.AT)) {
             return query();
+        } else if(isIn(TokenType.EOF)) {
+            return null;
         } else {
             throw new ParseException("Expected IDENTIFIER, VIEW, AT, or SELECT, found " + peek().type, pos);
         }
@@ -58,7 +63,7 @@ public class Parser {
         if(isIn(TokenType.IDENTIFIER)) {
             assignmentNode.setIdentifier(expect(TokenType.IDENTIFIER).lexeme);
             expect(TokenType.ASSIGNMENT);
-            assignmentNode.setQuery(query());
+            assignmentNode.setNode(query());
             return assignmentNode;
         } else {
             throw new ParseException("Expected IDENTIFIER for assignment, found " + peek().type, pos);
@@ -80,7 +85,18 @@ public class Parser {
 
     private AstNode query() throws ParseException {
         QueryNode queryNode = new QueryNode();
-        if(isIn(TokenType.SELECT, TokenType.AT)) {
+        if(isIn(TokenType.SELECT)) {
+            OpenJDKQueryNode node;
+            if(lookahead(-1).type == TokenType.LSPAREN) {
+                node = new OpenJDKQueryNode(input, peek().pos-1);
+            } else {
+                node = new OpenJDKQueryNode(input, peek().pos);
+            }
+            while(node.getEnd() > peek().pos) {
+                advance();
+            }
+            return node;
+        } else if(isIn(TokenType.AT)) {
             queryPrefix(queryNode);
             queryNode.setSelect(select());
             queryNode.setFrom(from());
@@ -136,11 +152,12 @@ public class Parser {
             advance();
             return selectNode;
         } else if(isIn(TokenType.FUNCTION, TokenType.FIELD, TokenType.NUMBER, TokenType.IDENTIFIER, TokenType.LPAREN, TokenType.LSPAREN, TokenType.PLUS, TokenType.MINUS)) {
-            selectNode.addColumn(expression());
-            while(isIn(TokenType.COMMA)) {
-                advance();
                 selectNode.addColumn(expression());
-            }
+                while(isIn(TokenType.COMMA)) {
+                    advance();
+                    selectNode.addColumn(expression());
+                }
+            
             return selectNode;
         } else {
             throw new ParseException("Expected MULT, FUNCTION, FIELD, NUMBER, IDENTIFIER, LPAREN, LSPAREN, PLUS, or MINUS, found " + peek().type, pos);
@@ -166,7 +183,9 @@ public class Parser {
             }
             return arithmetic;
         } else if(isIn(TokenType.LSPAREN)) {
-            return query();
+            AstNode subquery = query();
+            expect(TokenType.RSPAREN);
+            return subquery;
         } else {
             throw new ParseException("Expected FUNCTION, IDENTIFIER, BOOLEAN, STRING, PLUS, MINUS, LPAREN, NUMBER, LSPAREN, or AS, found " + peek().type, pos);
         }
@@ -194,7 +213,7 @@ public class Parser {
             advance();
             source(node);
         }
-        if(isIn(TokenType.WHERE, TokenType.GROUP_BY, TokenType.ORDER_BY, TokenType.LIMIT, TokenType.EOQ, TokenType.EOF)) {
+        if(isIn(TokenType.WHERE, TokenType.RSPAREN, TokenType.GROUP_BY, TokenType.ORDER_BY, TokenType.LIMIT, TokenType.EOQ, TokenType.EOF)) {
             return;
         } else {
             throw new ParseException("Expected COMMA, WHERE, GROUP, ORDER, LIMIT, or EOF after source, found " + peek().type, pos);
@@ -211,12 +230,15 @@ public class Parser {
             }
             node.addSource(sourceNode);
         } else if(isIn(TokenType.LSPAREN)) {
+            advance();
             SourceNode sourceNode = new SourceNode();
             sourceNode.setSource(query());
+            expect(TokenType.RSPAREN);
             if(isIn(TokenType.AS)) {
                 advance();
                 sourceNode.setAlias(expect(TokenType.IDENTIFIER).lexeme);
             }
+            node.addSource(sourceNode);
         } else {
             throw new ParseException("Expected IDENTIFIER, VIEW, or LSPAREN, found " + peek().type, pos);
         }
@@ -227,16 +249,16 @@ public class Parser {
             query.setWhere(where());
         }
         if(isIn(TokenType.GROUP_BY)) {
-            groupBy();
+            query.setGroupBy(groupBy());
         }
         if(isIn(TokenType.HAVING)) {
-            having();
+            query.setHaving(having());
         }
         if(isIn(TokenType.ORDER_BY)) {
-            orderBy();
+            query.setOrderBy(orderBy());
         }
         if(isIn(TokenType.LIMIT)) {
-            limit();
+            query.setLimit(limit());
         }
     }
 
@@ -278,55 +300,56 @@ public class Parser {
     }
 
     private AstNode condition() throws ParseException {
-        if(isIn(TokenType.IDENTIFIER) && (lookahead(1).type != TokenType.DOT && lookahead(1).type != TokenType.ASSIGNMENT) || isIn(TokenType.NUMBER, TokenType.LPAREN, TokenType.PLUS, TokenType.MINUS)) {
+        if(isIn(TokenType.IDENTIFIER) && (lookahead(1).type != TokenType.DOT && lookahead(1).type != TokenType.ASSIGNMENT) || isIn(TokenType.NUMBER, TokenType.LPAREN, TokenType.PLUS, TokenType.MINUS, TokenType.FUNCTION)) {
             ConditionNode conditionNode = new ConditionNode();
             conditionNode.setLeft(arithmetic());
             conditionNode.setOperator(expect(TokenType.EE, TokenType.NEQ, TokenType.LT, TokenType.GT, TokenType.LE, TokenType.GE, TokenType.LIKE, TokenType.IN).lexeme);
             conditionNode.setRight(arithmetic());
             return conditionNode;
-        } else if(isIn(TokenType.IDENTIFIER) && lookahead(1).type == TokenType.DOT) {
-            GCCorrelationNode gcCorrelationNode = new GCCorrelationNode();
-            gcCorrelationNode.setIdentifier(expect(TokenType.IDENTIFIER).lexeme);
-            advance();
-            gcCorrelationNode.setCorrelation(expect(TokenType.IDENTIFIER).lexeme);
+        } else if(isIn(TokenType.IDENTIFIER)) {
+            AstNode identifierNode = identifier();
             ConditionNode conditionNode = new ConditionNode();
-            conditionNode.setLeft(gcCorrelationNode);
+            conditionNode.setLeft(identifierNode);
             conditionNode.setOperator(expect(TokenType.EE, TokenType.NEQ, TokenType.LT, TokenType.GT, TokenType.LE, TokenType.GE, TokenType.LIKE, TokenType.IN).lexeme);
             conditionNode.setRight(arithmetic());
             return conditionNode;
         } else if(isIn(TokenType.IDENTIFIER) && lookahead(1).type == TokenType.ASSIGNMENT) {
             return assignment();
         } else {
-            throw new ParseException("Expected IDENTIFIER, NUMBER, LPAREN, PLUS, or MINUS, found " + peek().type, pos);
+            throw new ParseException("Expected IDENTIFIER, NUMBER, FUNCTION, LPAREN, PLUS, or MINUS, found " + peek().type, pos);
         }
     }
 
-    private void groupBy() throws ParseException {
+    private GroupByNode groupBy() throws ParseException {
         if(isIn(TokenType.GROUP_BY)) {
             advance();
-            expect(TokenType.IDENTIFIER);
+            GroupByNode groupByNode = new GroupByNode();
+            groupByNode.addGroup(identifier());
             while(isIn(TokenType.COMMA)) {
                 advance();
-                expect(TokenType.IDENTIFIER);
+                groupByNode.addGroup(identifier());
             }
             if(isIn(TokenType.HAVING, TokenType.ORDER_BY, TokenType.LIMIT, TokenType.EOQ, TokenType.EOF)) {
-                return;
+                return groupByNode;
             } else {
                 throw new ParseException("Expected HAVING, ORDER BY, LIMIT, or EOF after GROUP BY, found " + peek().type, pos);
             }
+        } else {
+            throw new ParseException("Expected GROUP BY keyword, found " + peek().type, pos);
         }
     }
 
-    private void having() throws ParseException {
+    private HavingNode having() throws ParseException {
         if(isIn(TokenType.HAVING)) {
             advance();
-            condition();
+            HavingNode havingNode = new HavingNode();
+            havingNode.addCondition(condition());
             while(isIn(TokenType.AND, TokenType.OR)) {
                 advance();
-                condition();
+                havingNode.addCondition(condition());
             }
             if(isIn(TokenType.ORDER_BY, TokenType.LIMIT, TokenType.EOQ, TokenType.EOF)) {
-                return;
+                return havingNode;
             } else {
                 throw new ParseException("Expected ORDER BY, LIMIT, or EOF after HAVING condition, found " + peek().type, pos);
             }
@@ -335,22 +358,25 @@ public class Parser {
         }
     }
 
-    private void orderBy() throws ParseException {
+    private OrderByNode orderBy() throws ParseException {
         if(isIn(TokenType.ORDER_BY)) {
             advance();
-            expect(TokenType.IDENTIFIER);
+            OrderByNode orderByNode = new OrderByNode();
+            orderByNode.addOrder(identifier());
             if(isIn(TokenType.ASC, TokenType.DESC)) {
-                advance(); // Optional ASC or DESC
+                orderByNode.addDirection(expect(TokenType.ASC, TokenType.DESC).lexeme);
+            } else {
+                orderByNode.addDirection("ASC"); // Default to ASC if not specified
             }
             while (isIn(TokenType.COMMA)) {
                 advance();
-                expect(TokenType.IDENTIFIER);
+                orderByNode.addOrder(identifier());
                 if(isIn(TokenType.ASC, TokenType.DESC)) {
                     advance(); // Optional ASC or DESC
                 }
             }
             if(isIn(TokenType.LIMIT, TokenType.EOQ, TokenType.EOF)) {
-                return;
+                return orderByNode;
             } else {
                 throw new ParseException("Expected LIMIT or EOF after ORDER BY, found " + peek().type, pos);
             }
@@ -359,12 +385,12 @@ public class Parser {
         }
     }
 
-    private void limit() throws ParseException {
+    private LimitNode limit() throws ParseException {
         if(isIn(TokenType.LIMIT)) {
             advance();
-            expression();
+            return new LimitNode(expression());
         } else if(isIn(TokenType.EOQ, TokenType.EOF)) {
-            return; // No LIMIT clause
+            return null;
         } else {
             throw new ParseException("Expected LIMIT keyword or EOF, found " + peek().type, pos);
         }
@@ -455,7 +481,7 @@ public class Parser {
 
     private AstNode primary() throws ParseException {
         if(isIn(TokenType.IDENTIFIER)) {
-            return new IdentifierNode(expect(TokenType.IDENTIFIER).lexeme);
+            return identifier();
         } else if(isIn(TokenType.NUMBER)) {
             return new NumberNode(expect(TokenType.NUMBER).lexeme);
         } else if(isIn(TokenType.LPAREN)) {
@@ -492,7 +518,20 @@ public class Parser {
     // === Token Helpers ===
 
     private Token peek() {
-        return pos < tokens.size() ? tokens.get(pos) : new Token(TokenType.EOF, "");
+        return pos < tokens.size() ? tokens.get(pos) : new Token(TokenType.EOF, "", pos);
+    }
+
+    private AstNode identifier() {
+        if(lookahead(1).type == TokenType.DOT) {
+            String table = expect(TokenType.IDENTIFIER).lexeme;
+            advance(); // Consume DOT
+            String identifier = expect(TokenType.IDENTIFIER).lexeme;
+            return new IdentifierNode(identifier, table);
+
+        } else {
+            String identifier = expect(TokenType.IDENTIFIER).lexeme;
+            return new IdentifierNode(identifier);
+        }
     }
 
 
@@ -502,10 +541,10 @@ public class Parser {
 
     private Token lookahead(int offset) {
         int lookaheadPos = pos + offset;
-        if (lookaheadPos < tokens.size()) {
+        if (lookaheadPos < tokens.size() && lookaheadPos >= 0) {
             return tokens.get(lookaheadPos);
         }
-        return new Token(TokenType.EOF, "");
+        return new Token(TokenType.EOF, "", 0);
     }
 
     private boolean match(TokenType... types) {

@@ -9,4 +9,8 @@ public abstract class AstNode {
         sb.append("\n").append(dent).append(this.getClass().getSimpleName()).append(":");
         return sb.toString();
     }
+
+    public String[][] eval() {
+        return new String[][] {{"You somehow got an empty AST node, this is a bug in the code."}};
+    }
 }

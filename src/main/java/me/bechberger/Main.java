@@ -73,13 +73,11 @@ public class Main implements Callable<Integer> {
         if (exitCode != EXIT_OK) {
             System.exit(exitCode);
         } */
-        String tmp = "SELECT col FROM table";
-        String query = "@SELECT col+2, SUM(col, col) FROM table, tablo WHERE 12 == +11 AND lipstick.beforeGC != p99(1+1) OR meme < meiemi; x=@SELECT * FROM events";
-        Lexer lexer = new Lexer(query);
-        List<Token> tokens = lexer.tokenize();
-        Parser parser = new Parser(tokens);
+        String input = "@SELECT * FROM [SELECT * FROM [SELECT * FROM events] AS t] AS p";
+        Lexer lexer = new Lexer(input);
+        Parser parser = new Parser(lexer.tokenize(), input);
         try {
-            ProgramNode res = (ProgramNode) parser.parse();
+            AstNode res = parser.parse();
             System.out.println(res.toString(0));
         } catch (ParseException e) {
             // TODO Auto-generated catch block

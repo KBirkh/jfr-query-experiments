@@ -1,7 +1,6 @@
 /Users/i589221/Documents/GitHub/jfr-query-experiments/src/main/java/me/bechberger/jfr/wrap/StringNode.java
 /Users/i589221/Documents/GitHub/jfr-query-experiments/src/main/java/me/bechberger/jfr/wrap/GroupByNode.java
 /Users/i589221/Documents/GitHub/jfr-query-experiments/src/main/java/me/bechberger/jfr/wrap/AssignmentNode.java
-/Users/i589221/Documents/GitHub/jfr-query-experiments/src/main/java/me/bechberger/jfr/wrap/SelectListNode.java
 /Users/i589221/Documents/GitHub/jfr-query-experiments/src/main/java/me/bechberger/jfr/query/TableSorter.java
 /Users/i589221/Documents/GitHub/jfr-query-experiments/src/main/java/me/bechberger/jfr/tool/WebCommand.java
 /Users/i589221/Documents/GitHub/jfr-query-experiments/src/main/java/me/bechberger/jfr/wrap/AndNode.java
@@ -33,7 +32,6 @@
 /Users/i589221/Documents/GitHub/jfr-query-experiments/src/main/java/me/bechberger/jfr/query/QueryExecutor.java
 /Users/i589221/Documents/GitHub/jfr-query-experiments/src/main/java/me/bechberger/jfr/query/QueryRun.java
 /Users/i589221/Documents/GitHub/jfr-query-experiments/src/main/java/me/bechberger/jfr/wrap/IdentifierNode.java
-/Users/i589221/Documents/GitHub/jfr-query-experiments/src/main/java/me/bechberger/jfr/wrap/StatementNode.java
 /Users/i589221/Documents/GitHub/jfr-query-experiments/src/main/java/me/bechberger/jfr/wrap/SelectNode.java
 /Users/i589221/Documents/GitHub/jfr-query-experiments/src/main/java/me/bechberger/jfr/wrap/FunctionNode.java
 /Users/i589221/Documents/GitHub/jfr-query-experiments/src/main/java/me/bechberger/jfr/wrap/BooleanNode.java
@@ -70,7 +68,6 @@
 /Users/i589221/Documents/GitHub/jfr-query-experiments/src/main/java/me/bechberger/jfr/util/Utils.java
 /Users/i589221/Documents/GitHub/jfr-query-experiments/src/main/java/me/bechberger/jfr/wrap/SourceNode.java
 /Users/i589221/Documents/GitHub/jfr-query-experiments/src/main/java/me/bechberger/jfr/query/TableRenderer.java
-/Users/i589221/Documents/GitHub/jfr-query-experiments/src/main/java/me/bechberger/jfr/wrap/AstPrinter.java
 /Users/i589221/Documents/GitHub/jfr-query-experiments/src/main/java/me/bechberger/jfr/wrap/ColumnNode.java
 /Users/i589221/Documents/GitHub/jfr-query-experiments/src/main/java/me/bechberger/jfr/query/Row.java
 /Users/i589221/Documents/GitHub/jfr-query-experiments/src/main/java/me/bechberger/jfr/wrap/WhereNode.java

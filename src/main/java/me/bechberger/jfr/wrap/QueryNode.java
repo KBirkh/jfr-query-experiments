@@ -11,6 +11,14 @@ public class QueryNode extends AstNode {
     private LimitNode limit;
     public boolean hasAt;
 
+    public QueryNode() {
+
+    }
+
+    public QueryNode(boolean hasAt) {
+        this.hasAt = hasAt;
+    }
+
     public void setSelect(AstNode select) {
         if (this.select == null) {
             this.select = (SelectNode) select;

@@ -30,8 +30,9 @@ public class Lexer {
         Map.entry("P95", TokenType.FUNCTION),
         Map.entry("P99", TokenType.FUNCTION),
         Map.entry("P999", TokenType.FUNCTION),
-        Map.entry("before_gc", TokenType.FIELD),
-        Map.entry("after_gc", TokenType.FIELD),
+        Map.entry("beforeGc", TokenType.FUNCTION),
+        Map.entry("afterGc", TokenType.FUNCTION),
+        Map.entry("nearGc", TokenType.FUNCTION),
         Map.entry("in", TokenType.IN),
         // Map.entry("minTimeSlice", TokenType.MIN_TIME_SLICE),
         Map.entry("LIKE", TokenType.LIKE),
@@ -78,7 +79,7 @@ public class Lexer {
             if(c=='\n' && lookahead() == '\n') {
                 pos += 2; // Empty line -> End of Query
                 if(tokens.getLast().type != TokenType.EOQ) {
-                    tokens.add(new Token(TokenType.EOQ, ""));
+                    tokens.add(new Token(TokenType.EOQ, "", pos));
                 }
                 continue;
             }
@@ -87,7 +88,9 @@ public class Lexer {
                 continue;
             }
 
-            if (Character.isLetter(c)) {
+            if (c == '"') {
+                tokens.add(readString());
+            } else if (Character.isLetter(c)) {
                 tokens.add(readWord());
             } else if (Character.isDigit(c)) {
                 tokens.add(readNumber());
@@ -95,69 +98,69 @@ public class Lexer {
                 switch (c) {
                     case '=':
                         pos++;
-                        if (match('=')) tokens.add(new Token(TokenType.EE, "=="));
-                        else tokens.add(new Token(TokenType.ASSIGNMENT, "="));
+                        if (match('=')) tokens.add(new Token(TokenType.EE, "==", pos));
+                        else tokens.add(new Token(TokenType.ASSIGNMENT, "=", pos));
                         break;
                     case '!':
                         pos++;
-                        if (match('=')) tokens.add(new Token(TokenType.NEQ, "!="));
+                        if (match('=')) tokens.add(new Token(TokenType.NEQ, "!=", pos));
                         else throw new RuntimeException("Unexpected character: !");
                         break;
                     case '<':
                         pos++;
-                        if (match('=')) tokens.add(new Token(TokenType.LE, "<="));
-                        else tokens.add(new Token(TokenType.LT, "<"));
+                        if (match('=')) tokens.add(new Token(TokenType.LE, "<=", pos));
+                        else tokens.add(new Token(TokenType.LT, "<", pos));
                         break;
                     case '>':
                         pos++;
-                        if (match('=')) tokens.add(new Token(TokenType.GE, ">="));
-                        else tokens.add(new Token(TokenType.GT, ">"));
+                        if (match('=')) tokens.add(new Token(TokenType.GE, ">=", pos));
+                        else tokens.add(new Token(TokenType.GT, ">", pos));
                         break;
                     case '+':
-                        tokens.add(new Token(TokenType.PLUS, String.valueOf(advance())));
+                        tokens.add(new Token(TokenType.PLUS, String.valueOf(advance()), pos));
                         break;
                     case '-':
-                        tokens.add(new Token(TokenType.MINUS, String.valueOf(advance())));
+                        tokens.add(new Token(TokenType.MINUS, String.valueOf(advance()), pos));
                         break;
                     case '*':
-                        tokens.add(new Token(TokenType.MULT, String.valueOf(advance())));
+                        tokens.add(new Token(TokenType.MULT, String.valueOf(advance()), pos));
                         break;
                     case '/':
-                        tokens.add(new Token(TokenType.DIV, String.valueOf(advance())));
+                        tokens.add(new Token(TokenType.DIV, String.valueOf(advance()), pos));
                         break;
                     case '(':
-                        tokens.add(new Token(TokenType.LPAREN, String.valueOf(advance())));
+                        tokens.add(new Token(TokenType.LPAREN, String.valueOf(advance()), pos));
                         break;
                     case ')':
-                        tokens.add(new Token(TokenType.RPAREN, String.valueOf(advance())));
+                        tokens.add(new Token(TokenType.RPAREN, String.valueOf(advance()), pos));
                         break;
                     case ',':
-                        tokens.add(new Token(TokenType.COMMA, String.valueOf(advance())));
+                        tokens.add(new Token(TokenType.COMMA, String.valueOf(advance()), pos));
                         break;
                     case ';':
-                        tokens.add(new Token(TokenType.EOQ, String.valueOf(advance())));
+                        tokens.add(new Token(TokenType.EOQ, String.valueOf(advance()), pos));
                         break;
                     case '@':
-                        tokens.add(new Token(TokenType.AT, String.valueOf(advance())));
+                        tokens.add(new Token(TokenType.AT, String.valueOf(advance()), pos));
                         break;
                     case '[':
-                        tokens.add(new Token(TokenType.LSPAREN, String.valueOf(advance())));
+                        tokens.add(new Token(TokenType.LSPAREN, String.valueOf(advance()), pos));
                         break;
                     case ']':
-                        tokens.add(new Token(TokenType.RSPAREN, String.valueOf(advance())));
+                        tokens.add(new Token(TokenType.RSPAREN, String.valueOf(advance()), pos));
                         break;
                     case '^':
-                        tokens.add(new Token(TokenType.EXP, String.valueOf(advance())));
+                        tokens.add(new Token(TokenType.EXP, String.valueOf(advance()), pos));
                         break;
                     case '.':
-                        tokens.add(new Token(TokenType.DOT, String.valueOf(advance())));
+                        tokens.add(new Token(TokenType.DOT, String.valueOf(advance()), pos));
                         break;
                     default:   
                         throw new RuntimeException("Unexpected character: " + c);
                 }
             }
         }
-        tokens.add(new Token(TokenType.EOF, ""));
+        tokens.add(new Token(TokenType.EOF, "", pos));
         return mergeGroupAndOrderBy(tokens);
     }
 
@@ -165,7 +168,8 @@ public class Lexer {
         int start = pos;
         while (Character.isLetterOrDigit(peek()) || peek() == '_') advance();
         String word = input.substring(start, pos).toUpperCase();
-        return new Token(keywords.getOrDefault(word, TokenType.IDENTIFIER), word);
+        String lexeme = input.substring(start, pos);
+        return new Token(keywords.getOrDefault(word, TokenType.IDENTIFIER), lexeme, start);
     }
 
     private Token readNumber() {
@@ -175,7 +179,24 @@ public class Lexer {
             advance();
             while (Character.isDigit(peek())) advance();
         }
-        return new Token(TokenType.NUMBER, input.substring(start, pos));
+        return new Token(TokenType.NUMBER, input.substring(start, pos), start);
+    }
+
+    public Token readString() {
+        int start = pos;
+        advance();
+        while(peek() != '"' && pos < length) {
+            if (peek() == '\\') {
+                advance(); // Skip escape character
+            }
+            advance();
+        }
+        if (peek() != '"') {
+            throw new RuntimeException("Unterminated string literal");
+        }
+        advance(); // Skip closing quote
+        String str = input.substring(start + 1, pos - 1); // Exclude quotes
+        return new Token(TokenType.STRING, str, start);
     }
 
     // Combine "GROUP BY" and "ORDER BY"
@@ -184,12 +205,12 @@ public class Lexer {
         for (int i = 0; i < tokens.size(); i++) {
             if (i + 1 < tokens.size()) {
                 if (tokens.get(i).type == TokenType.GROUP_BY && tokens.get(i + 1).lexeme.equals("BY")) {
-                    merged.add(new Token(TokenType.GROUP_BY, "GROUP BY"));
+                    merged.add(new Token(TokenType.GROUP_BY, "GROUP BY", tokens.get(i).pos));
                     i++;
                     continue;
                 }
                 if (tokens.get(i).type == TokenType.ORDER_BY && tokens.get(i + 1).lexeme.equals("BY")) {
-                    merged.add(new Token(TokenType.ORDER_BY, "ORDER BY"));
+                    merged.add(new Token(TokenType.ORDER_BY, "ORDER BY", tokens.get(i).pos));
                     i++;
                     continue;
                 }

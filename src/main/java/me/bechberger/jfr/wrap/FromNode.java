@@ -3,9 +3,24 @@ package me.bechberger.jfr.wrap;
 import java.util.List;
 
 public class FromNode extends AstNode {
-    private List<SourceNode> sources;
+    private List<AstNode> sources;
 
-    public void addSource(SourceNode source) {
+    public FromNode() {
+        sources = new java.util.ArrayList<>();
+    }
+
+    public FromNode(List<AstNode> sources) {
+        this.sources = sources;
+    }
+
+    public FromNode(AstNode... sources) {
+        this.sources = new java.util.ArrayList<>();
+        for (AstNode source : sources) {
+            this.sources.add(source);
+        }
+    }
+
+    public void addSource(AstNode source) {
         if (sources == null) {
             sources = new java.util.ArrayList<>();
         }
@@ -17,7 +32,7 @@ public class FromNode extends AstNode {
         String dent = "  ".repeat(indent);
         sb.append("\n").append(dent).append(this.getClass().getSimpleName()).append(":");
         if (sources != null) {
-            for (SourceNode source : sources) {
+            for (AstNode source : sources) {
                 sb.append(source.toString(indent + 1));
             }
         }

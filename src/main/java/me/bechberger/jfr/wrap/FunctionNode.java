@@ -20,6 +20,20 @@ public class FunctionNode extends AstNode {
         arguments = new ArrayList<AstNode>();
     }
 
+    public FunctionNode(String name, AstNode... arguments) {
+        if (name == null || name.isEmpty()) {
+            throw new IllegalArgumentException("Function name cannot be null or empty");
+        }
+        this.name = name;
+        this.arguments = new ArrayList<>();
+        for (AstNode arg : arguments) {
+            if (arg == null) {
+                throw new IllegalArgumentException("Function argument cannot be null");
+            }
+            this.arguments.add(arg);
+        }
+    }
+
     public void setName(String name) {
         if (name == null || name.isEmpty()) {
             throw new IllegalArgumentException("Function name cannot be null or empty");

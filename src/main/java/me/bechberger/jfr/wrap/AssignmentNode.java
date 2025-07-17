@@ -2,8 +2,7 @@ package me.bechberger.jfr.wrap;
 
 public class AssignmentNode extends AstNode {
     private String identifier;
-    private ExpressionNode expression;
-    private QueryNode query;
+    private AstNode node;
 
     public void setIdentifier(String identifier) {
         if (identifier == null || identifier.isEmpty()) {
@@ -12,11 +11,20 @@ public class AssignmentNode extends AstNode {
         this.identifier = identifier;
     }
 
-    public void setQuery(AstNode query) {
-        if (query == null) {
+    public AssignmentNode() {
+
+    }
+
+    public AssignmentNode(String identifier, AstNode expression) {
+        setIdentifier(identifier);
+        setNode(expression);
+    }
+
+    public void setNode(AstNode node) {
+        if (node == null) {
             throw new IllegalArgumentException("Query cannot be null");
         }
-        this.query = (QueryNode) query;
+        this.node = node;
     }
 
     public String toString(int indent) {
@@ -24,11 +32,8 @@ public class AssignmentNode extends AstNode {
         String dent = "  ".repeat(indent);
         sb.append("\n").append(dent).append(this.getClass().getSimpleName()).append(":");
         sb.append("\n").append(dent).append("  Identifier: ").append(identifier);
-        if (query != null) {
-            sb.append(query.toString(indent + 1));
-        }
-        if (expression != null) {
-            sb.append(expression.toString(indent + 1));
+        if (node != null) {
+            sb.append(node.toString(indent + 1));
         }
         return sb.toString();
     }

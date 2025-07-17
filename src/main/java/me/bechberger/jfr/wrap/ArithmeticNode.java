@@ -1,13 +1,25 @@
 package me.bechberger.jfr.wrap;
 
 public class ArithmeticNode extends AstNode {
-    private ArithmeticNode left;
+    private AstNode left;
     private String op;
-    private ArithmeticNode right;
+    private AstNode right;
     private String alias;
 
     public ArithmeticNode() {
 
+    }
+
+    public ArithmeticNode(AstNode left, String op, AstNode right) {
+        if (left == null || right == null) {
+            throw new IllegalArgumentException("Left and right expressions cannot be null");
+        }
+        if (op == null || op.isEmpty()) {
+            throw new IllegalArgumentException("Operator cannot be null or empty");
+        }
+        this.left = left;
+        this.op = op;
+        this.right = right;
     }
 
     public void setAlias(String alias) {
@@ -21,7 +33,7 @@ public class ArithmeticNode extends AstNode {
         return alias;
     }
 
-    public void setLeft(ArithmeticNode left) {
+    public void setLeft(AstNode left) {
         if (left == null) {
             throw new IllegalArgumentException("Left expression cannot be null");
         }
@@ -35,7 +47,7 @@ public class ArithmeticNode extends AstNode {
         this.op = op;
     }
 
-    public void setRight(ArithmeticNode right) {
+    public void setRight(AstNode right) {
         if (right == null) {
             throw new IllegalArgumentException("Right expression cannot be null");
         }

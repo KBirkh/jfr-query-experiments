@@ -7,6 +7,14 @@ public class BooleanNode extends AstNode {
         this.value = value;
     }
 
+    public BooleanNode() {
+
+    }
+
+    public BooleanNode(boolean value) {
+        this.value = value;
+    }
+
     public boolean getValue() {
         return value;
     }

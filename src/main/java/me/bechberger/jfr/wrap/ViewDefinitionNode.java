@@ -4,6 +4,14 @@ public class ViewDefinitionNode extends AstNode {
     private String name;
     private QueryNode query;
 
+    public ViewDefinitionNode(String name, AstNode query) {
+        setName(name);
+        setQuery(query);
+    }
+
+    public ViewDefinitionNode() {
+        
+    }
     public void setName(String name) {
         if (name == null || name.isEmpty()) {
             throw new IllegalArgumentException("Name cannot be null or empty");

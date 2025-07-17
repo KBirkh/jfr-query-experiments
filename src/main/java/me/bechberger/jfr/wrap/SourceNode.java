@@ -3,7 +3,7 @@ package me.bechberger.jfr.wrap;
 public class SourceNode extends AstNode {
     private String name;
     private String alias;
-    private QueryNode subquery;
+    private AstNode subquery;
     public boolean isSubQuery;
 
     public void setSource(String name) {
@@ -13,18 +13,33 @@ public class SourceNode extends AstNode {
         this.name = name;
     }
 
-    public void setAlias(String lexeme) {
+    public SourceNode() {}
+
+    public SourceNode(String name) {
+        setSource(name);
+    }
+
+    public SourceNode(AstNode query) {
+        if (query == null) {
+            throw new IllegalArgumentException("Subquery cannot be null");
+        }
+        this.subquery = query;
+        isSubQuery = true;
+    }
+
+    public SourceNode setAlias(String lexeme) {
         if (lexeme == null || lexeme.isEmpty()) {
             throw new IllegalArgumentException("Alias cannot be null or empty");
         }
         this.alias = lexeme;
+        return this;
     }
 
     public void setSource(AstNode query) {
         if (query == null) {
             throw new IllegalArgumentException("Subquery cannot be null");
         }
-        this.subquery = (QueryNode) query;
+        this.subquery = query;
         isSubQuery = true;
     }
     @Override

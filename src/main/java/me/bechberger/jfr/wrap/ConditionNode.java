@@ -15,6 +15,25 @@ public class ConditionNode extends AstNode {
         this.isFirst = false;
     }
 
+    public ConditionNode() {
+
+    }
+
+    public ConditionNode(String operator, AstNode left, AstNode right) {
+        if (operator == null || operator.isEmpty()) {
+            throw new IllegalArgumentException("Operator cannot be null or empty");
+        }
+        if (left == null) {
+            throw new IllegalArgumentException("Left expression cannot be null");
+        }
+        if (right == null) {
+            throw new IllegalArgumentException("Right expression cannot be null");
+        }
+        this.operator = operator;
+        this.left = left;
+        this.right = right;
+    }
+
     public void setLeft(AstNode arithmetic) {
         if (arithmetic == null) {
             throw new IllegalArgumentException("Left expression cannot be null");

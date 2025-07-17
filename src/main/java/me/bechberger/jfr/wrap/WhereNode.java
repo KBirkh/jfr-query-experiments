@@ -4,6 +4,17 @@ public class WhereNode extends AstNode {
     private AstNode condition;
     private ConditionNode conditionTail;
 
+    public WhereNode() {
+
+    }
+
+    public WhereNode(AstNode condition) {
+        if (condition == null) {
+            throw new IllegalArgumentException("Condition cannot be null");
+        }
+        this.condition = condition;
+    }
+
     public void setTail(ConditionNode conditionTail) {
         this.conditionTail = conditionTail;
     }
