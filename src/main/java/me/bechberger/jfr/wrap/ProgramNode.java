@@ -1,40 +1,50 @@
 package me.bechberger.jfr.wrap;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import me.bechberger.jfr.query.Table;
+
 public class ProgramNode extends AstNode {
-    private StatementNode statement;
-    private ProgramNode tail;
+    private List<AstNode> statements;
 
     public ProgramNode() {
-
+        statements = new ArrayList<AstNode>();
     }
 
-    public void addStatement(StatementNode statement) {
-        if (this.statement == null) {
-            this.statement = statement;
-        } else {
-            throw new IllegalStateException("ProgramNode can only have one statement");
+    public ProgramNode(AstNode... statements) {
+        this();
+        if (statements == null || statements.length == 0) {
+            throw new IllegalArgumentException("Statements cannot be null or empty");
+        }
+        for (AstNode statement : statements) {
+            addStatement(statement);
         }
     }
 
-    public void addTail(ProgramNode tail) {
-        if (this.tail == null) {
-            this.tail = tail;
-        } else {
-            throw new IllegalStateException("ProgramNode can only have one tail");
+    public void addStatement(AstNode statement) {
+        if(statement != null) {
+            statements.add(statement);
         }
     }
 
+    @Override
     public String toString(int indent) {
         StringBuilder sb = new StringBuilder();
         String dent = "  ".repeat(indent);
         sb.append(dent).append(this.getClass().getSimpleName()).append(":");
-        if (statement != null) {
+        for (AstNode statement : statements) {
             sb.append(statement.toString(indent + 1));
-        }
-        if (tail != null) {
-            sb.append(tail.toString(indent + 1));
         }
         return sb.toString();
     }
-
+    @Override
+    public Table eval() {
+        List<String[][]> results = new ArrayList<>();
+        Table table = null;
+        for (AstNode statement : statements) {
+            table = statement.eval();
+        }
+        return table;
+    }
 }

@@ -1,25 +1,42 @@
 package me.bechberger.jfr.wrap;
 
-public class SelectNode extends AstNode {
-    private SelectListNode selectList;
+import java.util.List;
 
-    public void setSelectList(SelectListNode selectList) {
-        if (selectList == null) {
-            throw new IllegalArgumentException("Select list cannot be null");
-        }
-        this.selectList = selectList;
+public class SelectNode extends AstNode {
+    private List<AstNode> columns;
+    public boolean isStar;
+
+    public SelectNode() {
+        columns = new java.util.ArrayList<AstNode>();
     }
 
+    public SelectNode(AstNode... columns) {
+        this();
+        if (columns == null || columns.length == 0) {
+            throw new IllegalArgumentException("Columns cannot be null or empty");
+        }
+        for (AstNode column : columns) {
+            addColumn(column);
+        }
+    }
+
+    @Override
     public String toString(int indent) {
         StringBuilder sb = new StringBuilder();
         String dent = "  ".repeat(indent);
         sb.append("\n").append(dent).append(this.getClass().getSimpleName()).append(":");
-        if (selectList != null) {
-            sb.append(selectList.toString(indent + 1));
+        if (isStar) {
+            sb.append(" *");
         } else {
-            sb.append(dent).append("  <no select list>");
+            for (AstNode column : columns) {
+                sb.append(column.toString(indent + 1));
+            }
         }
         return sb.toString();
+    }
+
+    public void addColumn(AstNode expression) {
+        columns.add(expression);
     }
 
 }

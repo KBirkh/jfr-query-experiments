@@ -4,6 +4,14 @@ public class ViewDefinitionNode extends AstNode {
     private String name;
     private QueryNode query;
 
+    public ViewDefinitionNode(String name, AstNode query) {
+        setName(name);
+        setQuery(query);
+    }
+
+    public ViewDefinitionNode() {
+        
+    }
     public void setName(String name) {
         if (name == null || name.isEmpty()) {
             throw new IllegalArgumentException("Name cannot be null or empty");
@@ -11,13 +19,13 @@ public class ViewDefinitionNode extends AstNode {
         this.name = name;
     }
 
-    public void setQuery(QueryNode query) {
+    public void setQuery(AstNode query) {
         if (query == null) {
             throw new IllegalArgumentException("Query cannot be null");
         }
-        this.query = query;
+        this.query = (QueryNode) query;
     }
-
+    @Override
     public String toString(int indent) {
         StringBuilder sb = new StringBuilder();
         String dent = "  ".repeat(indent);

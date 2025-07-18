@@ -9,11 +9,14 @@ public enum TokenType {
     ASSIGNMENT, EE, NEQ, LT, LE, GT, GE, PLUS, MINUS, MULT, DIV, EXP,
 
     // Symbols
-    LPAREN, RPAREN, COMMA, SEMICOLON, AT, STAR, LSPAREN, RSPAREN,
+    LPAREN, RPAREN, COMMA, SEMICOLON, AT, STAR, LSPAREN, RSPAREN, DOT,
 
     // Literals
-    IDENTIFIER, NUMBER, TEXT, FUNCTION, FIELD,
+    IDENTIFIER, NUMBER, TEXT, FUNCTION, FIELD, BOOLEAN, STRING,
 
+    // End of query
+    EOQ,
+    
     // End of file
     EOF
 }

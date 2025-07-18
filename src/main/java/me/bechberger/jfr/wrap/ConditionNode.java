@@ -2,10 +2,8 @@ package me.bechberger.jfr.wrap;
 
 public class ConditionNode extends AstNode {
     private String operator;
-    private ConditionNode conditionTail;
-    private ExpressionNode left;
-    private ExpressionNode right;
-    private ConditionNode condition;
+    private AstNode left;
+    private AstNode right;
 
     public boolean isFirst = true;
 
@@ -17,50 +15,46 @@ public class ConditionNode extends AstNode {
         this.isFirst = false;
     }
 
-    public void setTail(ConditionNode conditionTail) {
-        this.conditionTail = conditionTail;
+    public ConditionNode() {
+
     }
 
-    public void setLeft(ExpressionNode expression) {
-        if (expression == null) {
+    public ConditionNode(String operator, AstNode left, AstNode right) {
+        if (operator == null || operator.isEmpty()) {
+            throw new IllegalArgumentException("Operator cannot be null or empty");
+        }
+        if (left == null) {
             throw new IllegalArgumentException("Left expression cannot be null");
         }
-        this.left = expression;
-    }
-
-    public void setRight(ExpressionNode expression) {
-        if (expression == null) {
+        if (right == null) {
             throw new IllegalArgumentException("Right expression cannot be null");
         }
-        this.right = expression;
+        this.operator = operator;
+        this.left = left;
+        this.right = right;
     }
 
-    public void setCondition(ConditionNode condition) {
-        if (condition == null) {
-            throw new IllegalArgumentException("Condition cannot be null");
+    public void setLeft(AstNode arithmetic) {
+        if (arithmetic == null) {
+            throw new IllegalArgumentException("Left expression cannot be null");
         }
-        this.condition = condition;
+        this.left = arithmetic;
     }
 
+    public void setRight(AstNode arithmetic) {
+        if (arithmetic == null) {
+            throw new IllegalArgumentException("Right expression cannot be null");
+        }
+        this.right = arithmetic;
+    }
+    @Override
     public String toString(int indent) {
         StringBuilder sb = new StringBuilder();
         String dent = "  ".repeat(indent);
-        sb.append("\n").append(dent).append(this.getClass().getSimpleName());
-        if (left != null) {
-            sb.append(left.toString(indent + 1));
-        }
-        if (operator != null) {
-            sb.append("\n").append(dent).append("  Operator: ").append(operator);
-        }
-        if (right != null) {
-            sb.append(right.toString(indent + 1));
-        }
-        if (condition != null) {
-            sb.append(condition.toString(indent + 1));
-        }
-        if (conditionTail != null) {
-            sb.append(conditionTail.toString(indent + 1));
-        }
+        sb.append("\n").append(dent).append(this.getClass().getSimpleName()).append(":");
+        sb.append("\n").append(dent).append("  Operator: ").append(operator);
+        sb.append("\n").append(dent).append("  Left: ").append(left.toString(indent + 1));
+        sb.append("\n").append(dent).append("  Right: ").append(right.toString(indent + 1));
         return sb.toString();
     }
 

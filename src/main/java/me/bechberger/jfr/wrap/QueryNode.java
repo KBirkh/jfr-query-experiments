@@ -11,9 +11,17 @@ public class QueryNode extends AstNode {
     private LimitNode limit;
     public boolean hasAt;
 
-    public void setSelect(SelectNode select) {
+    public QueryNode() {
+
+    }
+
+    public QueryNode(boolean hasAt) {
+        this.hasAt = hasAt;
+    }
+
+    public void setSelect(AstNode select) {
         if (this.select == null) {
-            this.select = select;
+            this.select = (SelectNode) select;
         } else {
             throw new IllegalStateException("QueryNode can only have one SelectNode");
         }
@@ -67,15 +75,15 @@ public class QueryNode extends AstNode {
         }
     }
 
-    public void setColumn(ColumnNode columns) {
-        this.columns = columns;
+    public void setColumn(AstNode columns) {
+        this.columns = (ColumnNode) columns;
     }
-    
+    @Override
     public String toString(int indent) {
         StringBuilder sb = new StringBuilder();
         String dent = "  ".repeat(indent);
         sb.append("\n").append(dent).append(this.getClass().getSimpleName()).append(":");
-
+        sb.append("\n").append(dent).append("  Has @: ").append(hasAt);
         if (columns != null) {
             sb.append(columns.toString(indent + 1));
         }

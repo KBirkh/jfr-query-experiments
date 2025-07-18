@@ -19,7 +19,7 @@ public class BinaryOpNode extends AstNode {
         this.leftOperand = leftOperand;
         this.rightOperand = rightOperand;
     }
-
+    @Override
     public String toString(int indent) {
         StringBuilder sb = new StringBuilder();
         String dent = "  ".repeat(indent);

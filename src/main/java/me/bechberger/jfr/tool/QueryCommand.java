@@ -29,6 +29,7 @@ import jdk.jfr.consumer.EventStream;
 import me.bechberger.jfr.query.Configuration;
 import me.bechberger.jfr.query.Configuration.Truncate;
 import me.bechberger.jfr.query.QueryPrinter;
+import me.bechberger.jfr.query.Table;
 import me.bechberger.jfr.query.ViewPrinter;
 import me.bechberger.jfr.util.Output.BufferedPrinter;
 import me.bechberger.jfr.util.UserDataException;
@@ -48,7 +49,7 @@ import java.util.concurrent.Callable;
         version = "0.1",
         description = "Execute JFR queries against recording files"
 )
-public final class QueryCommand implements Callable<Integer>, Footerable {
+public final class QueryCommand implements Callable<Table>, Footerable {
 
     @CommandLine.Mixin
     private ConfigOptions configOptions;
@@ -101,7 +102,7 @@ public final class QueryCommand implements Callable<Integer>, Footerable {
     }
 
     @Override
-    public Integer call() throws UserSyntaxException, UserDataException {
+    public Table call() throws UserSyntaxException, UserDataException {
         try {
             Configuration configuration = new Configuration();
             BufferedPrinter printer = new BufferedPrinter(System.out);
@@ -109,16 +110,28 @@ public final class QueryCommand implements Callable<Integer>, Footerable {
             configOptions.init(configuration);
             try (EventStream stream = EventStream.openFile(file)) {
                 QueryPrinter vp = new QueryPrinter(configuration, stream);
-                vp.execute(view);
+                Table table = vp.execute(view);
                 printer.flush();
-                return 0;
+                return table;
             } catch (IOException ioe) {
                 System.err.println("Could not read file: " + file + ": " + ioe.getMessage());
-                return 1;
+                return null;
             }
         } catch (Exception e) {
             System.err.println("Error: " + e.getMessage());
-            return 1;
+            return null;
         }
+    }
+
+    public void setView(String view) {
+        this.view = view;
+    }
+
+    public void setFile(String file) {
+        this.file = Path.of(file);
+    }
+
+    public void setConfigOptions(ConfigOptions cfg) {
+        this.configOptions = cfg;
     }
 }

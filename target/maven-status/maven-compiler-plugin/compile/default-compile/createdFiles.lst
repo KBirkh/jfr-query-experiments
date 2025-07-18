@@ -10,6 +10,7 @@ me/bechberger/jfr/query/FieldBuilder.class
 me/bechberger/jfr/query/Row.class
 me/bechberger/jfr/query/Function$Null.class
 me/bechberger/jfr/wrap/ProgramNode.class
+me/bechberger/jfr/wrap/BooleanNode.class
 me/bechberger/jfr/query/Function$TimespanFunction.class
 me/bechberger/jfr/query/Query$Grouper.class
 me/bechberger/jfr/query/Function$First.class
@@ -19,6 +20,7 @@ me/bechberger/jfr/tool/HelpCommand.class
 me/bechberger/jfr/query/TableSorter$ColumnComparator.class
 me/bechberger/jfr/wrap/GroupByNode.class
 me/bechberger/jfr/query/Function$AverageDuration.class
+me/bechberger/jfr/wrap/StringNode.class
 me/bechberger/jfr/query/TableCell.class
 me/bechberger/jfr/wrap/TokenType.class
 me/bechberger/jfr/query/Function$FirstNonNull.class
@@ -33,6 +35,7 @@ me/bechberger/jfr/wrap/ConditionNode.class
 me/bechberger/jfr/util/StopWatch.class
 me/bechberger/jfr/util/SpellChecker.class
 me/bechberger/jfr/query/QueryExecutor.class
+me/bechberger/jfr/wrap/NumberNode.class
 me/bechberger/jfr/query/Function$Unique.class
 me/bechberger/jfr/query/Function$Count.class
 me/bechberger/jfr/wrap/Lexer.class
@@ -42,11 +45,15 @@ me/bechberger/jfr/tool/ViewCommand.class
 me/bechberger/jfr/query/Function$Maximum.class
 me/bechberger/jfr/query/Function.class
 me/bechberger/jfr/query/Function$Percentile.class
+me/bechberger/jfr/wrap/OrNode.class
+me/bechberger/jfr/wrap/AndNode.class
 me/bechberger/jfr/wrap/ViewDefinitionNode.class
 me/bechberger/jfr/query/Query$Where.class
 me/bechberger/jfr/util/Matcher.class
 me/bechberger/jfr/wrap/OrderByNode.class
+me/bechberger/jfr/wrap/BinaryOpNode.class
 me/bechberger/jfr/wrap/ArithmeticNode.class
+me/bechberger/jfr/wrap/IdentifierNode.class
 me/bechberger/jfr/query/FieldFormatter.class
 me/bechberger/jfr/query/Function$List.class
 me/bechberger/jfr/query/QueryResolver.class
@@ -55,6 +62,7 @@ me/bechberger/jfr/wrap/WhereNode.class
 me/bechberger/jfr/tool/WebCommand.class
 me/bechberger/jfr/query/Query$Expression.class
 me/bechberger/jfr/query/Histogram$MethodEquality.class
+me/bechberger/jfr/wrap/OpenJDKQueryNode.class
 me/bechberger/jfr/wrap/AstNode.class
 me/bechberger/jfr/tool/ConfigOptions.class
 me/bechberger/jfr/tool/QueryCommand.class
@@ -63,9 +71,9 @@ me/bechberger/jfr/query/Function$SumLong.class
 me/bechberger/jfr/query/QueryRun.class
 me/bechberger/jfr/query/Function$StandardDeviation.class
 me/bechberger/jfr/wrap/QueryNode.class
-me/bechberger/jfr/wrap/ExpressionNode.class
 me/bechberger/jfr/query/QueryResolver$QueryException.class
 me/bechberger/jfr/query/Function$Last.class
+me/bechberger/jfr/wrap/UnaryOpNode.class
 me/bechberger/jfr/query/Query$Property.class
 me/bechberger/jfr/util/ValueFormatter.class
 me/bechberger/jfr/wrap/SelectNode.class
@@ -81,7 +89,6 @@ me/bechberger/jfr/wrap/Token.class
 me/bechberger/jfr/query/Aggregator.class
 me/bechberger/jfr/query/FieldBuilder$1WildcardElement.class
 me/bechberger/jfr/query/Histogram.class
-me/bechberger/jfr/wrap/QueryPrefixNode.class
 me/bechberger/jfr/query/Configuration$Truncate.class
 me/bechberger/jfr/query/Function$LastBatch.class
 me/bechberger/jfr/query/FieldBuilder$1.class
@@ -91,7 +98,6 @@ me/bechberger/jfr/wrap/Parser.class
 me/bechberger/jfr/util/Columnizer$Column.class
 me/bechberger/jfr/query/ViewFile$ViewConfiguration.class
 me/bechberger/jfr/util/Output$BufferedPrinter.class
-me/bechberger/jfr/wrap/SelectListNode.class
 me/bechberger/jfr/query/Table.class
 me/bechberger/jfr/util/UserSyntaxException.class
 me/bechberger/jfr/wrap/SourceNode.class
@@ -106,5 +112,5 @@ me/bechberger/jfr/wrap/ColumnNode.class
 me/bechberger/jfr/query/Field.class
 me/bechberger/jfr/query/Histogram$LookupKey.class
 me/bechberger/jfr/wrap/LimitNode.class
+me/bechberger/jfr/wrap/FunctionNode.class
 me/bechberger/Main.class
-me/bechberger/jfr/wrap/StatementNode.class

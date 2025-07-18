@@ -1,21 +1,32 @@
 package me.bechberger.jfr.wrap;
 
 public class WhereNode extends AstNode {
-    private ConditionNode condition;
+    private AstNode condition;
     private ConditionNode conditionTail;
+
+    public WhereNode() {
+
+    }
+
+    public WhereNode(AstNode condition) {
+        if (condition == null) {
+            throw new IllegalArgumentException("Condition cannot be null");
+        }
+        this.condition = condition;
+    }
 
     public void setTail(ConditionNode conditionTail) {
         this.conditionTail = conditionTail;
     }
 
-    public void setCondition(ConditionNode condition) {
+    public void setCondition(AstNode condition) {
         if (this.condition == null) {
             this.condition = condition;
         } else {
             throw new IllegalStateException("WhereNode can only have one condition");
         }
     }
-
+    @Override
     public String toString(int indent) {
         StringBuilder sb = new StringBuilder();
         String dent = "  ".repeat(indent);

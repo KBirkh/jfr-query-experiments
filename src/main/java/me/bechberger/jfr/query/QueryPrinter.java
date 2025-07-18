@@ -67,11 +67,31 @@ public final class QueryPrinter {
      *                             event or event metadata
      * @throws UserSyntaxException if the syntax of the query is incorrect.
      */
-    public void execute(String query) throws UserDataException, UserSyntaxException {
+    public Table execute(String query) throws UserDataException, UserSyntaxException {
         if (showEvents(query) || showFields(query)) {
-            return;
+            return null;
         }
-        showQuery(query);
+        return giveTable(query);
+    }
+
+    public Table giveTable(String query) {
+        try {
+            stopWatch.beginQueryValidation();
+            Query q = new Query(query);
+            QueryExecutor executor = new QueryExecutor(stream, q);
+            stopWatch.beginAggregation();
+            QueryRun task = executor.run().getFirst();
+            if (!task.getSyntaxErrors().isEmpty()) {
+                throw new UserSyntaxException(task.getSyntaxErrors().getFirst());
+            }
+            if (!task.getMetadataErrors().isEmpty()) {
+                throw new UserDataException(task.getMetadataErrors().getFirst());
+            }
+            Table table = task.getTable();
+            return table;
+        } catch (Exception e) {
+            return null;
+        }
     }
 
     private void showQuery(String query) throws UserDataException, UserSyntaxException {
