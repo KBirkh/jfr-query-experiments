@@ -73,7 +73,7 @@ public class Main implements Callable<Integer> {
         if (exitCode != EXIT_OK) {
             System.exit(exitCode);
         } */
-        String input = "@SELECT * FROM [SELECT * FROM [SELECT * FROM events] AS t] AS p";
+        String input = "@SELECT * FROM [SELECT * FROM] AS p";
         Lexer lexer = new Lexer(input);
         Parser parser = new Parser(lexer.tokenize(), input);
         try {

@@ -526,8 +526,8 @@ public class ParserTest {
             ),
             assignment("x", query(true, selectStar(), from(source("events", null)), null, null, null, null, null)),
             openJDK("SELECT * FROM events"),
-            query(true, selectStar(), from(source(openJDK("SELECT * FROM events"), "ho")), null, null, null, null, null),
-            query(true, selectStar(), from(source(openJDK("SELECT * FROM [SELECT * FROM events] AS t"), "p")), null, null, null, null, null)
+            query(true, selectStar(), from(source(openJDK("[SELECT * FROM events]"), "ho")), null, null, null, null, null),
+            query(true, selectStar(), from(source(openJDK("[SELECT * FROM [SELECT * FROM events] AS t]"), "p")), null, null, null, null, null)
         );
         assertEquals(expected.toString(0), res.toString(0), "Parsed tree for complex query with all features does not match expected structure");
     }

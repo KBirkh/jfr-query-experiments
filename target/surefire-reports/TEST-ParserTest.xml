@@ -1,576 +1,96 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuite xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://maven.apache.org/surefire/maven-surefire-plugin/xsd/surefire-test-report-3.0.xsd" version="3.0" name="ParserTest" time="0.043" tests="33" errors="0" skipped="0" failures="3">
+<testsuite xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://maven.apache.org/surefire/maven-surefire-plugin/xsd/surefire-test-report-3.0.xsd" version="3.0" name="ParserTest" time="0.08" tests="33" errors="0" skipped="0" failures="0">
   <properties>
-    <property name="java.specification.version" value="21"/>
-    <property name="sun.jnu.encoding" value="UTF-8"/>
-    <property name="java.class.path" value="/Users/i589221/Documents/GitHub/jfr-query-experiments/target/test-classes:/Users/i589221/Documents/GitHub/jfr-query-experiments/target/classes:/Users/i589221/.m2/repository/info/picocli/picocli/4.7.7/picocli-4.7.7.jar:/Users/i589221/.m2/repository/org/junit/jupiter/junit-jupiter/5.9.3/junit-jupiter-5.9.3.jar:/Users/i589221/.m2/repository/org/junit/jupiter/junit-jupiter-api/5.9.3/junit-jupiter-api-5.9.3.jar:/Users/i589221/.m2/repository/org/opentest4j/opentest4j/1.2.0/opentest4j-1.2.0.jar:/Users/i589221/.m2/repository/org/junit/platform/junit-platform-commons/1.9.3/junit-platform-commons-1.9.3.jar:/Users/i589221/.m2/repository/org/apiguardian/apiguardian-api/1.1.2/apiguardian-api-1.1.2.jar:/Users/i589221/.m2/repository/org/junit/jupiter/junit-jupiter-params/5.9.3/junit-jupiter-params-5.9.3.jar:/Users/i589221/.m2/repository/org/junit/jupiter/junit-jupiter-engine/5.9.3/junit-jupiter-engine-5.9.3.jar:/Users/i589221/.m2/repository/org/junit/platform/junit-platform-engine/1.9.3/junit-platform-engine-1.9.3.jar:"/>
+    <property name="java.specification.version" value="24"/>
+    <property name="sun.cpu.isalist" value="amd64"/>
+    <property name="sun.jnu.encoding" value="Cp1252"/>
+    <property name="java.class.path" value="C:\Users\kbirk\Documents\GitHub\jfr-query-experiments\target\test-classes;C:\Users\kbirk\Documents\GitHub\jfr-query-experiments\target\classes;C:\Users\kbirk\.m2\repository\info\picocli\picocli\4.7.7\picocli-4.7.7.jar;C:\Users\kbirk\.m2\repository\org\junit\jupiter\junit-jupiter\5.9.3\junit-jupiter-5.9.3.jar;C:\Users\kbirk\.m2\repository\org\junit\jupiter\junit-jupiter-api\5.9.3\junit-jupiter-api-5.9.3.jar;C:\Users\kbirk\.m2\repository\org\opentest4j\opentest4j\1.2.0\opentest4j-1.2.0.jar;C:\Users\kbirk\.m2\repository\org\junit\platform\junit-platform-commons\1.9.3\junit-platform-commons-1.9.3.jar;C:\Users\kbirk\.m2\repository\org\apiguardian\apiguardian-api\1.1.2\apiguardian-api-1.1.2.jar;C:\Users\kbirk\.m2\repository\org\junit\jupiter\junit-jupiter-params\5.9.3\junit-jupiter-params-5.9.3.jar;C:\Users\kbirk\.m2\repository\org\junit\jupiter\junit-jupiter-engine\5.9.3\junit-jupiter-engine-5.9.3.jar;C:\Users\kbirk\.m2\repository\org\junit\platform\junit-platform-engine\1.9.3\junit-platform-engine-1.9.3.jar;"/>
     <property name="java.vm.vendor" value="SAP SE"/>
     <property name="sun.arch.data.model" value="64"/>
+    <property name="user.variant" value=""/>
     <property name="java.vendor.url" value="https://sapmachine.io/"/>
-    <property name="os.name" value="Mac OS X"/>
-    <property name="java.vm.specification.version" value="21"/>
+    <property name="user.timezone" value="Europe/Berlin"/>
+    <property name="user.country.format" value="DE"/>
+    <property name="os.name" value="Windows 11"/>
+    <property name="java.vm.specification.version" value="24"/>
     <property name="sun.java.launcher" value="SUN_STANDARD"/>
-    <property name="user.country" value="DE"/>
-    <property name="sun.boot.library.path" value="/Library/Java/JavaVirtualMachines/sapmachine-21.jdk/Contents/Home/lib"/>
-    <property name="sun.java.command" value="/Users/i589221/Documents/GitHub/jfr-query-experiments/target/surefire/surefirebooter-20250717170109065_3.jar /Users/i589221/Documents/GitHub/jfr-query-experiments/target/surefire 2025-07-17T17-01-09_026-jvmRun1 surefire-20250717170109065_1tmp surefire_0-20250717170109065_2tmp"/>
+    <property name="user.country" value="US"/>
+    <property name="sun.boot.library.path" value="C:\Program Files\SapMachine\JDK\24\bin"/>
+    <property name="sun.java.command" value="C:\Users\kbirk\AppData\Local\Temp\surefire11778227802489239939\surefirebooter-20250718110456655_3.jar C:\Users\kbirk\AppData\Local\Temp\surefire11778227802489239939 2025-07-18T11-04-56_547-jvmRun1 surefire-20250718110456655_1tmp surefire_0-20250718110456655_2tmp"/>
     <property name="jdk.debug" value="release"/>
-    <property name="surefire.test.class.path" value="/Users/i589221/Documents/GitHub/jfr-query-experiments/target/test-classes:/Users/i589221/Documents/GitHub/jfr-query-experiments/target/classes:/Users/i589221/.m2/repository/info/picocli/picocli/4.7.7/picocli-4.7.7.jar:/Users/i589221/.m2/repository/org/junit/jupiter/junit-jupiter/5.9.3/junit-jupiter-5.9.3.jar:/Users/i589221/.m2/repository/org/junit/jupiter/junit-jupiter-api/5.9.3/junit-jupiter-api-5.9.3.jar:/Users/i589221/.m2/repository/org/opentest4j/opentest4j/1.2.0/opentest4j-1.2.0.jar:/Users/i589221/.m2/repository/org/junit/platform/junit-platform-commons/1.9.3/junit-platform-commons-1.9.3.jar:/Users/i589221/.m2/repository/org/apiguardian/apiguardian-api/1.1.2/apiguardian-api-1.1.2.jar:/Users/i589221/.m2/repository/org/junit/jupiter/junit-jupiter-params/5.9.3/junit-jupiter-params-5.9.3.jar:/Users/i589221/.m2/repository/org/junit/jupiter/junit-jupiter-engine/5.9.3/junit-jupiter-engine-5.9.3.jar:/Users/i589221/.m2/repository/org/junit/platform/junit-platform-engine/1.9.3/junit-platform-engine-1.9.3.jar:"/>
+    <property name="surefire.test.class.path" value="C:\Users\kbirk\Documents\GitHub\jfr-query-experiments\target\test-classes;C:\Users\kbirk\Documents\GitHub\jfr-query-experiments\target\classes;C:\Users\kbirk\.m2\repository\info\picocli\picocli\4.7.7\picocli-4.7.7.jar;C:\Users\kbirk\.m2\repository\org\junit\jupiter\junit-jupiter\5.9.3\junit-jupiter-5.9.3.jar;C:\Users\kbirk\.m2\repository\org\junit\jupiter\junit-jupiter-api\5.9.3\junit-jupiter-api-5.9.3.jar;C:\Users\kbirk\.m2\repository\org\opentest4j\opentest4j\1.2.0\opentest4j-1.2.0.jar;C:\Users\kbirk\.m2\repository\org\junit\platform\junit-platform-commons\1.9.3\junit-platform-commons-1.9.3.jar;C:\Users\kbirk\.m2\repository\org\apiguardian\apiguardian-api\1.1.2\apiguardian-api-1.1.2.jar;C:\Users\kbirk\.m2\repository\org\junit\jupiter\junit-jupiter-params\5.9.3\junit-jupiter-params-5.9.3.jar;C:\Users\kbirk\.m2\repository\org\junit\jupiter\junit-jupiter-engine\5.9.3\junit-jupiter-engine-5.9.3.jar;C:\Users\kbirk\.m2\repository\org\junit\platform\junit-platform-engine\1.9.3\junit-platform-engine-1.9.3.jar;"/>
     <property name="sun.cpu.endian" value="little"/>
-    <property name="user.home" value="/Users/i589221"/>
+    <property name="user.home" value="C:\Users\kbirk"/>
     <property name="user.language" value="en"/>
     <property name="java.specification.vendor" value="Oracle Corporation"/>
-    <property name="java.version.date" value="2025-04-15"/>
-    <property name="java.home" value="/Library/Java/JavaVirtualMachines/sapmachine-21.jdk/Contents/Home"/>
-    <property name="file.separator" value="/"/>
-    <property name="basedir" value="/Users/i589221/Documents/GitHub/jfr-query-experiments"/>
+    <property name="java.version.date" value="2025-07-15"/>
+    <property name="java.home" value="C:\Program Files\SapMachine\JDK\24"/>
+    <property name="file.separator" value="\"/>
+    <property name="basedir" value="C:\Users\kbirk\Documents\GitHub\jfr-query-experiments"/>
     <property name="java.vm.compressedOopsMode" value="Zero based"/>
     <property name="line.separator" value="&#10;"/>
-    <property name="java.specification.name" value="Java Platform API Specification"/>
     <property name="java.vm.specification.vendor" value="Oracle Corporation"/>
-    <property name="apple.awt.application.name" value="ForkedBooter"/>
-    <property name="surefire.real.class.path" value="/Users/i589221/Documents/GitHub/jfr-query-experiments/target/surefire/surefirebooter-20250717170109065_3.jar"/>
+    <property name="java.specification.name" value="Java Platform API Specification"/>
+    <property name="surefire.real.class.path" value="C:\Users\kbirk\AppData\Local\Temp\surefire11778227802489239939\surefirebooter-20250718110456655_3.jar"/>
+    <property name="user.script" value=""/>
     <property name="sun.management.compiler" value="HotSpot 64-Bit Tiered Compilers"/>
-    <property name="java.runtime.version" value="21.0.7+6-LTS"/>
-    <property name="user.name" value="i589221"/>
-    <property name="stdout.encoding" value="UTF-8"/>
-    <property name="path.separator" value=":"/>
-    <property name="os.version" value="15.5"/>
+    <property name="java.runtime.version" value="24.0.2+12"/>
+    <property name="user.name" value="kbirk"/>
+    <property name="stdout.encoding" value="Cp1252"/>
+    <property name="path.separator" value=";"/>
+    <property name="os.version" value="10.0"/>
     <property name="java.runtime.name" value="OpenJDK Runtime Environment"/>
     <property name="file.encoding" value="UTF-8"/>
     <property name="java.vm.name" value="OpenJDK 64-Bit Server VM"/>
     <property name="java.vendor.version" value="SapMachine"/>
-    <property name="localRepository" value="/Users/i589221/.m2/repository"/>
+    <property name="localRepository" value="C:\Users\kbirk\.m2\repository"/>
     <property name="java.vendor.url.bug" value="https://github.com/SAP/SapMachine/issues/new"/>
-    <property name="java.io.tmpdir" value="/var/folders/rh/7yx6ftgj1w11rx2sm_w7fg1m0000gn/T/"/>
-    <property name="java.version" value="21.0.7"/>
-    <property name="user.dir" value="/Users/i589221/Documents/GitHub/jfr-query-experiments"/>
-    <property name="os.arch" value="aarch64"/>
+    <property name="java.io.tmpdir" value="C:\Users\kbirk\AppData\Local\Temp\"/>
+    <property name="java.version" value="24.0.2"/>
+    <property name="user.dir" value="C:\Users\kbirk\Documents\GitHub\jfr-query-experiments"/>
+    <property name="os.arch" value="amd64"/>
     <property name="java.vm.specification.name" value="Java Virtual Machine Specification"/>
-    <property name="native.encoding" value="UTF-8"/>
-    <property name="java.library.path" value="/Users/i589221/Library/Java/Extensions:/Library/Java/Extensions:/Network/Library/Java/Extensions:/System/Library/Java/Extensions:/usr/lib/java:."/>
+    <property name="sun.os.patch.level" value=""/>
+    <property name="native.encoding" value="Cp1252"/>
+    <property name="java.library.path" value="C:\Program Files\SapMachine\JDK\24\bin;C:\WINDOWS\Sun\Java\bin;C:\WINDOWS\system32;C:\WINDOWS;C:\Program Files\SapMachine\JDK\24\bin;C:\Program Files\Eclipse Adoptium\jre-21.0.6.7-hotspot\bin;C:\Python312\Scripts\;C:\Python312\;C:\WINDOWS\system32;C:\WINDOWS;C:\WINDOWS\System32\Wbem;C:\WINDOWS\System32\WindowsPowerShell\v1.0\;C:\WINDOWS\System32\OpenSSH\;C:\Program Files (x86)\NVIDIA Corporation\PhysX\Common;C:\Program Files\nodejs\;C:\ProgramData\chocolatey\bin;C:\Program Files\Git\cmd;C:\Program Files\CMake\bin;C:\Program Files\NVIDIA Corporation\NVIDIA app\NvDLISR;C:\Program Files\dotnet\;C:\Program Files (x86)\Windows Kits\10\Windows Performance Toolkit\;C:\Program Files\GitHub CLI\;C:\Users\kbirk\odin\dist;C:\Users\kbirk\Documents\apache-maven-3.9.11\bin;C:\Users\kbirk\AppData\Local\Microsoft\WindowsApps;C:\Users\kbirk\AppData\Local\Programs\Microsoft VS Code\bin;C:\Users\kbirk\AppData\Roaming\npm;C:\Program Files\Git\cmd;C:\Users\kbirk\.dotnet\tools;;c:\Users\kbirk\AppData\Roaming\Code\User\globalStorage\github.copilot-chat\debugCommand;."/>
     <property name="java.vm.info" value="mixed mode, sharing"/>
-    <property name="stderr.encoding" value="UTF-8"/>
+    <property name="stderr.encoding" value="Cp1252"/>
     <property name="java.vendor" value="SAP SE"/>
-    <property name="java.vm.version" value="21.0.7+6-LTS"/>
-    <property name="sun.io.unicode.encoding" value="UnicodeBig"/>
-    <property name="java.class.version" value="65.0"/>
+    <property name="java.vm.version" value="24.0.2+12"/>
+    <property name="sun.io.unicode.encoding" value="UnicodeLittle"/>
+    <property name="java.class.version" value="68.0"/>
   </properties>
-  <testcase name="testInvalidOperator" classname="ParserTest" time="0.001"/>
-  <testcase name="testSelectWithFunctionCall" classname="ParserTest" time="0.001"/>
-  <testcase name="testUnclosedParenthesis" classname="ParserTest" time="0.0"/>
-  <testcase name="testMultipleQueries" classname="ParserTest" time="0.0"/>
-  <testcase name="testOpenJDK" classname="ParserTest" time="0.002">
-    <failure message="Distinction between regular query and OpenJDK query made ==&gt; expected: &lt;ProgramNode:&#10;  QueryNode:&#10;    Has @: true&#10;    SelectNode: *&#10;    FromNode:&#10;      SourceNode:&#10;        Subquery: &#10;          OpenJDKQueryNode: SELECT * FROM events&gt; but was: &lt;ProgramNode:&#10;  QueryNode:&#10;    Has @: true&#10;    SelectNode: *&#10;    FromNode:&#10;      SourceNode:&#10;        Subquery: &#10;          OpenJDKQueryNode: SELECT * FROM events]&gt;" type="org.opentest4j.AssertionFailedError"><![CDATA[org.opentest4j.AssertionFailedError: 
-Distinction between regular query and OpenJDK query made ==> expected: <ProgramNode:
-  QueryNode:
-    Has @: true
-    SelectNode: *
-    FromNode:
-      SourceNode:
-        Subquery: 
-          OpenJDKQueryNode: SELECT * FROM events> but was: <ProgramNode:
-  QueryNode:
-    Has @: true
-    SelectNode: *
-    FromNode:
-      SourceNode:
-        Subquery: 
-          OpenJDKQueryNode: SELECT * FROM events]>
-	at org.junit.jupiter.api.AssertionFailureBuilder.build(AssertionFailureBuilder.java:151)
-	at org.junit.jupiter.api.AssertionFailureBuilder.buildAndThrow(AssertionFailureBuilder.java:132)
-	at org.junit.jupiter.api.AssertEquals.failNotEqual(AssertEquals.java:197)
-	at org.junit.jupiter.api.AssertEquals.assertEquals(AssertEquals.java:182)
-	at org.junit.jupiter.api.Assertions.assertEquals(Assertions.java:1153)
-	at ParserTest.testOpenJDK(ParserTest.java:427)
-	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:103)
-	at java.base/java.lang.reflect.Method.invoke(Method.java:580)
-	at org.junit.platform.commons.util.ReflectionUtils.invokeMethod(ReflectionUtils.java:727)
-	at org.junit.jupiter.engine.execution.MethodInvocation.proceed(MethodInvocation.java:60)
-	at org.junit.jupiter.engine.execution.InvocationInterceptorChain$ValidatingInvocation.proceed(InvocationInterceptorChain.java:131)
-	at org.junit.jupiter.engine.extension.TimeoutExtension.intercept(TimeoutExtension.java:156)
-	at org.junit.jupiter.engine.extension.TimeoutExtension.interceptTestableMethod(TimeoutExtension.java:147)
-	at org.junit.jupiter.engine.extension.TimeoutExtension.interceptTestMethod(TimeoutExtension.java:86)
-	at org.junit.jupiter.engine.execution.InterceptingExecutableInvoker$ReflectiveInterceptorCall.lambda$ofVoidMethod$0(InterceptingExecutableInvoker.java:103)
-	at org.junit.jupiter.engine.execution.InterceptingExecutableInvoker.lambda$invoke$0(InterceptingExecutableInvoker.java:93)
-	at org.junit.jupiter.engine.execution.InvocationInterceptorChain$InterceptedInvocation.proceed(InvocationInterceptorChain.java:106)
-	at org.junit.jupiter.engine.execution.InvocationInterceptorChain.proceed(InvocationInterceptorChain.java:64)
-	at org.junit.jupiter.engine.execution.InvocationInterceptorChain.chainAndInvoke(InvocationInterceptorChain.java:45)
-	at org.junit.jupiter.engine.execution.InvocationInterceptorChain.invoke(InvocationInterceptorChain.java:37)
-	at org.junit.jupiter.engine.execution.InterceptingExecutableInvoker.invoke(InterceptingExecutableInvoker.java:92)
-	at org.junit.jupiter.engine.execution.InterceptingExecutableInvoker.invoke(InterceptingExecutableInvoker.java:86)
-	at org.junit.jupiter.engine.descriptor.TestMethodTestDescriptor.lambda$invokeTestMethod$7(TestMethodTestDescriptor.java:217)
-	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:73)
-	at org.junit.jupiter.engine.descriptor.TestMethodTestDescriptor.invokeTestMethod(TestMethodTestDescriptor.java:213)
-	at org.junit.jupiter.engine.descriptor.TestMethodTestDescriptor.execute(TestMethodTestDescriptor.java:138)
-	at org.junit.jupiter.engine.descriptor.TestMethodTestDescriptor.execute(TestMethodTestDescriptor.java:68)
-	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$6(NodeTestTask.java:151)
-	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:73)
-	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$8(NodeTestTask.java:141)
-	at org.junit.platform.engine.support.hierarchical.Node.around(Node.java:137)
-	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$9(NodeTestTask.java:139)
-	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:73)
-	at org.junit.platform.engine.support.hierarchical.NodeTestTask.executeRecursively(NodeTestTask.java:138)
-	at org.junit.platform.engine.support.hierarchical.NodeTestTask.execute(NodeTestTask.java:95)
-	at java.base/java.util.ArrayList.forEach(ArrayList.java:1596)
-	at org.junit.platform.engine.support.hierarchical.SameThreadHierarchicalTestExecutorService.invokeAll(SameThreadHierarchicalTestExecutorService.java:41)
-	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$6(NodeTestTask.java:155)
-	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:73)
-	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$8(NodeTestTask.java:141)
-	at org.junit.platform.engine.support.hierarchical.Node.around(Node.java:137)
-	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$9(NodeTestTask.java:139)
-	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:73)
-	at org.junit.platform.engine.support.hierarchical.NodeTestTask.executeRecursively(NodeTestTask.java:138)
-	at org.junit.platform.engine.support.hierarchical.NodeTestTask.execute(NodeTestTask.java:95)
-	at java.base/java.util.ArrayList.forEach(ArrayList.java:1596)
-	at org.junit.platform.engine.support.hierarchical.SameThreadHierarchicalTestExecutorService.invokeAll(SameThreadHierarchicalTestExecutorService.java:41)
-	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$6(NodeTestTask.java:155)
-	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:73)
-	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$8(NodeTestTask.java:141)
-	at org.junit.platform.engine.support.hierarchical.Node.around(Node.java:137)
-	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$9(NodeTestTask.java:139)
-	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:73)
-	at org.junit.platform.engine.support.hierarchical.NodeTestTask.executeRecursively(NodeTestTask.java:138)
-	at org.junit.platform.engine.support.hierarchical.NodeTestTask.execute(NodeTestTask.java:95)
-	at org.junit.platform.engine.support.hierarchical.SameThreadHierarchicalTestExecutorService.submit(SameThreadHierarchicalTestExecutorService.java:35)
-	at org.junit.platform.engine.support.hierarchical.HierarchicalTestExecutor.execute(HierarchicalTestExecutor.java:57)
-	at org.junit.platform.engine.support.hierarchical.HierarchicalTestEngine.execute(HierarchicalTestEngine.java:54)
-	at org.junit.platform.launcher.core.EngineExecutionOrchestrator.execute(EngineExecutionOrchestrator.java:147)
-	at org.junit.platform.launcher.core.EngineExecutionOrchestrator.execute(EngineExecutionOrchestrator.java:127)
-	at org.junit.platform.launcher.core.EngineExecutionOrchestrator.execute(EngineExecutionOrchestrator.java:90)
-	at org.junit.platform.launcher.core.EngineExecutionOrchestrator.lambda$execute$0(EngineExecutionOrchestrator.java:55)
-	at org.junit.platform.launcher.core.EngineExecutionOrchestrator.withInterceptedStreams(EngineExecutionOrchestrator.java:102)
-	at org.junit.platform.launcher.core.EngineExecutionOrchestrator.execute(EngineExecutionOrchestrator.java:54)
-	at org.junit.platform.launcher.core.DefaultLauncher.execute(DefaultLauncher.java:114)
-	at org.junit.platform.launcher.core.DefaultLauncher.execute(DefaultLauncher.java:86)
-	at org.junit.platform.launcher.core.DefaultLauncherSession$DelegatingLauncher.execute(DefaultLauncherSession.java:86)
-	at org.apache.maven.surefire.junitplatform.LazyLauncher.execute(LazyLauncher.java:56)
-	at org.apache.maven.surefire.junitplatform.JUnitPlatformProvider.execute(JUnitPlatformProvider.java:184)
-	at org.apache.maven.surefire.junitplatform.JUnitPlatformProvider.invokeAllTests(JUnitPlatformProvider.java:148)
-	at org.apache.maven.surefire.junitplatform.JUnitPlatformProvider.invoke(JUnitPlatformProvider.java:122)
-	at org.apache.maven.surefire.booter.ForkedBooter.runSuitesInProcess(ForkedBooter.java:385)
-	at org.apache.maven.surefire.booter.ForkedBooter.execute(ForkedBooter.java:162)
-	at org.apache.maven.surefire.booter.ForkedBooter.run(ForkedBooter.java:507)
-	at org.apache.maven.surefire.booter.ForkedBooter.main(ForkedBooter.java:495)
-]]></failure>
-  </testcase>
-  <testcase name="testMissingSelectClause" classname="ParserTest" time="0.0"/>
-  <testcase name="testInvalidQueryAssignment" classname="ParserTest" time="0.0"/>
+  <testcase name="testInvalidOperator" classname="ParserTest" time="0.003"/>
+  <testcase name="testSelectWithFunctionCall" classname="ParserTest" time="0.002"/>
+  <testcase name="testUnclosedParenthesis" classname="ParserTest" time="0.001"/>
+  <testcase name="testMultipleQueries" classname="ParserTest" time="0.001"/>
+  <testcase name="testOpenJDK" classname="ParserTest" time="0.001"/>
+  <testcase name="testMissingSelectClause" classname="ParserTest" time="0.001"/>
+  <testcase name="testInvalidQueryAssignment" classname="ParserTest" time="0.001"/>
   <testcase name="testArithmeticExpressionInWhere" classname="ParserTest" time="0.001"/>
-  <testcase name="testInvalidFunctionCallSyntax" classname="ParserTest" time="0.0"/>
-  <testcase name="testCombinedQueries(String)[1]" classname="ParserTest" time="0.011"/>
-  <testcase name="testCombinedQueries(String)[2]" classname="ParserTest" time="0.0"/>
+  <testcase name="testInvalidFunctionCallSyntax" classname="ParserTest" time="0.001"/>
+  <testcase name="testCombinedQueries(String)[1]" classname="ParserTest" time="0.017"/>
+  <testcase name="testCombinedQueries(String)[2]" classname="ParserTest" time="0.001"/>
   <testcase name="testCombinedQueries(String)[3]" classname="ParserTest" time="0.0"/>
   <testcase name="testCombinedQueries(String)[4]" classname="ParserTest" time="0.0"/>
-  <testcase name="testCombinedQueries(String)[5]" classname="ParserTest" time="0.001"/>
-  <testcase name="testCombinedQueries(String)[6]" classname="ParserTest" time="0.001"/>
+  <testcase name="testCombinedQueries(String)[5]" classname="ParserTest" time="0.0"/>
+  <testcase name="testCombinedQueries(String)[6]" classname="ParserTest" time="0.0"/>
   <testcase name="testCombinedQueries(String)[7]" classname="ParserTest" time="0.0"/>
-  <testcase name="testCombinedQueries(String)[8]" classname="ParserTest" time="0.0"/>
+  <testcase name="testCombinedQueries(String)[8]" classname="ParserTest" time="0.001"/>
   <testcase name="testMultipleQueries2" classname="ParserTest" time="0.0"/>
   <testcase name="testTableIdentifiers" classname="ParserTest" time="0.0"/>
-  <testcase name="testSelectWithSubquery" classname="ParserTest" time="0.0"/>
+  <testcase name="testSelectWithSubquery" classname="ParserTest" time="0.001"/>
   <testcase name="testSimpleSelect" classname="ParserTest" time="0.0"/>
-  <testcase name="testSelectWithArithmeticExpression" classname="ParserTest" time="0.001"/>
-  <testcase name="testEverything" classname="ParserTest" time="0.0">
-    <failure message="Parsed tree for complex query with assignment does not match expected structure ==&gt; expected: &lt;ProgramNode:&#10;  QueryNode:&#10;    Has @: true&#10;    SelectNode:&#10;      BinaryOpNode: + &#10;        IdentifierNode: col1&#10;        BinaryOpNode: * &#10;          NumberNode: 5&#10;          NumberNode: 2&#10;      FunctionNode: SUM&#10;        Arguments:&#10;        IdentifierNode: col2&#10;    FromNode:&#10;      SourceNode:&#10;        Name: table&#10;    WhereNode:&#10;      ConditionNode:&#10;        Operator: &gt;&#10;        Left: &#10;        IdentifierNode: col3&#10;        Right: &#10;        NumberNode: 10&#10;    GroupByNode:&#10;      Identifier: &#10;      IdentifierNode: col4&#10;    HavingNode:&#10;      ConditionNode:&#10;        Operator: &lt;&#10;        Left: &#10;        FunctionNode: SUM&#10;          Arguments:&#10;          IdentifierNode: col5&#10;        Right: &#10;        NumberNode: 100&#10;    OrderByNode: &#10;  IdentifierNode: col6 ASC&#10;    LimitNode: &#10;      NumberNode: 10&#10;  AssignmentNode:&#10;    Identifier: x&#10;    QueryNode:&#10;      Has @: true&#10;      SelectNode: *&#10;      FromNode:&#10;        SourceNode:&#10;          Name: events&#10;  OpenJDKQueryNode: SELECT * FROM events&#10;  QueryNode:&#10;    Has @: true&#10;    SelectNode: *&#10;    FromNode:&#10;      SourceNode:&#10;        Subquery: &#10;          OpenJDKQueryNode: SELECT * FROM events&#10;        Alias: ho&gt; but was: &lt;ProgramNode:&#10;  QueryNode:&#10;    Has @: true&#10;    SelectNode:&#10;      BinaryOpNode: + &#10;        IdentifierNode: col1&#10;        BinaryOpNode: * &#10;          NumberNode: 5&#10;          NumberNode: 2&#10;      FunctionNode: SUM&#10;        Arguments:&#10;        IdentifierNode: col2&#10;    FromNode:&#10;      SourceNode:&#10;        Name: table&#10;    WhereNode:&#10;      ConditionNode:&#10;        Operator: &gt;&#10;        Left: &#10;        IdentifierNode: col3&#10;        Right: &#10;        NumberNode: 10&#10;    GroupByNode:&#10;      Identifier: &#10;      IdentifierNode: col4&#10;    HavingNode:&#10;      ConditionNode:&#10;        Operator: &lt;&#10;        Left: &#10;        FunctionNode: SUM&#10;          Arguments:&#10;          IdentifierNode: col5&#10;        Right: &#10;        NumberNode: 100&#10;    OrderByNode: &#10;  IdentifierNode: col6 ASC&#10;    LimitNode: &#10;      NumberNode: 10&#10;  AssignmentNode:&#10;    Identifier: x&#10;    QueryNode:&#10;      Has @: true&#10;      SelectNode: *&#10;      FromNode:&#10;        SourceNode:&#10;          Name: events&#10;  OpenJDKQueryNode: SELECT * FROM events&#10;  QueryNode:&#10;    Has @: true&#10;    SelectNode: *&#10;    FromNode:&#10;      SourceNode:&#10;        Subquery: &#10;          OpenJDKQueryNode: SELECT * FROM events] AS ho&gt;" type="org.opentest4j.AssertionFailedError"><![CDATA[org.opentest4j.AssertionFailedError: 
-Parsed tree for complex query with assignment does not match expected structure ==> expected: <ProgramNode:
-  QueryNode:
-    Has @: true
-    SelectNode:
-      BinaryOpNode: + 
-        IdentifierNode: col1
-        BinaryOpNode: * 
-          NumberNode: 5
-          NumberNode: 2
-      FunctionNode: SUM
-        Arguments:
-        IdentifierNode: col2
-    FromNode:
-      SourceNode:
-        Name: table
-    WhereNode:
-      ConditionNode:
-        Operator: >
-        Left: 
-        IdentifierNode: col3
-        Right: 
-        NumberNode: 10
-    GroupByNode:
-      Identifier: 
-      IdentifierNode: col4
-    HavingNode:
-      ConditionNode:
-        Operator: <
-        Left: 
-        FunctionNode: SUM
-          Arguments:
-          IdentifierNode: col5
-        Right: 
-        NumberNode: 100
-    OrderByNode: 
-  IdentifierNode: col6 ASC
-    LimitNode: 
-      NumberNode: 10
-  AssignmentNode:
-    Identifier: x
-    QueryNode:
-      Has @: true
-      SelectNode: *
-      FromNode:
-        SourceNode:
-          Name: events
-  OpenJDKQueryNode: SELECT * FROM events
-  QueryNode:
-    Has @: true
-    SelectNode: *
-    FromNode:
-      SourceNode:
-        Subquery: 
-          OpenJDKQueryNode: SELECT * FROM events
-        Alias: ho> but was: <ProgramNode:
-  QueryNode:
-    Has @: true
-    SelectNode:
-      BinaryOpNode: + 
-        IdentifierNode: col1
-        BinaryOpNode: * 
-          NumberNode: 5
-          NumberNode: 2
-      FunctionNode: SUM
-        Arguments:
-        IdentifierNode: col2
-    FromNode:
-      SourceNode:
-        Name: table
-    WhereNode:
-      ConditionNode:
-        Operator: >
-        Left: 
-        IdentifierNode: col3
-        Right: 
-        NumberNode: 10
-    GroupByNode:
-      Identifier: 
-      IdentifierNode: col4
-    HavingNode:
-      ConditionNode:
-        Operator: <
-        Left: 
-        FunctionNode: SUM
-          Arguments:
-          IdentifierNode: col5
-        Right: 
-        NumberNode: 100
-    OrderByNode: 
-  IdentifierNode: col6 ASC
-    LimitNode: 
-      NumberNode: 10
-  AssignmentNode:
-    Identifier: x
-    QueryNode:
-      Has @: true
-      SelectNode: *
-      FromNode:
-        SourceNode:
-          Name: events
-  OpenJDKQueryNode: SELECT * FROM events
-  QueryNode:
-    Has @: true
-    SelectNode: *
-    FromNode:
-      SourceNode:
-        Subquery: 
-          OpenJDKQueryNode: SELECT * FROM events] AS ho>
-	at org.junit.jupiter.api.AssertionFailureBuilder.build(AssertionFailureBuilder.java:151)
-	at org.junit.jupiter.api.AssertionFailureBuilder.buildAndThrow(AssertionFailureBuilder.java:132)
-	at org.junit.jupiter.api.AssertEquals.failNotEqual(AssertEquals.java:197)
-	at org.junit.jupiter.api.AssertEquals.assertEquals(AssertEquals.java:182)
-	at org.junit.jupiter.api.Assertions.assertEquals(Assertions.java:1153)
-	at ParserTest.testEverything(ParserTest.java:409)
-	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:103)
-	at java.base/java.lang.reflect.Method.invoke(Method.java:580)
-	at org.junit.platform.commons.util.ReflectionUtils.invokeMethod(ReflectionUtils.java:727)
-	at org.junit.jupiter.engine.execution.MethodInvocation.proceed(MethodInvocation.java:60)
-	at org.junit.jupiter.engine.execution.InvocationInterceptorChain$ValidatingInvocation.proceed(InvocationInterceptorChain.java:131)
-	at org.junit.jupiter.engine.extension.TimeoutExtension.intercept(TimeoutExtension.java:156)
-	at org.junit.jupiter.engine.extension.TimeoutExtension.interceptTestableMethod(TimeoutExtension.java:147)
-	at org.junit.jupiter.engine.extension.TimeoutExtension.interceptTestMethod(TimeoutExtension.java:86)
-	at org.junit.jupiter.engine.execution.InterceptingExecutableInvoker$ReflectiveInterceptorCall.lambda$ofVoidMethod$0(InterceptingExecutableInvoker.java:103)
-	at org.junit.jupiter.engine.execution.InterceptingExecutableInvoker.lambda$invoke$0(InterceptingExecutableInvoker.java:93)
-	at org.junit.jupiter.engine.execution.InvocationInterceptorChain$InterceptedInvocation.proceed(InvocationInterceptorChain.java:106)
-	at org.junit.jupiter.engine.execution.InvocationInterceptorChain.proceed(InvocationInterceptorChain.java:64)
-	at org.junit.jupiter.engine.execution.InvocationInterceptorChain.chainAndInvoke(InvocationInterceptorChain.java:45)
-	at org.junit.jupiter.engine.execution.InvocationInterceptorChain.invoke(InvocationInterceptorChain.java:37)
-	at org.junit.jupiter.engine.execution.InterceptingExecutableInvoker.invoke(InterceptingExecutableInvoker.java:92)
-	at org.junit.jupiter.engine.execution.InterceptingExecutableInvoker.invoke(InterceptingExecutableInvoker.java:86)
-	at org.junit.jupiter.engine.descriptor.TestMethodTestDescriptor.lambda$invokeTestMethod$7(TestMethodTestDescriptor.java:217)
-	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:73)
-	at org.junit.jupiter.engine.descriptor.TestMethodTestDescriptor.invokeTestMethod(TestMethodTestDescriptor.java:213)
-	at org.junit.jupiter.engine.descriptor.TestMethodTestDescriptor.execute(TestMethodTestDescriptor.java:138)
-	at org.junit.jupiter.engine.descriptor.TestMethodTestDescriptor.execute(TestMethodTestDescriptor.java:68)
-	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$6(NodeTestTask.java:151)
-	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:73)
-	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$8(NodeTestTask.java:141)
-	at org.junit.platform.engine.support.hierarchical.Node.around(Node.java:137)
-	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$9(NodeTestTask.java:139)
-	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:73)
-	at org.junit.platform.engine.support.hierarchical.NodeTestTask.executeRecursively(NodeTestTask.java:138)
-	at org.junit.platform.engine.support.hierarchical.NodeTestTask.execute(NodeTestTask.java:95)
-	at java.base/java.util.ArrayList.forEach(ArrayList.java:1596)
-	at org.junit.platform.engine.support.hierarchical.SameThreadHierarchicalTestExecutorService.invokeAll(SameThreadHierarchicalTestExecutorService.java:41)
-	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$6(NodeTestTask.java:155)
-	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:73)
-	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$8(NodeTestTask.java:141)
-	at org.junit.platform.engine.support.hierarchical.Node.around(Node.java:137)
-	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$9(NodeTestTask.java:139)
-	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:73)
-	at org.junit.platform.engine.support.hierarchical.NodeTestTask.executeRecursively(NodeTestTask.java:138)
-	at org.junit.platform.engine.support.hierarchical.NodeTestTask.execute(NodeTestTask.java:95)
-	at java.base/java.util.ArrayList.forEach(ArrayList.java:1596)
-	at org.junit.platform.engine.support.hierarchical.SameThreadHierarchicalTestExecutorService.invokeAll(SameThreadHierarchicalTestExecutorService.java:41)
-	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$6(NodeTestTask.java:155)
-	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:73)
-	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$8(NodeTestTask.java:141)
-	at org.junit.platform.engine.support.hierarchical.Node.around(Node.java:137)
-	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$9(NodeTestTask.java:139)
-	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:73)
-	at org.junit.platform.engine.support.hierarchical.NodeTestTask.executeRecursively(NodeTestTask.java:138)
-	at org.junit.platform.engine.support.hierarchical.NodeTestTask.execute(NodeTestTask.java:95)
-	at org.junit.platform.engine.support.hierarchical.SameThreadHierarchicalTestExecutorService.submit(SameThreadHierarchicalTestExecutorService.java:35)
-	at org.junit.platform.engine.support.hierarchical.HierarchicalTestExecutor.execute(HierarchicalTestExecutor.java:57)
-	at org.junit.platform.engine.support.hierarchical.HierarchicalTestEngine.execute(HierarchicalTestEngine.java:54)
-	at org.junit.platform.launcher.core.EngineExecutionOrchestrator.execute(EngineExecutionOrchestrator.java:147)
-	at org.junit.platform.launcher.core.EngineExecutionOrchestrator.execute(EngineExecutionOrchestrator.java:127)
-	at org.junit.platform.launcher.core.EngineExecutionOrchestrator.execute(EngineExecutionOrchestrator.java:90)
-	at org.junit.platform.launcher.core.EngineExecutionOrchestrator.lambda$execute$0(EngineExecutionOrchestrator.java:55)
-	at org.junit.platform.launcher.core.EngineExecutionOrchestrator.withInterceptedStreams(EngineExecutionOrchestrator.java:102)
-	at org.junit.platform.launcher.core.EngineExecutionOrchestrator.execute(EngineExecutionOrchestrator.java:54)
-	at org.junit.platform.launcher.core.DefaultLauncher.execute(DefaultLauncher.java:114)
-	at org.junit.platform.launcher.core.DefaultLauncher.execute(DefaultLauncher.java:86)
-	at org.junit.platform.launcher.core.DefaultLauncherSession$DelegatingLauncher.execute(DefaultLauncherSession.java:86)
-	at org.apache.maven.surefire.junitplatform.LazyLauncher.execute(LazyLauncher.java:56)
-	at org.apache.maven.surefire.junitplatform.JUnitPlatformProvider.execute(JUnitPlatformProvider.java:184)
-	at org.apache.maven.surefire.junitplatform.JUnitPlatformProvider.invokeAllTests(JUnitPlatformProvider.java:148)
-	at org.apache.maven.surefire.junitplatform.JUnitPlatformProvider.invoke(JUnitPlatformProvider.java:122)
-	at org.apache.maven.surefire.booter.ForkedBooter.runSuitesInProcess(ForkedBooter.java:385)
-	at org.apache.maven.surefire.booter.ForkedBooter.execute(ForkedBooter.java:162)
-	at org.apache.maven.surefire.booter.ForkedBooter.run(ForkedBooter.java:507)
-	at org.apache.maven.surefire.booter.ForkedBooter.main(ForkedBooter.java:495)
-]]></failure>
-  </testcase>
-  <testcase name="testTreeBuilder" classname="ParserTest" time="0.0"/>
-  <testcase name="testFunctionCallInSelect" classname="ParserTest" time="0.001"/>
+  <testcase name="testSelectWithArithmeticExpression" classname="ParserTest" time="0.0"/>
+  <testcase name="testEverything" classname="ParserTest" time="0.001"/>
+  <testcase name="testTreeBuilder" classname="ParserTest" time="0.001"/>
+  <testcase name="testFunctionCallInSelect" classname="ParserTest" time="0.0"/>
   <testcase name="testSelectWithWhere" classname="ParserTest" time="0.0"/>
   <testcase name="testOpenJDK2" classname="ParserTest" time="0.0"/>
-  <testcase name="testMissingFromClause" classname="ParserTest" time="0.0"/>
+  <testcase name="testMissingFromClause" classname="ParserTest" time="0.001"/>
   <testcase name="testFunctionCallInWhere" classname="ParserTest" time="0.0"/>
-  <testcase name="testAllTheThings" classname="ParserTest" time="0.001">
-    <failure message="Parsed tree for complex query with all features does not match expected structure ==&gt; expected: &lt;ProgramNode:&#10;  QueryNode:&#10;    Has @: true&#10;    SelectNode:&#10;      BinaryOpNode: + &#10;        IdentifierNode: col1&#10;        BinaryOpNode: * &#10;          NumberNode: 5&#10;          NumberNode: 2&#10;      FunctionNode: SUM&#10;        Arguments:&#10;        IdentifierNode: col2&#10;    FromNode:&#10;      SourceNode:&#10;        Name: table&#10;        Alias: t&#10;    WhereNode:&#10;      ConditionNode:&#10;        Operator: &gt;&#10;        Left: &#10;        IdentifierNode: col3&#10;        Table: t&#10;        Right: &#10;        NumberNode: 10&#10;    GroupByNode:&#10;      Identifier: &#10;      IdentifierNode: col4&#10;      Identifier: &#10;      IdentifierNode: col6&#10;      Table: t&#10;    HavingNode:&#10;      ConditionNode:&#10;        Operator: &lt;&#10;        Left: &#10;        FunctionNode: SUM&#10;          Arguments:&#10;          IdentifierNode: col5&#10;        Right: &#10;        NumberNode: 100&#10;    OrderByNode: &#10;  IdentifierNode: col6 DESC&#10;    LimitNode: &#10;      NumberNode: 10&#10;  AssignmentNode:&#10;    Identifier: x&#10;    QueryNode:&#10;      Has @: true&#10;      SelectNode: *&#10;      FromNode:&#10;        SourceNode:&#10;          Name: events&#10;  OpenJDKQueryNode: SELECT * FROM events&#10;  QueryNode:&#10;    Has @: true&#10;    SelectNode: *&#10;    FromNode:&#10;      SourceNode:&#10;        Subquery: &#10;          OpenJDKQueryNode: SELECT * FROM events&#10;        Alias: ho&#10;  QueryNode:&#10;    Has @: true&#10;    SelectNode: *&#10;    FromNode:&#10;      SourceNode:&#10;        Subquery: &#10;          OpenJDKQueryNode: SELECT * FROM SELECT * FROM events] AS t&#10;        Alias: p&gt; but was: &lt;ProgramNode:&#10;  QueryNode:&#10;    Has @: true&#10;    SelectNode:&#10;      BinaryOpNode: + &#10;        IdentifierNode: col1&#10;        BinaryOpNode: * &#10;          NumberNode: 5&#10;          NumberNode: 2&#10;      FunctionNode: SUM&#10;        Arguments:&#10;        IdentifierNode: col2&#10;    FromNode:&#10;      SourceNode:&#10;        Name: table&#10;        Alias: t&#10;    WhereNode:&#10;      ConditionNode:&#10;        Operator: &gt;&#10;        Left: &#10;        IdentifierNode: col3&#10;        Table: t&#10;        Right: &#10;        NumberNode: 10&#10;    GroupByNode:&#10;      Identifier: &#10;      IdentifierNode: col4&#10;      Identifier: &#10;      IdentifierNode: col6&#10;      Table: t&#10;    HavingNode:&#10;      ConditionNode:&#10;        Operator: &lt;&#10;        Left: &#10;        FunctionNode: SUM&#10;          Arguments:&#10;          IdentifierNode: col5&#10;        Right: &#10;        NumberNode: 100&#10;    OrderByNode: &#10;  IdentifierNode: col6 DESC&#10;    LimitNode: &#10;      NumberNode: 10&#10;  AssignmentNode:&#10;    Identifier: x&#10;    QueryNode:&#10;      Has @: true&#10;      SelectNode: *&#10;      FromNode:&#10;        SourceNode:&#10;          Name: events&#10;  OpenJDKQueryNode: SELECT * FROM events&#10;  QueryNode:&#10;    Has @: true&#10;    SelectNode: *&#10;    FromNode:&#10;      SourceNode:&#10;        Subquery: &#10;          OpenJDKQueryNode: SELECT * FROM events] AS ho &#10;&#10; @SELECT * FROM SELECT * FROM [SELECT * FROM events] AS t] AS p&gt;" type="org.opentest4j.AssertionFailedError"><![CDATA[org.opentest4j.AssertionFailedError: 
-Parsed tree for complex query with all features does not match expected structure ==> expected: <ProgramNode:
-  QueryNode:
-    Has @: true
-    SelectNode:
-      BinaryOpNode: + 
-        IdentifierNode: col1
-        BinaryOpNode: * 
-          NumberNode: 5
-          NumberNode: 2
-      FunctionNode: SUM
-        Arguments:
-        IdentifierNode: col2
-    FromNode:
-      SourceNode:
-        Name: table
-        Alias: t
-    WhereNode:
-      ConditionNode:
-        Operator: >
-        Left: 
-        IdentifierNode: col3
-        Table: t
-        Right: 
-        NumberNode: 10
-    GroupByNode:
-      Identifier: 
-      IdentifierNode: col4
-      Identifier: 
-      IdentifierNode: col6
-      Table: t
-    HavingNode:
-      ConditionNode:
-        Operator: <
-        Left: 
-        FunctionNode: SUM
-          Arguments:
-          IdentifierNode: col5
-        Right: 
-        NumberNode: 100
-    OrderByNode: 
-  IdentifierNode: col6 DESC
-    LimitNode: 
-      NumberNode: 10
-  AssignmentNode:
-    Identifier: x
-    QueryNode:
-      Has @: true
-      SelectNode: *
-      FromNode:
-        SourceNode:
-          Name: events
-  OpenJDKQueryNode: SELECT * FROM events
-  QueryNode:
-    Has @: true
-    SelectNode: *
-    FromNode:
-      SourceNode:
-        Subquery: 
-          OpenJDKQueryNode: SELECT * FROM events
-        Alias: ho
-  QueryNode:
-    Has @: true
-    SelectNode: *
-    FromNode:
-      SourceNode:
-        Subquery: 
-          OpenJDKQueryNode: SELECT * FROM SELECT * FROM events] AS t
-        Alias: p> but was: <ProgramNode:
-  QueryNode:
-    Has @: true
-    SelectNode:
-      BinaryOpNode: + 
-        IdentifierNode: col1
-        BinaryOpNode: * 
-          NumberNode: 5
-          NumberNode: 2
-      FunctionNode: SUM
-        Arguments:
-        IdentifierNode: col2
-    FromNode:
-      SourceNode:
-        Name: table
-        Alias: t
-    WhereNode:
-      ConditionNode:
-        Operator: >
-        Left: 
-        IdentifierNode: col3
-        Table: t
-        Right: 
-        NumberNode: 10
-    GroupByNode:
-      Identifier: 
-      IdentifierNode: col4
-      Identifier: 
-      IdentifierNode: col6
-      Table: t
-    HavingNode:
-      ConditionNode:
-        Operator: <
-        Left: 
-        FunctionNode: SUM
-          Arguments:
-          IdentifierNode: col5
-        Right: 
-        NumberNode: 100
-    OrderByNode: 
-  IdentifierNode: col6 DESC
-    LimitNode: 
-      NumberNode: 10
-  AssignmentNode:
-    Identifier: x
-    QueryNode:
-      Has @: true
-      SelectNode: *
-      FromNode:
-        SourceNode:
-          Name: events
-  OpenJDKQueryNode: SELECT * FROM events
-  QueryNode:
-    Has @: true
-    SelectNode: *
-    FromNode:
-      SourceNode:
-        Subquery: 
-          OpenJDKQueryNode: SELECT * FROM events] AS ho 
-
- @SELECT * FROM SELECT * FROM [SELECT * FROM events] AS t] AS p>
-	at org.junit.jupiter.api.AssertionFailureBuilder.build(AssertionFailureBuilder.java:151)
-	at org.junit.jupiter.api.AssertionFailureBuilder.buildAndThrow(AssertionFailureBuilder.java:132)
-	at org.junit.jupiter.api.AssertEquals.failNotEqual(AssertEquals.java:197)
-	at org.junit.jupiter.api.AssertEquals.assertEquals(AssertEquals.java:182)
-	at org.junit.jupiter.api.Assertions.assertEquals(Assertions.java:1153)
-	at ParserTest.testAllTheThings(ParserTest.java:532)
-	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:103)
-	at java.base/java.lang.reflect.Method.invoke(Method.java:580)
-	at org.junit.platform.commons.util.ReflectionUtils.invokeMethod(ReflectionUtils.java:727)
-	at org.junit.jupiter.engine.execution.MethodInvocation.proceed(MethodInvocation.java:60)
-	at org.junit.jupiter.engine.execution.InvocationInterceptorChain$ValidatingInvocation.proceed(InvocationInterceptorChain.java:131)
-	at org.junit.jupiter.engine.extension.TimeoutExtension.intercept(TimeoutExtension.java:156)
-	at org.junit.jupiter.engine.extension.TimeoutExtension.interceptTestableMethod(TimeoutExtension.java:147)
-	at org.junit.jupiter.engine.extension.TimeoutExtension.interceptTestMethod(TimeoutExtension.java:86)
-	at org.junit.jupiter.engine.execution.InterceptingExecutableInvoker$ReflectiveInterceptorCall.lambda$ofVoidMethod$0(InterceptingExecutableInvoker.java:103)
-	at org.junit.jupiter.engine.execution.InterceptingExecutableInvoker.lambda$invoke$0(InterceptingExecutableInvoker.java:93)
-	at org.junit.jupiter.engine.execution.InvocationInterceptorChain$InterceptedInvocation.proceed(InvocationInterceptorChain.java:106)
-	at org.junit.jupiter.engine.execution.InvocationInterceptorChain.proceed(InvocationInterceptorChain.java:64)
-	at org.junit.jupiter.engine.execution.InvocationInterceptorChain.chainAndInvoke(InvocationInterceptorChain.java:45)
-	at org.junit.jupiter.engine.execution.InvocationInterceptorChain.invoke(InvocationInterceptorChain.java:37)
-	at org.junit.jupiter.engine.execution.InterceptingExecutableInvoker.invoke(InterceptingExecutableInvoker.java:92)
-	at org.junit.jupiter.engine.execution.InterceptingExecutableInvoker.invoke(InterceptingExecutableInvoker.java:86)
-	at org.junit.jupiter.engine.descriptor.TestMethodTestDescriptor.lambda$invokeTestMethod$7(TestMethodTestDescriptor.java:217)
-	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:73)
-	at org.junit.jupiter.engine.descriptor.TestMethodTestDescriptor.invokeTestMethod(TestMethodTestDescriptor.java:213)
-	at org.junit.jupiter.engine.descriptor.TestMethodTestDescriptor.execute(TestMethodTestDescriptor.java:138)
-	at org.junit.jupiter.engine.descriptor.TestMethodTestDescriptor.execute(TestMethodTestDescriptor.java:68)
-	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$6(NodeTestTask.java:151)
-	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:73)
-	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$8(NodeTestTask.java:141)
-	at org.junit.platform.engine.support.hierarchical.Node.around(Node.java:137)
-	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$9(NodeTestTask.java:139)
-	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:73)
-	at org.junit.platform.engine.support.hierarchical.NodeTestTask.executeRecursively(NodeTestTask.java:138)
-	at org.junit.platform.engine.support.hierarchical.NodeTestTask.execute(NodeTestTask.java:95)
-	at java.base/java.util.ArrayList.forEach(ArrayList.java:1596)
-	at org.junit.platform.engine.support.hierarchical.SameThreadHierarchicalTestExecutorService.invokeAll(SameThreadHierarchicalTestExecutorService.java:41)
-	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$6(NodeTestTask.java:155)
-	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:73)
-	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$8(NodeTestTask.java:141)
-	at org.junit.platform.engine.support.hierarchical.Node.around(Node.java:137)
-	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$9(NodeTestTask.java:139)
-	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:73)
-	at org.junit.platform.engine.support.hierarchical.NodeTestTask.executeRecursively(NodeTestTask.java:138)
-	at org.junit.platform.engine.support.hierarchical.NodeTestTask.execute(NodeTestTask.java:95)
-	at java.base/java.util.ArrayList.forEach(ArrayList.java:1596)
-	at org.junit.platform.engine.support.hierarchical.SameThreadHierarchicalTestExecutorService.invokeAll(SameThreadHierarchicalTestExecutorService.java:41)
-	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$6(NodeTestTask.java:155)
-	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:73)
-	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$8(NodeTestTask.java:141)
-	at org.junit.platform.engine.support.hierarchical.Node.around(Node.java:137)
-	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$9(NodeTestTask.java:139)
-	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:73)
-	at org.junit.platform.engine.support.hierarchical.NodeTestTask.executeRecursively(NodeTestTask.java:138)
-	at org.junit.platform.engine.support.hierarchical.NodeTestTask.execute(NodeTestTask.java:95)
-	at org.junit.platform.engine.support.hierarchical.SameThreadHierarchicalTestExecutorService.submit(SameThreadHierarchicalTestExecutorService.java:35)
-	at org.junit.platform.engine.support.hierarchical.HierarchicalTestExecutor.execute(HierarchicalTestExecutor.java:57)
-	at org.junit.platform.engine.support.hierarchical.HierarchicalTestEngine.execute(HierarchicalTestEngine.java:54)
-	at org.junit.platform.launcher.core.EngineExecutionOrchestrator.execute(EngineExecutionOrchestrator.java:147)
-	at org.junit.platform.launcher.core.EngineExecutionOrchestrator.execute(EngineExecutionOrchestrator.java:127)
-	at org.junit.platform.launcher.core.EngineExecutionOrchestrator.execute(EngineExecutionOrchestrator.java:90)
-	at org.junit.platform.launcher.core.EngineExecutionOrchestrator.lambda$execute$0(EngineExecutionOrchestrator.java:55)
-	at org.junit.platform.launcher.core.EngineExecutionOrchestrator.withInterceptedStreams(EngineExecutionOrchestrator.java:102)
-	at org.junit.platform.launcher.core.EngineExecutionOrchestrator.execute(EngineExecutionOrchestrator.java:54)
-	at org.junit.platform.launcher.core.DefaultLauncher.execute(DefaultLauncher.java:114)
-	at org.junit.platform.launcher.core.DefaultLauncher.execute(DefaultLauncher.java:86)
-	at org.junit.platform.launcher.core.DefaultLauncherSession$DelegatingLauncher.execute(DefaultLauncherSession.java:86)
-	at org.apache.maven.surefire.junitplatform.LazyLauncher.execute(LazyLauncher.java:56)
-	at org.apache.maven.surefire.junitplatform.JUnitPlatformProvider.execute(JUnitPlatformProvider.java:184)
-	at org.apache.maven.surefire.junitplatform.JUnitPlatformProvider.invokeAllTests(JUnitPlatformProvider.java:148)
-	at org.apache.maven.surefire.junitplatform.JUnitPlatformProvider.invoke(JUnitPlatformProvider.java:122)
-	at org.apache.maven.surefire.booter.ForkedBooter.runSuitesInProcess(ForkedBooter.java:385)
-	at org.apache.maven.surefire.booter.ForkedBooter.execute(ForkedBooter.java:162)
-	at org.apache.maven.surefire.booter.ForkedBooter.run(ForkedBooter.java:507)
-	at org.apache.maven.surefire.booter.ForkedBooter.main(ForkedBooter.java:495)
-]]></failure>
-  </testcase>
-  <testcase name="testArithmeticExpressionInSelect" classname="ParserTest" time="0.001"/>
+  <testcase name="testAllTheThings" classname="ParserTest" time="0.0"/>
+  <testcase name="testArithmeticExpressionInSelect" classname="ParserTest" time="0.0"/>
   <testcase name="testQueryAssignment" classname="ParserTest" time="0.0"/>
-  <testcase name="testTableAlias" classname="ParserTest" time="0.0"/>
+  <testcase name="testTableAlias" classname="ParserTest" time="0.001"/>
 </testsuite>

@@ -8,16 +8,22 @@ public class OpenJDKQueryNode extends AstNode {
         StringBuilder sb = new StringBuilder();
         int i = start;
         int toConsume = 0;
-        while (i < input.length() && (input.charAt(i) != ';' || input.substring(i,i+2).equals("\n\n"))) {
-            if(input.charAt(i) != '[' && input.charAt(i) != ']' || toConsume > 0) {
-                sb.append(input.charAt(i));
-            } 
-            if(input.charAt(i) == '[') toConsume++;
-            else if(input.charAt(i) == ']') toConsume--;
+        while(i < input.length() && (input.charAt(i) != ';' || input.substring(i,i+2).equals("\n\n"))) {
+            if(input.charAt(i) == '[') {
+                toConsume++;
+                if(toConsume == 1) {
+                    i++;
+                    continue;
+                }
+            } else if(input.charAt(i) == ']') {
+                toConsume--;
+                if(toConsume == 0) {
+                    break;
+                }
+                
+            }
+            sb.append(input.charAt(i));
             i++;
-        }
-        if(toConsume != 0) {
-            throw new IllegalArgumentException("Unmatched brackets in query starting at index " + start);
         }
         end = i;
         query = sb.toString();
