@@ -44,18 +44,18 @@ public class OrderByNode extends AstNode {
     public String toString(int indent) {
         StringBuilder sb = new StringBuilder();
         String dent = "  ".repeat(indent);
-        sb.append("\n").append(dent).append(this.getClass().getSimpleName()).append(": ").append(identifierString()).append("\n");
+        sb.append("\n").append(dent).append(this.getClass().getSimpleName()).append(": ").append(identifierString(indent + 1)).append("\n");
         return sb.toString();
     }
 
-    private String identifierString() {
+    private String identifierString(int indent) {
         if (identifiers == null || identifiers.isEmpty()) {
             return "";
         }
         StringBuilder sb = new StringBuilder();
         for (int i = 0; i < identifiers.size(); i++) {
             AstNode identifier = identifiers.get(i);
-            sb.append(identifier.toString(1));
+            sb.append(identifier.toString(indent));
             if (i < directions.size()) {
                 sb.append(" ").append(directions.get(i));
             }

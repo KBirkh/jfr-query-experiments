@@ -22,7 +22,7 @@ public class IdentifierNode extends AstNode {
     } 
 
     public IdentifierNode() {
-        
+
     }
 
     public void setIdentifier(String identifier) {
@@ -54,7 +54,7 @@ public class IdentifierNode extends AstNode {
         String dent = "  ".repeat(indent);
         sb.append("\n").append(dent).append(this.getClass().getSimpleName()).append(": ").append(identifier);
         if (tableAlias != null && !tableAlias.isEmpty()) {
-            sb.append("\n").append(dent).append("Table: ").append(tableAlias);
+            sb.append("\n").append(dent).append("  ").append("Table: ").append(tableAlias);
         }
         return sb.toString();
     }

@@ -49,7 +49,7 @@ public class FunctionNode extends AstNode {
         if (arguments != null && !arguments.isEmpty()) {
             sb.append("\n").append(dent).append("  Arguments:");
             for (AstNode arg : arguments) {
-                sb.append(arg.toString(indent + 1));
+                sb.append(arg.toString(indent + 2));
             }
         } else {
             sb.append("\n").append(dent).append("  No arguments");

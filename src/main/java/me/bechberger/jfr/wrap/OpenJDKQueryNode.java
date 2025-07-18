@@ -1,5 +1,10 @@
 package me.bechberger.jfr.wrap;
 
+import me.bechberger.jfr.query.*;
+import me.bechberger.jfr.tool.*;
+import me.bechberger.jfr.util.UserDataException;
+import me.bechberger.jfr.util.UserSyntaxException;
+
 public class OpenJDKQueryNode extends AstNode {
     private String query;
     private int end;
@@ -43,6 +48,20 @@ public class OpenJDKQueryNode extends AstNode {
         String dent = "  ".repeat(indent);
         sb.append("\n").append(dent).append(this.getClass().getSimpleName()).append(": ").append(query);
         return sb.toString();
+    }
+    @Override
+    public Table eval() {
+        QueryCommand queryCommand = new QueryCommand();
+        queryCommand.setView(query);
+        queryCommand.setFile("src/main/java/me/bechberger/jfr/voronoi2.jfr");
+        queryCommand.setConfigOptions(new ConfigOptions());
+        try {
+            return queryCommand.call();
+        } catch (UserSyntaxException | UserDataException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        return null;
     }
     
 }

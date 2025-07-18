@@ -3,6 +3,8 @@ package me.bechberger.jfr.wrap;
 import java.util.ArrayList;
 import java.util.List;
 
+import me.bechberger.jfr.query.Table;
+
 public class ProgramNode extends AstNode {
     private List<AstNode> statements;
 
@@ -35,5 +37,14 @@ public class ProgramNode extends AstNode {
             sb.append(statement.toString(indent + 1));
         }
         return sb.toString();
+    }
+    @Override
+    public Table eval() {
+        List<String[][]> results = new ArrayList<>();
+        Table table = null;
+        for (AstNode statement : statements) {
+            table = statement.eval();
+        }
+        return table;
     }
 }

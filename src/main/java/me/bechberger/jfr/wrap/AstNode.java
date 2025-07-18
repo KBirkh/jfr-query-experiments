@@ -1,5 +1,6 @@
 package me.bechberger.jfr.wrap;
 
+import me.bechberger.jfr.query.Table;
 
 public abstract class AstNode {
 
@@ -10,7 +11,7 @@ public abstract class AstNode {
         return sb.toString();
     }
 
-    public String[][] eval() {
-        return new String[][] {{"You somehow got an empty AST node, this is a bug in the code."}};
+    public Table eval() {
+        return null;
     }
 }

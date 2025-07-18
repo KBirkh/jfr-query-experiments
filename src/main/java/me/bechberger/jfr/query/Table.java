@@ -44,7 +44,6 @@ public final class Table {
     void addRows(List<Row> rows) {
         this.rows.addAll(rows);
     }
-
     List<Row> getRows() {
         return rows;
     }
@@ -68,5 +67,20 @@ public final class Table {
             row.putValue(field.index, field.valueGetter.apply(event));
         }
         rows.add(row);
+    }
+
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        for (Field field : fields) {
+            sb.append(field.name).append("\t");
+        }
+        sb.append("\n");
+        for (Row row : rows) {
+            for (int i = 0; i < fields.size(); i++) {
+                sb.append(row.getValue(i)).append("\t");
+            }
+            sb.append("\n");
+        }
+        return sb.toString();
     }
 }

@@ -33,7 +33,7 @@ public class GroupByNode extends AstNode {
             sb.append(" No identifiers");
         } else {
             for (AstNode identifier : identifiers) {
-                sb.append("\n").append(dent).append("  Identifier: ").append(identifier.toString(indent + 1));
+                sb.append(identifier.toString(indent + 1));
             }
         }
         return sb.toString();

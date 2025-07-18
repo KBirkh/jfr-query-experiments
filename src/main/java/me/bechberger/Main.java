@@ -1,5 +1,6 @@
 package me.bechberger;
 
+import me.bechberger.jfr.query.Table;
 import me.bechberger.jfr.tool.*;
 import me.bechberger.jfr.wrap.*;
 import picocli.CommandLine;
@@ -63,21 +64,13 @@ public class Main implements Callable<Integer> {
     }
 
     public static void main(String[] args) {
-        /* CommandLine cli = new CommandLine(new Main());
-        cli.getSubcommands().forEach((subcommandName, command) -> {
-            if (command.getCommand() instanceof Footerable f) {
-                command.getCommandSpec().usageMessage().footer(f.footer());
-            }
-        });
-        int exitCode = cli.execute(args);
-        if (exitCode != EXIT_OK) {
-            System.exit(exitCode);
-        } */
-        String input = "@SELECT * FROM [SELECT * FROM] AS p";
+        String input = "SELECT * FROM GCPhaseParallel";
         Lexer lexer = new Lexer(input);
         Parser parser = new Parser(lexer.tokenize(), input);
         try {
             AstNode res = parser.parse();
+            Table table = res.eval();
+            System.out.println(table);
             System.out.println(res.toString(0));
         } catch (ParseException e) {
             // TODO Auto-generated catch block
