@@ -46,7 +46,7 @@ import java.util.function.Function;
  * <p>
  * Settings in {@Configuration} overrides any field setting.
  */
-final class Field {
+public final class Field {
     // The fields to use as data sources, for example, when a
     // field references multiple event types. First field
     // is always the same as this field.
@@ -143,5 +143,13 @@ final class Field {
     @Override
     public String toString() {
         return type.getName() + "#" + name;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public String getType() {
+        return type.getName();
     }
 }

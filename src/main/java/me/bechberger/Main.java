@@ -1,15 +1,14 @@
 package me.bechberger;
 
-import me.bechberger.jfr.query.Table;
 import me.bechberger.jfr.tool.*;
 import me.bechberger.jfr.wrap.*;
+import me.bechberger.jfr.wrap.nodes.AstNode;
 import picocli.CommandLine;
 
 import java.text.ParseException;
-import java.util.List;
 import java.util.concurrent.Callable;
 
-@CommandLine.Command(
+/* @CommandLine.Command(
         name = "query",
         mixinStandardHelpOptions = true,
         version = "0.1",
@@ -20,9 +19,9 @@ import java.util.concurrent.Callable;
                 QueryCommand.class,
                 WebCommand.class
         }
-)
-public class Main implements Callable<Integer> {
-
+) */
+public class Main /* implements Callable<Integer> */ {
+/* 
     @CommandLine.Spec
     CommandLine.Model.CommandSpec spec;
 
@@ -61,19 +60,20 @@ public class Main implements Callable<Integer> {
         // print usage with picocli
         spec.commandLine().usage(System.out);
         return EXIT_OK;
-    }
+    } */
 
     public static void main(String[] args) {
-        String input = "SELECT * FROM GCPhaseParallel";
+        String input = "@SELECT * FROM [SELECT * FROM GCPhaseParallel] AS gcP WHERE gcP.eventThread == \"GC Thread#2\"";
         Lexer lexer = new Lexer(input);
         Parser parser = new Parser(lexer.tokenize(), input);
         try {
             AstNode res = parser.parse();
-            Table table = res.eval();
-            System.out.println(table);
+            res.eval();
+            Evaluator evaluator = Evaluator.getInstance();
+            System.out.println(evaluator);
             System.out.println(res.toString(0));
         } catch (ParseException e) {
-            // TODO Auto-generated catch block
+            
             e.printStackTrace();
         }
 

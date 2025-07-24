@@ -1,6 +1,6 @@
-package me.bechberger.jfr.wrap;
+package me.bechberger.jfr.wrap.nodes;
 
-import me.bechberger.jfr.query.Table;
+import me.bechberger.jfr.wrap.EvalRow;
 
 public abstract class AstNode {
 
@@ -11,7 +11,15 @@ public abstract class AstNode {
         return sb.toString();
     }
 
-    public Table eval() {
-        return null;
+    public void eval() {
+
+    }
+
+    public void eval(String alias) {
+        
+    }
+
+    public Object eval(EvalRow row) {
+        return false;
     }
 }

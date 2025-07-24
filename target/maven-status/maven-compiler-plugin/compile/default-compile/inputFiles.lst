@@ -1,4 +1,5 @@
 /Users/i589221/Documents/GitHub/jfr-query-experiments/src/main/java/me/bechberger/jfr/wrap/StringNode.java
+/Users/i589221/Documents/GitHub/jfr-query-experiments/src/main/java/me/bechberger/jfr/wrap/Evaluator.java
 /Users/i589221/Documents/GitHub/jfr-query-experiments/src/main/java/me/bechberger/jfr/wrap/GroupByNode.java
 /Users/i589221/Documents/GitHub/jfr-query-experiments/src/main/java/me/bechberger/jfr/wrap/AssignmentNode.java
 /Users/i589221/Documents/GitHub/jfr-query-experiments/src/main/java/me/bechberger/jfr/query/TableSorter.java
@@ -23,6 +24,7 @@
 /Users/i589221/Documents/GitHub/jfr-query-experiments/src/main/java/me/bechberger/jfr/query/Aggregator.java
 /Users/i589221/Documents/GitHub/jfr-query-experiments/src/main/java/me/bechberger/jfr/wrap/UnaryOpNode.java
 /Users/i589221/Documents/GitHub/jfr-query-experiments/src/main/java/me/bechberger/jfr/util/UserDataException.java
+/Users/i589221/Documents/GitHub/jfr-query-experiments/src/main/java/me/bechberger/jfr/util/TableUtils.java
 /Users/i589221/Documents/GitHub/jfr-query-experiments/src/main/java/me/bechberger/jfr/wrap/ProgramNode.java
 /Users/i589221/Documents/GitHub/jfr-query-experiments/src/main/java/me/bechberger/jfr/query/Query.java
 /Users/i589221/Documents/GitHub/jfr-query-experiments/src/main/java/me/bechberger/jfr/query/Histogram.java

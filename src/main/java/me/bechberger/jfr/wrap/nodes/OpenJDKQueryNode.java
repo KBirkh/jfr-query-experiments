@@ -1,9 +1,12 @@
-package me.bechberger.jfr.wrap;
+package me.bechberger.jfr.wrap.nodes;
 
 import me.bechberger.jfr.query.*;
 import me.bechberger.jfr.tool.*;
 import me.bechberger.jfr.util.UserDataException;
 import me.bechberger.jfr.util.UserSyntaxException;
+import me.bechberger.jfr.wrap.EvalTable;
+import me.bechberger.jfr.wrap.Evaluator;
+import me.bechberger.jfr.wrap.TableUtils;
 
 public class OpenJDKQueryNode extends AstNode {
     private String query;
@@ -13,7 +16,8 @@ public class OpenJDKQueryNode extends AstNode {
         StringBuilder sb = new StringBuilder();
         int i = start;
         int toConsume = 0;
-        while(i < input.length() && (input.charAt(i) != ';' || input.substring(i,i+2).equals("\n\n"))) {
+        while(i < input.length() && input.charAt(i) != ';') {
+            if(i + 2 < input.length() && input.substring(i,i+2).equals("\n\n")) break;
             if(input.charAt(i) == '[') {
                 toConsume++;
                 if(toConsume == 1) {
@@ -50,18 +54,45 @@ public class OpenJDKQueryNode extends AstNode {
         return sb.toString();
     }
     @Override
-    public Table eval() {
+    public void eval(String alias) {
         QueryCommand queryCommand = new QueryCommand();
         queryCommand.setView(query);
         queryCommand.setFile("src/main/java/me/bechberger/jfr/voronoi2.jfr");
         queryCommand.setConfigOptions(new ConfigOptions());
         try {
-            return queryCommand.call();
+            Table table = queryCommand.call();
+            if(table == null) {
+                System.err.println("Query returned null table: " + query);
+                return;
+            }
+            EvalTable evalTable = TableUtils.toEvalTable(table, alias);
+            Evaluator evaluator = Evaluator.getInstance();
+            evaluator.addToTable(evalTable, query);
         } catch (UserSyntaxException | UserDataException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
-        return null;
+    }
+
+    @Override
+    public void eval() {
+        QueryCommand queryCommand = new QueryCommand();
+        queryCommand.setView(query);
+        queryCommand.setFile("src/main/java/me/bechberger/jfr/voronoi2.jfr");
+        queryCommand.setConfigOptions(new ConfigOptions());
+        try {
+            Table table = queryCommand.call();
+            if(table == null) {
+                System.err.println("Query returned null table: " + query);
+                return;
+            }
+            EvalTable evalTable = TableUtils.toEvalTable(table);
+            Evaluator evaluator = Evaluator.getInstance();
+            evaluator.addToTable(evalTable, query);
+        } catch (UserSyntaxException | UserDataException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
     }
     
 }

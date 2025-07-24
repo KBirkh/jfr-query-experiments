@@ -44,7 +44,7 @@ public final class Table {
     void addRows(List<Row> rows) {
         this.rows.addAll(rows);
     }
-    List<Row> getRows() {
+    public List<Row> getRows() {
         return rows;
     }
 
@@ -57,7 +57,7 @@ public final class Table {
         this.fields.addAll(fields);
     }
 
-    List<Field> getFields() {
+    public List<Field> getFields() {
         return fields;
     }
 

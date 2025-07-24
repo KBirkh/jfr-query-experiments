@@ -1,4 +1,4 @@
-package me.bechberger.jfr.wrap;
+package me.bechberger.jfr.wrap.nodes;
 
 public class SourceNode extends AstNode {
     private String name;
@@ -56,6 +56,17 @@ public class SourceNode extends AstNode {
             sb.append("\n").append(dent).append("  Alias: ").append(alias);
         }
         return sb.toString();
+    }
+
+    @Override
+    public void eval() {
+        if(isSubQuery) {
+            if(alias == null || alias.isEmpty()) {
+                subquery.eval();
+            } else {
+                subquery.eval(alias);
+            }
+        }
     }
 
 }

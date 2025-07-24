@@ -1,10 +1,10 @@
-package me.bechberger.jfr.wrap;
+package me.bechberger.jfr.wrap.nodes;
 
-public class UnaryOpNode extends AstNode {
+public class UnaryOpNode extends AstConditional {
     private String operator;
-    private AstNode operand;
+    private AstConditional operand;
 
-    public UnaryOpNode(String operator, AstNode operand) {
+    public UnaryOpNode(String operator, AstConditional operand) {
         if (operator == null || operator.isEmpty()) {
             throw new IllegalArgumentException("Operator cannot be null or empty");
         }

@@ -1,8 +1,10 @@
-package me.bechberger.jfr.wrap;
+package me.bechberger.jfr.wrap.nodes;
+
+import me.bechberger.jfr.wrap.EvalTable;
+import me.bechberger.jfr.wrap.Evaluator;
 
 public class WhereNode extends AstNode {
     private AstNode condition;
-    private ConditionNode conditionTail;
 
     public WhereNode() {
 
@@ -13,10 +15,6 @@ public class WhereNode extends AstNode {
             throw new IllegalArgumentException("Condition cannot be null");
         }
         this.condition = condition;
-    }
-
-    public void setTail(ConditionNode conditionTail) {
-        this.conditionTail = conditionTail;
     }
 
     public void setCondition(AstNode condition) {
@@ -34,10 +32,15 @@ public class WhereNode extends AstNode {
         if (condition != null) {
             sb.append(condition.toString(indent + 1));
         }
-        if (conditionTail != null) {
-            sb.append(conditionTail.toString(indent + 1));
-        }
         return sb.toString();
+    }
+
+    public void eval() {
+        Evaluator evaluator = Evaluator.getInstance();
+        EvalTable evalTable = evaluator.getFirstTable();
+        evalTable.rows = evalTable.getRows().stream()
+            .filter(row -> ((ConditionNode) condition).eval(row))
+            .toList();
     }
 
 }

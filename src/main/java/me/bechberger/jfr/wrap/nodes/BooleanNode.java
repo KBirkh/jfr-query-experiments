@@ -1,6 +1,6 @@
-package me.bechberger.jfr.wrap;
+package me.bechberger.jfr.wrap.nodes;
 
-public class BooleanNode extends AstNode {
+public class BooleanNode extends AstConditional {
     private boolean value;
 
     public void setValue(boolean value) {

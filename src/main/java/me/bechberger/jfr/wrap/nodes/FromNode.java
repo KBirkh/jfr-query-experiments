@@ -1,4 +1,4 @@
-package me.bechberger.jfr.wrap;
+package me.bechberger.jfr.wrap.nodes;
 
 import java.util.List;
 
@@ -37,6 +37,13 @@ public class FromNode extends AstNode {
             }
         }
         return sb.toString();
+    }
+
+    @Override
+    public void eval() {
+        for(AstNode source : sources) {
+            source.eval();
+        }
     }
 
 }

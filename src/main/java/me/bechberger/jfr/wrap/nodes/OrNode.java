@@ -1,6 +1,6 @@
-package me.bechberger.jfr.wrap;
+package me.bechberger.jfr.wrap.nodes;
 
-public class OrNode extends AstNode {
+public class OrNode extends AstConditional {
     private AstNode left;
     private AstNode right;
 

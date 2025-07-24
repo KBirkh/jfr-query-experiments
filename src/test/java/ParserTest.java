@@ -8,6 +8,34 @@ import java.text.ParseException;
 import java.util.stream.Stream;
 
 import me.bechberger.jfr.wrap.*;
+import me.bechberger.jfr.wrap.nodes.AndNode;
+import me.bechberger.jfr.wrap.nodes.ArithmeticNode;
+import me.bechberger.jfr.wrap.nodes.AssignmentNode;
+import me.bechberger.jfr.wrap.nodes.AstConditional;
+import me.bechberger.jfr.wrap.nodes.AstNode;
+import me.bechberger.jfr.wrap.nodes.BinaryOpNode;
+import me.bechberger.jfr.wrap.nodes.BooleanNode;
+import me.bechberger.jfr.wrap.nodes.ColumnNode;
+import me.bechberger.jfr.wrap.nodes.ConditionNode;
+import me.bechberger.jfr.wrap.nodes.FromNode;
+import me.bechberger.jfr.wrap.nodes.FunctionNode;
+import me.bechberger.jfr.wrap.nodes.GroupByNode;
+import me.bechberger.jfr.wrap.nodes.HavingNode;
+import me.bechberger.jfr.wrap.nodes.IdentifierNode;
+import me.bechberger.jfr.wrap.nodes.LimitNode;
+import me.bechberger.jfr.wrap.nodes.NumberNode;
+import me.bechberger.jfr.wrap.nodes.OpenJDKQueryNode;
+import me.bechberger.jfr.wrap.nodes.OrNode;
+import me.bechberger.jfr.wrap.nodes.OrderByNode;
+import me.bechberger.jfr.wrap.nodes.ProgramNode;
+import me.bechberger.jfr.wrap.nodes.QueryNode;
+import me.bechberger.jfr.wrap.nodes.SelectNode;
+import me.bechberger.jfr.wrap.nodes.SourceNode;
+import me.bechberger.jfr.wrap.nodes.StringNode;
+import me.bechberger.jfr.wrap.nodes.TimeNode;
+import me.bechberger.jfr.wrap.nodes.UnaryOpNode;
+import me.bechberger.jfr.wrap.nodes.ViewDefinitionNode;
+import me.bechberger.jfr.wrap.nodes.WhereNode;
 
 public class ParserTest {
 
@@ -51,11 +79,11 @@ public class ParserTest {
         return new LimitNode(count);
     }
 
-    public AstNode and(AstNode left, AstNode right) {
+    public AstConditional and(AstNode left, AstNode right) {
         return new AndNode(left, right);
     }
 
-    public AstNode arithmetic(String operator, AstNode left, AstNode right) {
+    public AstConditional arithmetic(String operator, AstNode left, AstNode right) {
         return new ArithmeticNode(left, operator, right);
     }
 
@@ -67,11 +95,11 @@ public class ParserTest {
         return new OpenJDKQueryNode(query, 0);
     }
 
-    public AstNode binaryOp(String operator, AstNode left, AstNode right) {
+    public AstConditional binaryOp(String operator, AstConditional left, AstConditional right) {
         return new BinaryOpNode(operator, left, right);
     }
 
-    public AstNode bool(boolean value) {
+    public AstConditional bool(boolean value) {
         return new BooleanNode(value);
     }
 
@@ -83,15 +111,15 @@ public class ParserTest {
         return col;
     }
 
-    public AstNode condition(String operator, AstNode left, AstNode right) {
+    public AstNode condition(TokenType operator, AstConditional left, AstConditional right) {
         return new ConditionNode(operator, left, right);
     }
 
-    public AstNode or(AstNode left, AstNode right) {
+    public AstConditional or(AstNode left, AstNode right) {
         return new OrNode(left, right);
     }
     
-    public AstNode function(String name, AstNode... arguments) {
+    public AstConditional function(String name, AstNode... arguments) {
         return new FunctionNode(name, arguments);
     }
     
@@ -127,23 +155,27 @@ public class ParserTest {
         return new ViewDefinitionNode(name, query);
     }
     
-    public AstNode number(String value) {
+    public AstConditional number(String value) {
         return new NumberNode(value);
     }
+
+    public AstConditional time(String timeUnit) {
+        return new TimeNode(timeUnit);
+    }
     
-    public AstNode string(String value) {
+    public AstConditional string(String value) {
         return new StringNode(value);
     }
     
-    public AstNode identifier(String name) {
+    public AstConditional identifier(String name) {
         return new IdentifierNode(name);
     }
     
-    public AstNode identifier(String name, String table) {
+    public AstConditional identifier(String name, String table) {
         return new IdentifierNode(name, table);
     }
 
-    public AstNode unaryOp(String operator, AstNode operand) {
+    public AstConditional unaryOp(String operator, AstConditional operand) {
         return new UnaryOpNode(operator, operand);
     }
 
@@ -231,7 +263,7 @@ public class ParserTest {
             query(true, 
                 selectStar(), 
                 from(source("table", null)), 
-                where(condition(">", binaryOp("+", identifier("col1"), number("5")), binaryOp("*", identifier("col2"), number("2")))), 
+                where(condition(TokenType.GT, binaryOp("+", identifier("col1"), number("5")), binaryOp("*", identifier("col2"), number("2")))), 
                 null, null, null, null
             )
         );
@@ -251,7 +283,7 @@ public class ParserTest {
             query(true, 
                 selectStar(), 
                 from(source("table", null)), 
-                where(condition(">", function("SUM", identifier("col1"), identifier("col2")), number("100"))), 
+                where(condition(TokenType.GT, function("SUM", identifier("col1"), identifier("col2")), number("100"))), 
                 null, null, null, null
             )
         );
@@ -395,9 +427,9 @@ public class ParserTest {
                     function("SUM", identifier("col2"))
                 ), 
                 from(source("table", null)), 
-                where(condition(">", identifier("col3"), number("10"))), 
+                where(condition(TokenType.GT, identifier("col3"), number("10"))), 
                 groupBy(identifier("col4")), 
-                having(condition("<", function("SUM", identifier("col5")), number("100"))), 
+                having(condition(TokenType.LT, function("SUM", identifier("col5")), number("100"))), 
                 orderBy(arr(identifier("col6")), arr("ASC")), 
                 limit(number("10"))
             ),
@@ -451,7 +483,7 @@ public class ParserTest {
             query(true, 
                 selectStar(), 
                 from(source("table", "t")), 
-                where(condition(">", identifier("col", "t"), number("10"))), 
+                where(condition(TokenType.GT, identifier("col", "t"), number("10"))), 
                 null, null, null, null
             )
         );
@@ -498,10 +530,12 @@ public class ParserTest {
             query(true, 
                 select(identifier("col1", "t")), 
                 from(source("table", "t")), 
-                where(and(function("p99", identifier("col2", "t")), condition("<", identifier("col3", "t"), number("100")))), 
+                where(and(function("p99", identifier("col2", "t")), condition(TokenType.LT, identifier("col3", "t"), number("100")))), 
                 null, null, null, null
             )
         );
+
+        assertEquals(expected.toString(0), res.toString(0), "Parsed tree for table identifiers does not match expected structure");
     }
 
     @Test
@@ -518,9 +552,9 @@ public class ParserTest {
                     function("SUM", identifier("col2"))
                 ), 
                 from(source("table", "t")), 
-                where(condition(">", identifier("col3", "t"), number("10"))), 
+                where(condition(TokenType.GT, identifier("col3", "t"), number("10"))), 
                 groupBy(identifier("col4"), identifier("col6", "t")), 
-                having(condition("<", function("SUM", identifier("col5")), number("100"))), 
+                having(condition(TokenType.LT, function("SUM", identifier("col5")), number("100"))), 
                 orderBy(arr(identifier("col6")), arr("DESC")), 
                 limit(number("10"))
             ),
@@ -530,6 +564,42 @@ public class ParserTest {
             query(true, selectStar(), from(source(openJDK("[SELECT * FROM [SELECT * FROM events] AS t]"), "p")), null, null, null, null, null)
         );
         assertEquals(expected.toString(0), res.toString(0), "Parsed tree for complex query with all features does not match expected structure");
+    }
+
+    @Test
+    public void testTimeUnits() throws ParseException {
+        String input = "@SELECT * FROM table WHERE duration > 5ms AND duration < 10s";
+        Lexer lexer = new Lexer(input);
+        Parser parser = new Parser(lexer.tokenize(), input);
+        AstNode res = parser.parse();
+
+        AstNode expected = program(
+            query(true, 
+                selectStar(), 
+                from(source("table", null)), 
+                where(and(condition(TokenType.GT, identifier("duration"), time("5ms")), condition(TokenType.LT, identifier("duration"), time("10s")))), 
+                null, null, null, null
+            )
+        );
+        assertEquals(expected.toString(0), res.toString(0), "Parsed tree for time units in WHERE clause does not match expected structure");
+    }
+
+    @Test
+    public void testSingleCondition() throws ParseException {
+        String input = "@SELECT * FROM table WHERE p99(duration)";
+        Lexer lexer = new Lexer(input);
+        Parser parser = new Parser(lexer.tokenize(), input);
+        AstNode res = parser.parse();
+
+        AstNode expected = program(
+            query(true, 
+                selectStar(), 
+                from(source("table", null)), 
+                where(function("p99", identifier("duration"))), 
+                null, null, null, null
+            )
+        );
+        assertEquals(expected.toString(0), res.toString(0), "Parsed tree for single condition in WHERE clause does not match expected structure");
     }
 
 

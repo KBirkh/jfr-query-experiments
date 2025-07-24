@@ -1,4 +1,4 @@
-package me.bechberger.jfr.wrap;
+package me.bechberger.jfr.wrap.nodes;
 
 public class QueryNode extends AstNode {
     private ColumnNode columns;
@@ -109,6 +109,17 @@ public class QueryNode extends AstNode {
             sb.append(limit.toString(indent + 1));
         }
         return sb.toString();
+    }
+
+    @Override
+    public void eval() {
+        if(!select.isStar) {
+            select.eval();
+        }
+        from.eval();
+        if(where != null) {
+            where.eval();
+        }
     }
     
 

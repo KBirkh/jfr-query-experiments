@@ -1,9 +1,8 @@
-package me.bechberger.jfr.wrap;
+package me.bechberger.jfr.wrap.nodes;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import me.bechberger.jfr.query.Table;
 
 public class ProgramNode extends AstNode {
     private List<AstNode> statements;
@@ -39,12 +38,9 @@ public class ProgramNode extends AstNode {
         return sb.toString();
     }
     @Override
-    public Table eval() {
-        List<String[][]> results = new ArrayList<>();
-        Table table = null;
+    public void eval() {
         for (AstNode statement : statements) {
-            table = statement.eval();
+            statement.eval();
         }
-        return table;
     }
 }

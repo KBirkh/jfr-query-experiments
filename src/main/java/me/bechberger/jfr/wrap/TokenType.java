@@ -18,5 +18,5 @@ public enum TokenType {
     EOQ,
     
     // End of file
-    EOF
+    EOF, TIME_UNIT
 }

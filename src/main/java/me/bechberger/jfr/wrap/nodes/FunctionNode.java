@@ -1,9 +1,9 @@
-package me.bechberger.jfr.wrap;
+package me.bechberger.jfr.wrap.nodes;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class FunctionNode extends AstNode {
+public class FunctionNode extends AstConditional {
     private String name;
     private List<AstNode> arguments;
 

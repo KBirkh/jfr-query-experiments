@@ -1,4 +1,4 @@
-package me.bechberger.jfr.wrap;
+package me.bechberger.jfr.wrap.nodes;
 
 public class LimitNode extends AstNode {
     private AstNode count;
@@ -23,7 +23,7 @@ public class LimitNode extends AstNode {
     public String toString(int indent) {
         StringBuilder sb = new StringBuilder();
         String dent = "  ".repeat(indent);
-        sb.append(dent).append(this.getClass().getSimpleName()).append(": ").append(count.toString(indent + 1));
+        sb.append("\n").append(dent).append(this.getClass().getSimpleName()).append(": ").append(count.toString(indent + 1));
         return sb.toString();
     }
 

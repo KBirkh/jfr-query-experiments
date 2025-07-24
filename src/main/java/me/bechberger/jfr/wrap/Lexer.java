@@ -179,6 +179,17 @@ public class Lexer {
             advance();
             while (Character.isDigit(peek())) advance();
         }
+        if(peek() == 's') {
+            advance();
+            return new Token(TokenType.TIME_UNIT, input.substring(start, pos), start);
+        } else if(peek() == 'm') {
+            advance();
+            if(peek() == 's') {
+                advance();
+                return new Token(TokenType.TIME_UNIT, input.substring(start, pos), start);
+            }
+            return new Token(TokenType.TIME_UNIT, input.substring(start, pos), start);
+        }
         return new Token(TokenType.NUMBER, input.substring(start, pos), start);
     }
 

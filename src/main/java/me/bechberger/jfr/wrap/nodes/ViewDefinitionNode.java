@@ -1,4 +1,4 @@
-package me.bechberger.jfr.wrap;
+package me.bechberger.jfr.wrap.nodes;
 
 public class ViewDefinitionNode extends AstNode {
     private String name;

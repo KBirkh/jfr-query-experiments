@@ -25,6 +25,7 @@
 package me.bechberger.jfr.query;
 
 import java.util.Arrays;
+import java.util.List;
 
 public final class Row {
     private final Object[] values;
@@ -54,5 +55,9 @@ public final class Row {
     @Override
     public String toString() {
         return Arrays.asList(values).toString();
+    }
+
+    public List<Object> toList() {
+        return Arrays.asList(values);
     }
 }

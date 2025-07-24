@@ -3,6 +3,35 @@ package me.bechberger.jfr.wrap;
 import java.text.ParseException;
 import java.util.*;
 
+import me.bechberger.jfr.wrap.nodes.AndNode;
+import me.bechberger.jfr.wrap.nodes.ArithmeticNode;
+import me.bechberger.jfr.wrap.nodes.AssignmentNode;
+import me.bechberger.jfr.wrap.nodes.AstConditional;
+import me.bechberger.jfr.wrap.nodes.AstNode;
+import me.bechberger.jfr.wrap.nodes.BinaryOpNode;
+import me.bechberger.jfr.wrap.nodes.BooleanNode;
+import me.bechberger.jfr.wrap.nodes.ColumnNode;
+import me.bechberger.jfr.wrap.nodes.ConditionNode;
+import me.bechberger.jfr.wrap.nodes.FromNode;
+import me.bechberger.jfr.wrap.nodes.FunctionNode;
+import me.bechberger.jfr.wrap.nodes.GroupByNode;
+import me.bechberger.jfr.wrap.nodes.HavingNode;
+import me.bechberger.jfr.wrap.nodes.IdentifierNode;
+import me.bechberger.jfr.wrap.nodes.LimitNode;
+import me.bechberger.jfr.wrap.nodes.NumberNode;
+import me.bechberger.jfr.wrap.nodes.OpenJDKQueryNode;
+import me.bechberger.jfr.wrap.nodes.OrNode;
+import me.bechberger.jfr.wrap.nodes.OrderByNode;
+import me.bechberger.jfr.wrap.nodes.ProgramNode;
+import me.bechberger.jfr.wrap.nodes.QueryNode;
+import me.bechberger.jfr.wrap.nodes.SelectNode;
+import me.bechberger.jfr.wrap.nodes.SourceNode;
+import me.bechberger.jfr.wrap.nodes.StringNode;
+import me.bechberger.jfr.wrap.nodes.TimeNode;
+import me.bechberger.jfr.wrap.nodes.UnaryOpNode;
+import me.bechberger.jfr.wrap.nodes.ViewDefinitionNode;
+import me.bechberger.jfr.wrap.nodes.WhereNode;
+
 
 public class Parser {
     private final List<Token> tokens;
@@ -151,7 +180,7 @@ public class Parser {
             selectNode.isStar = true;
             advance();
             return selectNode;
-        } else if(isIn(TokenType.FUNCTION, TokenType.FIELD, TokenType.NUMBER, TokenType.IDENTIFIER, TokenType.LPAREN, TokenType.LSPAREN, TokenType.PLUS, TokenType.MINUS)) {
+        } else if(isIn(TokenType.FUNCTION, TokenType.FIELD, TokenType.NUMBER, TokenType.TIME_UNIT, TokenType.IDENTIFIER, TokenType.LPAREN, TokenType.LSPAREN, TokenType.PLUS, TokenType.MINUS)) {
                 selectNode.addColumn(expression());
                 while(isIn(TokenType.COMMA)) {
                     advance();
@@ -160,7 +189,7 @@ public class Parser {
             
             return selectNode;
         } else {
-            throw new ParseException("Expected MULT, FUNCTION, FIELD, NUMBER, IDENTIFIER, LPAREN, LSPAREN, PLUS, or MINUS, found " + peek().type, pos);
+            throw new ParseException("Expected MULT, FUNCTION, FIELD, NUMBER, TIME_UNIT, IDENTIFIER, LPAREN, LSPAREN, PLUS, or MINUS, found " + peek().type, pos);
         }
     }
 
@@ -175,7 +204,7 @@ public class Parser {
             stringNode.setValue(peek().lexeme);
             advance();
             return stringNode;
-        } else if(isIn(TokenType.PLUS, TokenType.MINUS, TokenType.LPAREN, TokenType.IDENTIFIER, TokenType.NUMBER, TokenType.FUNCTION)) {
+        } else if(isIn(TokenType.PLUS, TokenType.MINUS, TokenType.LPAREN, TokenType.TIME_UNIT, TokenType.IDENTIFIER, TokenType.NUMBER, TokenType.FUNCTION)) {
             AstNode arithmetic = arithmetic();
             if(isIn(TokenType.AS) && arithmetic instanceof ArithmeticNode) {
                 ArithmeticNode arithmeticNode = (ArithmeticNode) arithmetic;
@@ -187,7 +216,7 @@ public class Parser {
             expect(TokenType.RSPAREN);
             return subquery;
         } else {
-            throw new ParseException("Expected FUNCTION, IDENTIFIER, BOOLEAN, STRING, PLUS, MINUS, LPAREN, NUMBER, LSPAREN, or AS, found " + peek().type, pos);
+            throw new ParseException("Expected FUNCTION, IDENTIFIER, TIME_UNIT, BOOLEAN, STRING, PLUS, MINUS, LPAREN, NUMBER, LSPAREN, or AS, found " + peek().type, pos);
         }
     }
 
@@ -300,23 +329,27 @@ public class Parser {
     }
 
     private AstNode condition() throws ParseException {
-        if(isIn(TokenType.IDENTIFIER) && (lookahead(1).type != TokenType.DOT && lookahead(1).type != TokenType.ASSIGNMENT) || isIn(TokenType.NUMBER, TokenType.LPAREN, TokenType.PLUS, TokenType.MINUS, TokenType.FUNCTION)) {
-            ConditionNode conditionNode = new ConditionNode();
-            conditionNode.setLeft(arithmetic());
-            conditionNode.setOperator(expect(TokenType.EE, TokenType.NEQ, TokenType.LT, TokenType.GT, TokenType.LE, TokenType.GE, TokenType.LIKE, TokenType.IN).lexeme);
-            conditionNode.setRight(arithmetic());
-            return conditionNode;
+        if(isIn(TokenType.IDENTIFIER) && (lookahead(1).type != TokenType.DOT && lookahead(1).type != TokenType.ASSIGNMENT) || isIn(TokenType.NUMBER, TokenType.TIME_UNIT, TokenType.LPAREN, TokenType.PLUS, TokenType.MINUS, TokenType.FUNCTION)) {
+            AstConditional left = arithmetic();
+            if(isIn(TokenType.EE, TokenType.NEQ, TokenType.LT, TokenType.GT, TokenType.LE, TokenType.GE, TokenType.LIKE, TokenType.IN)) {
+                ConditionNode conditionNode = new ConditionNode();
+                conditionNode.setLeft(left);
+                conditionNode.setOperator(expect(TokenType.EE, TokenType.NEQ, TokenType.LT, TokenType.GT, TokenType.LE, TokenType.GE, TokenType.LIKE, TokenType.IN).type);
+                conditionNode.setRight(arithmetic());
+                return conditionNode;
+            }
+            return left;
         } else if(isIn(TokenType.IDENTIFIER)) {
-            AstNode identifierNode = identifier();
+            AstConditional identifierNode = identifier();
             ConditionNode conditionNode = new ConditionNode();
             conditionNode.setLeft(identifierNode);
-            conditionNode.setOperator(expect(TokenType.EE, TokenType.NEQ, TokenType.LT, TokenType.GT, TokenType.LE, TokenType.GE, TokenType.LIKE, TokenType.IN).lexeme);
+            conditionNode.setOperator(expect(TokenType.EE, TokenType.NEQ, TokenType.LT, TokenType.GT, TokenType.LE, TokenType.GE, TokenType.LIKE, TokenType.IN).type);
             conditionNode.setRight(arithmetic());
             return conditionNode;
         } else if(isIn(TokenType.IDENTIFIER) && lookahead(1).type == TokenType.ASSIGNMENT) {
             return assignment();
         } else {
-            throw new ParseException("Expected IDENTIFIER, NUMBER, FUNCTION, LPAREN, PLUS, or MINUS, found " + peek().type, pos);
+            throw new ParseException("Expected IDENTIFIER, NUMBER, TIME_UNIT, FUNCTION, LPAREN, PLUS, or MINUS, found " + peek().type, pos);
         }
     }
 
@@ -396,19 +429,27 @@ public class Parser {
         }
     }
 
-    private AstNode arithmetic() throws ParseException {
-        if(isIn(TokenType.FUNCTION, TokenType.PLUS, TokenType.MINUS, TokenType.LPAREN, TokenType.IDENTIFIER, TokenType.NUMBER)) {
-            AstNode left = term();
+    private AstConditional arithmetic() throws ParseException {
+        if(isIn(TokenType.FUNCTION, TokenType.PLUS, TokenType.MINUS, TokenType.LPAREN, TokenType.IDENTIFIER, TokenType.NUMBER, TokenType.TIME_UNIT)) {
+            AstConditional left = term();
             return arithmeticPrime(left);
+        } else if(isIn(TokenType.STRING)) {
+            StringNode stringNode = new StringNode();
+            stringNode.setValue(expect(TokenType.STRING).lexeme);
+            return stringNode;
+        } else if(isIn(TokenType.BOOLEAN)) {
+            BooleanNode boolNode = new BooleanNode();
+            boolNode.setValue(Boolean.parseBoolean(expect(TokenType.BOOLEAN).lexeme));
+            return boolNode;
         } else {
-            throw new ParseException("Expected PLUS, MINUS, LPAREN, FUNCTION, IDENTIFIER, or NUMBER for arithmetic expression, found " + peek().type, pos);
+            throw new ParseException("Expected PLUS, MINUS, LPAREN, FUNCTION, IDENTIFIER, TIME_UNIT, or NUMBER for arithmetic expression, found " + peek().type, pos);
         }
     }
 
-    private AstNode arithmeticPrime(AstNode left) throws ParseException {
+    private AstConditional arithmeticPrime(AstConditional left) throws ParseException {
         if(isIn(TokenType.PLUS, TokenType.MINUS)) {
             String operator = expect(TokenType.PLUS, TokenType.MINUS).lexeme;
-            AstNode right = term();
+            AstConditional right = term();
             return new BinaryOpNode(operator, left, right);
         } else if(isIn(TokenType.EE, TokenType.NEQ, TokenType.LT, TokenType.GT, TokenType.LE, TokenType.GE, TokenType.LIKE, TokenType.IN, TokenType.AND, TokenType.OR, TokenType.RPAREN, TokenType.COMMA, TokenType.AS, TokenType.FROM, TokenType.GROUP_BY, TokenType.ORDER_BY, TokenType.HAVING, TokenType.LIMIT, TokenType.EOQ, TokenType.EOF)){
             return left;
@@ -417,19 +458,19 @@ public class Parser {
         }
     }
 
-    private AstNode term() throws ParseException {
-        if(isIn(TokenType.FUNCTION, TokenType.LPAREN, TokenType.MINUS, TokenType.PLUS, TokenType.IDENTIFIER, TokenType.NUMBER)) {
-            AstNode left = factor();
+    private AstConditional term() throws ParseException {
+        if(isIn(TokenType.FUNCTION, TokenType.LPAREN, TokenType.MINUS, TokenType.PLUS, TokenType.IDENTIFIER, TokenType.NUMBER, TokenType.TIME_UNIT)) {
+            AstConditional left = factor();
             return termPrime(left);
         } else  {
-            throw new ParseException("Expected LPAREN, IDENTIFIER, FUNCTION, NUMBER, or FUNCTION for term, found " + peek().type, pos);
+            throw new ParseException("Expected LPAREN, IDENTIFIER, FUNCTION, NUMBER, TIME_UNIT, or FUNCTION for term, found " + peek().type, pos);
         }
     }
 
-    private AstNode termPrime(AstNode left) throws ParseException {
+    private AstConditional termPrime(AstConditional left) throws ParseException {
         if(isIn(TokenType.MULT, TokenType.DIV)) {
             String operator = expect(TokenType.MULT, TokenType.DIV).lexeme;
-            AstNode right = factor();
+            AstConditional right = factor();
             return new BinaryOpNode(operator, left, right);
         } else if(isIn(TokenType.PLUS, TokenType.MINUS, TokenType.EE, TokenType.NEQ, TokenType.LT, TokenType.GT, TokenType.LE, TokenType.GE, TokenType.LIKE, TokenType.IN, TokenType.AND, TokenType.OR, TokenType.RPAREN, TokenType.COMMA, TokenType.AS, TokenType.FROM, TokenType.GROUP_BY, TokenType.ORDER_BY, TokenType.HAVING, TokenType.LIMIT, TokenType.EOQ, TokenType.EOF)) {
             return left; // No more terms
@@ -438,19 +479,19 @@ public class Parser {
         }
     }
 
-    private AstNode factor() throws ParseException {
-        if(isIn(TokenType.FUNCTION, TokenType.PLUS, TokenType.MINUS, TokenType.LPAREN, TokenType.IDENTIFIER, TokenType.NUMBER)) {
-            AstNode right = power();
+    private AstConditional factor() throws ParseException {
+        if(isIn(TokenType.FUNCTION, TokenType.PLUS, TokenType.MINUS, TokenType.LPAREN, TokenType.IDENTIFIER, TokenType.NUMBER, TokenType.TIME_UNIT)) {
+            AstConditional right = power();
             return factorPrime(right);
         } else {
-            throw new ParseException("Expected PLUS, MINUS, LPAREN, FUNCTION, IDENTIFIER, or NUMBER for factor, found " + peek().type, pos);
+            throw new ParseException("Expected PLUS, MINUS, LPAREN, FUNCTION, IDENTIFIER, TIME_UNIT, or NUMBER for factor, found " + peek().type, pos);
         }
     }
 
-    private AstNode factorPrime(AstNode right) throws ParseException {
+    private AstConditional factorPrime(AstConditional right) throws ParseException {
         if(isIn(TokenType.EXP)) {
             String operator = expect(TokenType.EXP).lexeme;
-            AstNode left = power();
+            AstConditional left = power();
             return new BinaryOpNode(operator, left, right);
         } else if(isIn(TokenType.MULT, TokenType.DIV, TokenType.PLUS, TokenType.MINUS, TokenType.EE, TokenType.NEQ, TokenType.LT, TokenType.GT, TokenType.LE, TokenType.GE, TokenType.LIKE, TokenType.IN, TokenType.AND, TokenType.OR, TokenType.RPAREN, TokenType.COMMA, TokenType.AS, TokenType.FROM, TokenType.GROUP_BY, TokenType.ORDER_BY, TokenType.HAVING, TokenType.LIMIT, TokenType.EOQ, TokenType.EOF)) {
             return right; // No more factors
@@ -459,34 +500,36 @@ public class Parser {
         }
     }
 
-    private AstNode power() throws ParseException {
-        if(isIn(TokenType.FUNCTION, TokenType.PLUS, TokenType.MINUS, TokenType.LPAREN, TokenType.IDENTIFIER, TokenType.NUMBER)) {
+    private AstConditional power() throws ParseException {
+        if(isIn(TokenType.FUNCTION, TokenType.PLUS, TokenType.MINUS, TokenType.LPAREN, TokenType.IDENTIFIER, TokenType.NUMBER, TokenType.TIME_UNIT)) {
             return unary();
         } else {
-            throw new ParseException("Expected PLUS, MINUS, LPAREN, IDENTIFIER, FUnCTION, or NUMBER for power, found " + peek().type, pos);
+            throw new ParseException("Expected PLUS, MINUS, LPAREN, IDENTIFIER, FUNCTION, TIME_UNIT, or NUMBER for power, found " + peek().type, pos);
         }
     }
 
-    private AstNode unary() throws ParseException {
+    private AstConditional unary() throws ParseException {
         if(isIn(TokenType.PLUS, TokenType.MINUS)) {
             String operator = expect(TokenType.PLUS, TokenType.MINUS).lexeme;
-            AstNode operand = primary();
+            AstConditional operand = primary();
             return new UnaryOpNode(operator, operand);
-        } else if(isIn(TokenType.FUNCTION, TokenType.LPAREN, TokenType.IDENTIFIER, TokenType.NUMBER)) {
+        } else if(isIn(TokenType.FUNCTION, TokenType.LPAREN, TokenType.IDENTIFIER, TokenType.NUMBER, TokenType.TIME_UNIT)) {
             return primary();
         } else {
-            throw new ParseException("Expected PLUS, MINUS, LPAREN, IDENTIFIER, FUNCTION, or NUMBER for unary operation, found " + peek().type, pos);
+            throw new ParseException("Expected PLUS, MINUS, LPAREN, IDENTIFIER, FUNCTION, TIME_UNIT, or NUMBER for unary operation, found " + peek().type, pos);
         }
     }
 
-    private AstNode primary() throws ParseException {
+    private AstConditional primary() throws ParseException {
         if(isIn(TokenType.IDENTIFIER)) {
             return identifier();
         } else if(isIn(TokenType.NUMBER)) {
             return new NumberNode(expect(TokenType.NUMBER).lexeme);
+        } else if(isIn(TokenType.TIME_UNIT)) {
+            return new TimeNode(expect(TokenType.TIME_UNIT).lexeme);
         } else if(isIn(TokenType.LPAREN)) {
             advance(); // Consume LPAREN
-            AstNode arithmeticNode = arithmetic();
+            AstConditional arithmeticNode = arithmetic();
             expect(TokenType.RPAREN);
             return arithmeticNode;
         } else if(isIn(TokenType.FUNCTION)) {
@@ -521,7 +564,7 @@ public class Parser {
         return pos < tokens.size() ? tokens.get(pos) : new Token(TokenType.EOF, "", pos);
     }
 
-    private AstNode identifier() {
+    private AstConditional identifier() {
         if(lookahead(1).type == TokenType.DOT) {
             String table = expect(TokenType.IDENTIFIER).lexeme;
             advance(); // Consume DOT

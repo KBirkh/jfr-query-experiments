@@ -1,6 +1,8 @@
-package me.bechberger.jfr.wrap;
+package me.bechberger.jfr.wrap.nodes;
 
-public class NumberNode extends AstNode {
+import me.bechberger.jfr.wrap.EvalRow;
+
+public class NumberNode extends AstConditional {
     private String value;
 
     public NumberNode(String value) {
@@ -12,5 +14,9 @@ public class NumberNode extends AstNode {
         String dent = "  ".repeat(indent);
         sb.append("\n").append(dent).append(this.getClass().getSimpleName()).append(": ").append(value);
         return sb.toString();
+    }
+
+    public Object eval(EvalRow row) {
+        return value != null ? Double.parseDouble(value) : null;
     }
 }

@@ -1,6 +1,6 @@
-package me.bechberger.jfr.wrap;
+package me.bechberger.jfr.wrap.nodes;
 
-public class ArithmeticNode extends AstNode {
+public class ArithmeticNode extends AstConditional {
     private AstNode left;
     private String op;
     private AstNode right;
