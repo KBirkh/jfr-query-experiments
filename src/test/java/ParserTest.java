@@ -530,7 +530,7 @@ public class ParserTest {
             query(true, 
                 select(identifier("col1", "t")), 
                 from(source("table", "t")), 
-                where(and(function("p99", identifier("col2", "t")), condition(TokenType.LT, identifier("col3", "t"), number("100")))), 
+                where(and(condition(TokenType.EE, function("p99", identifier("col2", "t")), identifier("id")), condition(TokenType.LT, identifier("col3", "t"), number("100")))), 
                 null, null, null, null
             )
         );

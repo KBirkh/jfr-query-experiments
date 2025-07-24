@@ -63,14 +63,15 @@ public class Main /* implements Callable<Integer> */ {
     } */
 
     public static void main(String[] args) {
-        String input = "@SELECT * FROM [SELECT * FROM GCPhaseParallel] AS gcP WHERE gcP.eventThread == \"GC Thread#2\"";
+        String tmp = "@SELECT * FROM [SELECT * FROM GCPhaseParallel] AS gcP WHERE gcP.eventThread == \"GC Thread#2\"";
+        String input = "@SELECT t.col1 FROM table AS t WHERE p99(t.col2) == id AND t.col3 < 100";
         Lexer lexer = new Lexer(input);
         Parser parser = new Parser(lexer.tokenize(), input);
         try {
             AstNode res = parser.parse();
-            res.eval();
+            /* res.eval();
             Evaluator evaluator = Evaluator.getInstance();
-            System.out.println(evaluator);
+            System.out.println(evaluator); */
             System.out.println(res.toString(0));
         } catch (ParseException e) {
             
