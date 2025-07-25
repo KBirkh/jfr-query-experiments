@@ -2,12 +2,16 @@ package me.bechberger.jfr.wrap;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+
+import me.bechberger.jfr.wrap.nodes.AstNode;
 
 
 public class Evaluator {
     private static Evaluator instance;
     private HashMap<String, EvalTable> tables;
+    private List<AstNode> aggregates;
 
     private Evaluator() {
         this.tables = new HashMap<String, EvalTable>();
@@ -84,6 +88,13 @@ public class Evaluator {
             }
         }
         return sb.toString();
+    }
+
+    public void addAggregate(AstNode aggregate) {
+        if (aggregates == null) {
+            aggregates = new ArrayList<>();
+        }
+        aggregates.add(aggregate);
     }
 }
 

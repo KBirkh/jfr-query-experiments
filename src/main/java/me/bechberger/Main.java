@@ -64,7 +64,7 @@ public class Main /* implements Callable<Integer> */ {
     } */
 
     public static void main(String[] args) {
-        String input = "@SELECT * FROM [SELECT * FROM GCPhaseParallel] AS gcP WHERE gcP.duration < 1us AND gcP.eventThread == \"GC Thread#2\" OR gcP.eventThread == \"GC Thread#3\";";
+        String input = "@SELECT AVG(gcP.duration) FROM [SELECT * FROM GCPhaseParallel] AS gcP WHERE gcP.duration < 1us AND gcP.eventThread == \"GC Thread#2\" OR gcP.eventThread == \"GC Thread#3\";";
         Lexer lexer = new Lexer(input);
         Parser parser = new Parser(lexer.tokenize(), input);
         try {
@@ -72,7 +72,7 @@ public class Main /* implements Callable<Integer> */ {
             res.eval();
             Evaluator evaluator = Evaluator.getInstance();
             System.out.println(evaluator);
-            System.out.println(res.toString(0));
+            /* System.out.println(res.toString(0)); */
         } catch (ParseException e) {
             
             e.printStackTrace();

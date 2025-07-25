@@ -120,6 +120,7 @@ public class QueryNode extends AstNode {
         if(where != null) {
             where.eval();
         }
+        select.findAggregates();
         return null;
     }
     

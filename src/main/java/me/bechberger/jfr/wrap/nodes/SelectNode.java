@@ -2,6 +2,8 @@ package me.bechberger.jfr.wrap.nodes;
 
 import java.util.List;
 
+import me.bechberger.jfr.wrap.Evaluator;
+
 public class SelectNode extends AstNode {
     private List<AstNode> columns;
     public boolean isStar;
@@ -37,6 +39,15 @@ public class SelectNode extends AstNode {
 
     public void addColumn(AstNode expression) {
         columns.add(expression);
+    }
+    
+    public void findAggregates() {
+        Evaluator evaluator = Evaluator.getInstance();
+        for (AstNode column : columns) {
+            if (column instanceof FunctionNode) {
+                evaluator.addAggregate(column);
+            }
+        }
     }
 
 }
