@@ -3,6 +3,8 @@ package me.bechberger.jfr.wrap.nodes;
 import java.util.ArrayList;
 import java.util.List;
 
+import me.bechberger.jfr.wrap.EvalRow;
+
 public class FunctionNode extends AstConditional {
     private String name;
     private List<AstNode> arguments;
@@ -59,5 +61,9 @@ public class FunctionNode extends AstConditional {
 
     public void addArgument(AstNode expression) {
         arguments.add(expression);
+    }
+
+    public Object eval(EvalRow row) {
+        return null; // TODO
     }
 }

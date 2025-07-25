@@ -11,12 +11,12 @@ public abstract class AstNode {
         return sb.toString();
     }
 
-    public void eval() {
-
+    public Object eval() {
+        return null;
     }
 
-    public void eval(String alias) {
-        
+    public Object eval(String alias) {
+        return null;
     }
 
     public Object eval(EvalRow row) {

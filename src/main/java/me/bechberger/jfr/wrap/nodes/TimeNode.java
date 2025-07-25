@@ -1,5 +1,9 @@
 package me.bechberger.jfr.wrap.nodes;
 
+import java.time.Duration;
+
+import me.bechberger.jfr.wrap.EvalRow;
+
 public class TimeNode extends AstConditional {
 
     private double timeValue;
@@ -20,6 +24,31 @@ public class TimeNode extends AstConditional {
             }
         }
 
+    }
+
+    private long getUnitMultiplier() {
+        switch (timeUnit.toLowerCase()) {
+            case "ns":
+                return 1L;
+            case "µs":
+                return 1_000L;
+            case "us":
+                return 1_000L;
+            case "ms":
+                return 1_000_000L;
+            case "s":
+                return 1_000_000_000L;
+            case "m":
+                return 60_000_000_000L;
+            case "h":
+                return 3_600_000_000_000L;
+            default:
+                throw new IllegalArgumentException("Unknown time unit: " + timeUnit);
+        }
+    }
+
+    public Object eval(EvalRow row) {
+        return Duration.ofNanos((long) timeValue * getUnitMultiplier());
     }
 
     public String toString(int indent) {

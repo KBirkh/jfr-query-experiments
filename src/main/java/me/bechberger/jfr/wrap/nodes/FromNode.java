@@ -40,10 +40,11 @@ public class FromNode extends AstNode {
     }
 
     @Override
-    public void eval() {
+    public Object eval() {
         for(AstNode source : sources) {
             source.eval();
         }
+        return null;
     }
 
 }

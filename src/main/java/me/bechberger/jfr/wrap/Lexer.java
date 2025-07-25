@@ -179,12 +179,26 @@ public class Lexer {
             advance();
             while (Character.isDigit(peek())) advance();
         }
-        if(peek() == 's') {
+        if (peek() == 'n') { // Detect nanoseconds (ns)
+            advance();
+            if (peek() == 's') {
+                advance();
+                return new Token(TokenType.TIME_UNIT, input.substring(start, pos), start);
+            }
+            throw new RuntimeException("Unexpected character after 'n': " + peek());
+        } else if (peek() == 'u' || peek() == 'µ') { // Detect microseconds (us)
+            advance();
+            if (peek() == 's') {
+                advance();
+                return new Token(TokenType.TIME_UNIT, input.substring(start, pos), start);
+            }
+            throw new RuntimeException("Unexpected character after 'u': " + peek());
+        } else if (peek() == 's') { // Detect seconds (s)
             advance();
             return new Token(TokenType.TIME_UNIT, input.substring(start, pos), start);
-        } else if(peek() == 'm') {
+        } else if (peek() == 'm') { // Detect milliseconds (ms) or minutes (m)
             advance();
-            if(peek() == 's') {
+            if (peek() == 's') {
                 advance();
                 return new Token(TokenType.TIME_UNIT, input.substring(start, pos), start);
             }

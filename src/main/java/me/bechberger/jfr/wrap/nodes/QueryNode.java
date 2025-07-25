@@ -112,7 +112,7 @@ public class QueryNode extends AstNode {
     }
 
     @Override
-    public void eval() {
+    public Object eval() {
         if(!select.isStar) {
             select.eval();
         }
@@ -120,6 +120,7 @@ public class QueryNode extends AstNode {
         if(where != null) {
             where.eval();
         }
+        return null;
     }
     
 

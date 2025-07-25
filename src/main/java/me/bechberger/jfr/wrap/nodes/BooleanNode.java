@@ -1,5 +1,7 @@
 package me.bechberger.jfr.wrap.nodes;
 
+import me.bechberger.jfr.wrap.EvalRow;
+
 public class BooleanNode extends AstConditional {
     private boolean value;
 
@@ -16,6 +18,10 @@ public class BooleanNode extends AstConditional {
     }
 
     public boolean getValue() {
+        return value;
+    }
+
+    public Boolean eval(EvalRow row) {
         return value;
     }
 }

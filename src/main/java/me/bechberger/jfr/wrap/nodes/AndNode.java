@@ -1,5 +1,7 @@
 package me.bechberger.jfr.wrap.nodes;
 
+import me.bechberger.jfr.wrap.EvalRow;
+
 public class AndNode extends AstConditional {
     private AstNode left;
     private AstNode right;
@@ -38,6 +40,23 @@ public class AndNode extends AstConditional {
         sb.append("\n").append(dent).append("  Left: ").append(left.toString(indent + 1));
         sb.append("\n").append(dent).append("  Right: ").append(right.toString(indent + 1));
         return sb.toString();
+    }
+
+    public Object eval(EvalRow row) {
+        if (left == null || right == null) {
+            throw new IllegalStateException("Left and right nodes must be set before evaluation");
+        }
+        Boolean leftValue = (Boolean) left.eval(row);
+        if(!leftValue){ 
+            return false;
+        }   
+        Object rightValue = right.eval(row);
+        
+        if (leftValue instanceof Boolean && rightValue instanceof Boolean) {
+            return (Boolean) leftValue && (Boolean) rightValue;
+        } else {
+            throw new IllegalArgumentException("Both left and right nodes must evaluate to Boolean values");
+        }
     }
     
 }

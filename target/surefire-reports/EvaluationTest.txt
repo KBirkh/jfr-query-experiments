@@ -1,4 +1,4 @@
 -------------------------------------------------------------------------------
-Test set: ParserTest
+Test set: EvaluationTest
 -------------------------------------------------------------------------------
-Tests run: 35, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.042 s -- in ParserTest
+Tests run: 8, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.008 s -- in EvaluationTest

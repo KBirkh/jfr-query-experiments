@@ -72,7 +72,9 @@ public class ConditionNode extends AstNode {
 
         if(leftValue instanceof RecordedThread) {
             leftValue = ((RecordedThread) leftValue).getOSName();
-        } 
+        }  else if(leftValue instanceof Integer) {
+            leftValue = Double.parseDouble(leftValue.toString());
+        }
         if (leftValue == null || rightValue == null) {
             return false; // Handle null values as false
         }

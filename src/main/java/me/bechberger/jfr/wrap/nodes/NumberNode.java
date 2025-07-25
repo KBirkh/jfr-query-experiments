@@ -19,4 +19,8 @@ public class NumberNode extends AstConditional {
     public Object eval(EvalRow row) {
         return value != null ? Double.parseDouble(value) : null;
     }
+
+    public String getType() {
+        return "Number";
+    }
 }

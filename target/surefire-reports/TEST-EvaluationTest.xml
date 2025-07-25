@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuite xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://maven.apache.org/surefire/maven-surefire-plugin/xsd/surefire-test-report-3.0.xsd" version="3.0" name="ParserTest" time="0.042" tests="35" errors="0" skipped="0" failures="0">
+<testsuite xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://maven.apache.org/surefire/maven-surefire-plugin/xsd/surefire-test-report-3.0.xsd" version="3.0" name="EvaluationTest" time="0.008" tests="8" errors="0" skipped="0" failures="0">
   <properties>
     <property name="java.specification.version" value="21"/>
     <property name="sun.jnu.encoding" value="UTF-8"/>
@@ -55,39 +55,12 @@
     <property name="sun.io.unicode.encoding" value="UnicodeBig"/>
     <property name="java.class.version" value="65.0"/>
   </properties>
-  <testcase name="testInvalidOperator" classname="ParserTest" time="0.001"/>
-  <testcase name="testSelectWithFunctionCall" classname="ParserTest" time="0.001"/>
-  <testcase name="testUnclosedParenthesis" classname="ParserTest" time="0.0"/>
-  <testcase name="testMultipleQueries" classname="ParserTest" time="0.001"/>
-  <testcase name="testOpenJDK" classname="ParserTest" time="0.001"/>
-  <testcase name="testMissingSelectClause" classname="ParserTest" time="0.0"/>
-  <testcase name="testInvalidQueryAssignment" classname="ParserTest" time="0.001"/>
-  <testcase name="testArithmeticExpressionInWhere" classname="ParserTest" time="0.001"/>
-  <testcase name="testInvalidFunctionCallSyntax" classname="ParserTest" time="0.002"/>
-  <testcase name="testCombinedQueries(String)[1]" classname="ParserTest" time="0.007"/>
-  <testcase name="testCombinedQueries(String)[2]" classname="ParserTest" time="0.0"/>
-  <testcase name="testCombinedQueries(String)[3]" classname="ParserTest" time="0.0"/>
-  <testcase name="testCombinedQueries(String)[4]" classname="ParserTest" time="0.001"/>
-  <testcase name="testCombinedQueries(String)[5]" classname="ParserTest" time="0.0"/>
-  <testcase name="testCombinedQueries(String)[6]" classname="ParserTest" time="0.001"/>
-  <testcase name="testCombinedQueries(String)[7]" classname="ParserTest" time="0.0"/>
-  <testcase name="testCombinedQueries(String)[8]" classname="ParserTest" time="0.0"/>
-  <testcase name="testMultipleQueries2" classname="ParserTest" time="0.0"/>
-  <testcase name="testTableIdentifiers" classname="ParserTest" time="0.0"/>
-  <testcase name="testSelectWithSubquery" classname="ParserTest" time="0.001"/>
-  <testcase name="testSimpleSelect" classname="ParserTest" time="0.0"/>
-  <testcase name="testSelectWithArithmeticExpression" classname="ParserTest" time="0.001"/>
-  <testcase name="testEverything" classname="ParserTest" time="0.0"/>
-  <testcase name="testSingleCondition" classname="ParserTest" time="0.001"/>
-  <testcase name="testTreeBuilder" classname="ParserTest" time="0.0"/>
-  <testcase name="testFunctionCallInSelect" classname="ParserTest" time="0.001"/>
-  <testcase name="testSelectWithWhere" classname="ParserTest" time="0.0"/>
-  <testcase name="testOpenJDK2" classname="ParserTest" time="0.0"/>
-  <testcase name="testMissingFromClause" classname="ParserTest" time="0.0"/>
-  <testcase name="testFunctionCallInWhere" classname="ParserTest" time="0.0"/>
-  <testcase name="testTimeUnits" classname="ParserTest" time="0.0"/>
-  <testcase name="testAllTheThings" classname="ParserTest" time="0.001"/>
-  <testcase name="testArithmeticExpressionInSelect" classname="ParserTest" time="0.0"/>
-  <testcase name="testQueryAssignment" classname="ParserTest" time="0.0"/>
-  <testcase name="testTableAlias" classname="ParserTest" time="0.001"/>
+  <testcase name="testTimeNode" classname="EvaluationTest" time="0.001"/>
+  <testcase name="testNumberNode" classname="EvaluationTest" time="0.001"/>
+  <testcase name="testConditionNode" classname="EvaluationTest" time="0.003"/>
+  <testcase name="testIdentifierNode" classname="EvaluationTest" time="0.001"/>
+  <testcase name="testMultipleComplexConditions" classname="EvaluationTest" time="0.0"/>
+  <testcase name="testMultipleConditions" classname="EvaluationTest" time="0.001"/>
+  <testcase name="testBooleanNode" classname="EvaluationTest" time="0.0"/>
+  <testcase name="testStringNode" classname="EvaluationTest" time="0.001"/>
 </testsuite>

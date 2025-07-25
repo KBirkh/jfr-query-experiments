@@ -35,12 +35,13 @@ public class WhereNode extends AstNode {
         return sb.toString();
     }
 
-    public void eval() {
+    public Object eval() {
         Evaluator evaluator = Evaluator.getInstance();
         EvalTable evalTable = evaluator.getFirstTable();
         evalTable.rows = evalTable.getRows().stream()
-            .filter(row -> ((ConditionNode) condition).eval(row))
+            .filter(row -> (Boolean) condition.eval(row) == true)
             .toList();
+        return null;
     }
 
 }

@@ -54,7 +54,7 @@ public class OpenJDKQueryNode extends AstNode {
         return sb.toString();
     }
     @Override
-    public void eval(String alias) {
+    public Object eval(String alias) {
         QueryCommand queryCommand = new QueryCommand();
         queryCommand.setView(query);
         queryCommand.setFile("src/main/java/me/bechberger/jfr/voronoi2.jfr");
@@ -63,7 +63,7 @@ public class OpenJDKQueryNode extends AstNode {
             Table table = queryCommand.call();
             if(table == null) {
                 System.err.println("Query returned null table: " + query);
-                return;
+                return null;
             }
             EvalTable evalTable = TableUtils.toEvalTable(table, alias);
             Evaluator evaluator = Evaluator.getInstance();
@@ -72,10 +72,11 @@ public class OpenJDKQueryNode extends AstNode {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
+        return null;
     }
 
     @Override
-    public void eval() {
+    public Object eval() {
         QueryCommand queryCommand = new QueryCommand();
         queryCommand.setView(query);
         queryCommand.setFile("src/main/java/me/bechberger/jfr/voronoi2.jfr");
@@ -84,7 +85,7 @@ public class OpenJDKQueryNode extends AstNode {
             Table table = queryCommand.call();
             if(table == null) {
                 System.err.println("Query returned null table: " + query);
-                return;
+                return null;
             }
             EvalTable evalTable = TableUtils.toEvalTable(table);
             Evaluator evaluator = Evaluator.getInstance();
@@ -93,6 +94,7 @@ public class OpenJDKQueryNode extends AstNode {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
+        return null;
     }
     
 }
