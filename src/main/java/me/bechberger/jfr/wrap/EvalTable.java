@@ -2,22 +2,24 @@ package me.bechberger.jfr.wrap;
 
 import java.util.List;
 
+import me.bechberger.jfr.wrap.nodes.AstNode;
+
 public class EvalTable {
     public List<Column> columns;
     public List<EvalRow> rows;
-    private String query;
+    private AstNode root;
 
     public EvalTable(List<Column> columns, List<EvalRow> rows) {
         this.columns = columns;
         this.rows = rows;
     }
 
-    public void setQuery(String query) {
-        this.query = query;
+    public void setQuery(AstNode root) {
+        this.root = root;
     }
 
-    public String getQuery() {
-        return query;
+    public AstNode getRoot() {
+        return root;
     }
 
     public void setAlias(String alias) {

@@ -120,18 +120,18 @@ public class FunctionNode extends AstConditional {
     }
 
     @Override
-    public Object eval(Object obj) {
+    public Object eval(Object obj, AstNode root) {
         Evaluator evaluator = Evaluator.getInstance();
         if(evaluator.state == EvalState.GROUP_BY) {
-            return evalGroup(obj);
+            return evalGroup(obj, root);
         } else if(evaluator.state == EvalState.WHERE) {
-            return evalWhere((EvalRow) obj);
+            return evalWhere((EvalRow) obj, root);
         } else {
-            return evalHaving((EvalRow) obj);
+            return evalHaving((EvalRow) obj, root);
         }
     }
 
-    private Object evalHaving(EvalRow row) {
+    private Object evalHaving(EvalRow row, AstNode root) {
         if (row == null) {
             throw new IllegalArgumentException("EvalRow cannot be null");
         }
@@ -147,7 +147,7 @@ public class FunctionNode extends AstConditional {
             case P95:
             case P99:
             case P999:
-                return evalWhere(row);
+                return evalWhere(row, root);
             case BEFORE_GC:
                 return evalBeforeGC(List.of(row));
             case AFTER_GC:
@@ -159,7 +159,7 @@ public class FunctionNode extends AstConditional {
         }
     } 
 
-    private Object evalWhere(EvalRow row) {
+    private Object evalWhere(EvalRow row, AstNode root) {
         Evaluator evaluator = Evaluator.getInstance();
         if (row == null) {
             throw new IllegalArgumentException("EvalRow cannot be null");
@@ -173,28 +173,28 @@ public class FunctionNode extends AstConditional {
                 // These functions are not evaluated in WHERE context
                 throw new UnsupportedOperationException("Function " + name + " cannot be used in WHERE clause");
             case P50:
-                Comparable<Object> toCompare = (Comparable<Object>) arguments.get(0).eval(row);
-                if(((Comparable<Object>) evaluator.getPercentiles(arguments.get(0))[4]).compareTo(toCompare) > 0) {
+                Comparable<Object> toCompare = (Comparable<Object>) arguments.get(0).eval(row, root);
+                if(((Comparable<Object>) evaluator.getPercentiles(arguments.get(0), root)[4]).compareTo(toCompare) > 0) {
                     return false;
                 } else return true;
             case P90:
-                toCompare = (Comparable<Object>) arguments.get(0).eval(row);
-                if(((Comparable<Object>) evaluator.getPercentiles(arguments.get(0))[3]).compareTo(toCompare) > 0) {
+                toCompare = (Comparable<Object>) arguments.get(0).eval(row, root);
+                if(((Comparable<Object>) evaluator.getPercentiles(arguments.get(0), root)[3]).compareTo(toCompare) > 0) {
                     return false;
                 } else return true;
             case P95:
-                toCompare = (Comparable<Object>) arguments.get(0).eval(row);
-                if(((Comparable<Object>) evaluator.getPercentiles(arguments.get(0))[2]).compareTo(toCompare) > 0) {
+                toCompare = (Comparable<Object>) arguments.get(0).eval(row, root);
+                if(((Comparable<Object>) evaluator.getPercentiles(arguments.get(0), root)[2]).compareTo(toCompare) > 0) {
                 return false;
                 } else return true;
             case P99:
-                toCompare = (Comparable<Object>) arguments.get(0).eval(row);
-                if(((Comparable<Object>) evaluator.getPercentiles(arguments.get(0))[1]).compareTo(toCompare) > 0) {
+                toCompare = (Comparable<Object>) arguments.get(0).eval(row, root);
+                if(((Comparable<Object>) evaluator.getPercentiles(arguments.get(0), root)[1]).compareTo(toCompare) > 0) {
                     return false;
                 } else return true;
             case P999:
-                toCompare = (Comparable<Object>) arguments.get(0).eval(row);
-                if(((Comparable<Object>) evaluator.getPercentiles(arguments.get(0))[0]).compareTo(toCompare) > 0) {
+                toCompare = (Comparable<Object>) arguments.get(0).eval(row, root);
+                if(((Comparable<Object>) evaluator.getPercentiles(arguments.get(0), root)[0]).compareTo(toCompare) > 0) {
                     return false;
                 } else return true;
             case BEFORE_GC:
@@ -207,22 +207,22 @@ public class FunctionNode extends AstConditional {
         }
     }
 
-    private Object evalGroup(Object rows) {
+    private Object evalGroup(Object rows, AstNode root) {
         // Only called from Evaluator -> assume rows is a List<EvalRow>
         List<EvalRow> evalRows = (List<EvalRow>) rows;
     
         // Dispatch to specific function type handler
         switch (type) {
             case SUM:
-                return evalSum(evalRows);
+                return evalSum(evalRows, root);
             case AVG:
-                return evalAvg(evalRows);
+                return evalAvg(evalRows, root);
             case COUNT:
                 return evalCount(evalRows);
             case MIN:
-                return evalMin(evalRows);
+                return evalMin(evalRows, root);
             case MAX:
-                return evalMax(evalRows);
+                return evalMax(evalRows, root);
             // Should already be evaluated by this time
             case P90:
             case P95:
@@ -237,38 +237,38 @@ public class FunctionNode extends AstConditional {
         }
     }
 
-    private Object evalSum(List<EvalRow> rows) {
+    private Object evalSum(List<EvalRow> rows, AstNode root) {
         AstNode arg = arguments.get(0);
         if (rows.isEmpty()) {
             return 0;
         }
     
-        if (arg.eval(rows.get(0)) instanceof Number) {
+        if (arg.eval(rows.get(0), root) instanceof Number) {
             return rows.stream()
-                .mapToDouble(row -> ((Number) arg.eval(row)).doubleValue())
+                .mapToDouble(row -> ((Number) arg.eval(row, root)).doubleValue())
                 .sum();
-        } else if (arg.eval(rows.get(0)) instanceof Duration) {
+        } else if (arg.eval(rows.get(0), root) instanceof Duration) {
             return rows.stream()
-                .map(row -> (Duration) arg.eval(row))
+                .map(row -> (Duration) arg.eval(row, root))
                 .reduce(Duration.ZERO, Duration::plus);
         } else {
             throw new IllegalArgumentException("SUM can only be applied to Number or Duration types");
         }
     }
 
-    private Object evalAvg(List<EvalRow> rows) {
+    private Object evalAvg(List<EvalRow> rows, AstNode root) {
         AstNode arg = arguments.get(0);
         if (rows.isEmpty()) {
             return 0.0;
         }
-        if (arg.eval(rows.get(0)) instanceof Number) {
+        if (arg.eval(rows.get(0), root) instanceof Number) {
             return rows.stream()
-                .mapToDouble(row -> ((Number) arg.eval(row)).doubleValue())
+                .mapToDouble(row -> ((Number) arg.eval(row, root)).doubleValue())
                 .average()
                 .orElse(0.0);
-        } else if (arg.eval(rows.get(0)) instanceof Duration) {
+        } else if (arg.eval(rows.get(0), root) instanceof Duration) {
             Duration total = rows.stream()
-                .map(row -> (Duration) arg.eval(row))
+                .map(row -> (Duration) arg.eval(row, root))
                 .reduce(Duration.ZERO, Duration::plus);
             return total.dividedBy(rows.size());
         } else {
@@ -280,19 +280,19 @@ public class FunctionNode extends AstConditional {
         return rows.size();
     }
 
-    private Object evalMin(List<EvalRow> rows) {
+    private Object evalMin(List<EvalRow> rows, AstNode root) {
         AstNode arg = arguments.get(0);
         if(rows.isEmpty()) {
             return 0.0;
         }
-        if (arg.eval(rows.get(0)) instanceof Number) {
+        if (arg.eval(rows.get(0), root) instanceof Number) {
             return rows.stream()
-                .mapToDouble(row -> ((Number) arg.eval(row)).doubleValue())
+                .mapToDouble(row -> ((Number) arg.eval(row, root)).doubleValue())
                 .min()
                 .orElse(Double.NaN);
-        } else if (arg.eval(rows.get(0)) instanceof Duration) {
+        } else if (arg.eval(rows.get(0), root) instanceof Duration) {
             return rows.stream()
-                .map(row -> (Duration) arg.eval(row))
+                .map(row -> (Duration) arg.eval(row, root))
                 .min(Duration::compareTo)
                 .orElse(Duration.ZERO);
         } else {
@@ -300,19 +300,19 @@ public class FunctionNode extends AstConditional {
         }
     }
 
-    private Object evalMax(List<EvalRow> rows) {
+    private Object evalMax(List<EvalRow> rows, AstNode root) {
         AstNode arg = arguments.get(0);
         if(rows.isEmpty()) {
             return 0.0;
         }
-        if (arg.eval(rows.get(0)) instanceof Number) {
+        if (arg.eval(rows.get(0), root) instanceof Number) {
             return rows.stream()
-                .mapToDouble(row -> ((Number) arg.eval(row)).doubleValue())
+                .mapToDouble(row -> ((Number) arg.eval(row, root)).doubleValue())
                 .max()
                 .orElse(Double.NaN);
-        } else if (arg.eval(rows.get(0)) instanceof Duration) {
+        } else if (arg.eval(rows.get(0), root) instanceof Duration) {
             return rows.stream()
-                .map(row -> (Duration) arg.eval(row))
+                .map(row -> (Duration) arg.eval(row, root))
                 .max(Duration::compareTo)
                 .orElse(Duration.ZERO);
         } else {

@@ -11,12 +11,12 @@ public abstract class AstNode {
         return sb.toString();
     }
 
-    public Object eval() {
+    public Object eval(AstNode root) {
         return null;
     }
 
-    public Object eval(Object obj) {
-        throw new UnsupportedOperationException("eval(Object obj) not implemented for " + this.getClass().getSimpleName());
+    public Object eval(Object obj, AstNode root) {
+        throw new UnsupportedOperationException("eval(Object obj, AstNode root) not implemented for " + this.getClass().getSimpleName());
     }
 
 

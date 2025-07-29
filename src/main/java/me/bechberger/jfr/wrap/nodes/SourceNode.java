@@ -59,12 +59,12 @@ public class SourceNode extends AstNode {
     }
 
     @Override
-    public Object eval() {
+    public Object eval(AstNode root) {
         if(isSubQuery) {
             if(alias == null || alias.isEmpty()) {
-                subquery.eval();
+                subquery.eval(root);
             } else {
-                subquery.eval(alias);
+                subquery.eval(alias, root);
             }
         }
         return null;

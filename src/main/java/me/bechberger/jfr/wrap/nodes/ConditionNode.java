@@ -62,13 +62,13 @@ public class ConditionNode extends AstNode {
         return sb.toString();
     }
     @Override
-    public Object eval(Object row) {
+    public Object eval(Object row, AstNode root) {
         if (left == null || right == null || operator == null) {
             throw new IllegalStateException("ConditionNode is not fully initialized");
         }
 
-        Object leftValue = left.eval(row);
-        Object rightValue = right.eval(row);
+        Object leftValue = left.eval(row, root);
+        Object rightValue = right.eval(row, root);
 
         if(leftValue instanceof RecordedThread) {
             leftValue = ((RecordedThread) leftValue).getOSName();

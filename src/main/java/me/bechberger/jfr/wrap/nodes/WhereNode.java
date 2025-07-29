@@ -34,12 +34,12 @@ public class WhereNode extends AstNode {
         }
         return sb.toString();
     }
-
-    public Object eval() {
+    @Override
+    public Object eval(AstNode root) {
         Evaluator evaluator = Evaluator.getInstance();
-        EvalTable evalTable = evaluator.getFirstTable();
+        EvalTable evalTable = evaluator.getTable(root);
         evalTable.rows = evalTable.getRows().parallelStream()
-            .filter(row -> (Boolean) condition.eval(row) != null && (Boolean) condition.eval(row))
+            .filter(row -> (Boolean) condition.eval(row, root) != null && (Boolean) condition.eval(row, root))
             .toList();
         return null;
     }

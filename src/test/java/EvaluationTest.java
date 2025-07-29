@@ -189,7 +189,7 @@ public class EvaluationTest {
     public void testNumberNode() {
         AstNode node = number("42");
         EvalRow row = new EvalRow();
-        Object result = node.eval(row);
+        Object result = node.eval(row, node);
         assert result instanceof Double : "Expected a Double result";
         assert ((Double) result).equals(42.0) : "Expected result to be 42.0";
     }
@@ -198,7 +198,7 @@ public class EvaluationTest {
     public void testTimeNode() {
         AstNode node = time("12ms");
         EvalRow row = new EvalRow();
-        Object result = node.eval(row);
+        Object result = node.eval(row, node);
         assert result instanceof Duration : "Expected a result of type Duration";
         assert result.equals(Duration.ofMillis(12)) : "Expected result to be 12ms Duration";
     }
@@ -208,7 +208,7 @@ public class EvaluationTest {
         AstNode node = identifier("eventName", "events");
         EvalRow row = new EvalRow();
         row.getFields().put("events_eventName", "testEvent");
-        Object result = node.eval(row);
+        Object result = node.eval(row, node);
         assert result instanceof String : "Expected a String result";
         assert result.equals("testEvent") : "Expected result to be 'testEvent'";
     }
@@ -217,7 +217,7 @@ public class EvaluationTest {
     public void testStringNode() {
         AstNode node = string("Hello, World!");
         EvalRow row = new EvalRow();
-        Object result = node.eval(row);
+        Object result = node.eval(row, node);
         assert result instanceof String : "Expected a String result";
         assert result.equals("Hello, World!") : "Expected result to be 'Hello, World!'";
     }
@@ -225,12 +225,12 @@ public class EvaluationTest {
     @Test
     public void testBooleanNode() {
         AstConditional node = bool(true);
-        Object result = node.eval(new EvalRow());
+        Object result = node.eval(new EvalRow(), node);
         assert result instanceof Boolean : "Expected a Boolean result";
         assert result.equals(true) : "Expected result to be true";
 
         node = bool(false);
-        result = node.eval(new EvalRow());
+        result = node.eval(new EvalRow(), node);
         assert result instanceof Boolean : "Expected a Boolean result";
         assert result.equals(false) : "Expected result to be false";
     }
@@ -244,12 +244,12 @@ public class EvaluationTest {
         EvalRow row = new EvalRow();
         row.getFields().put("events_eventName", "testEvent");
         
-        Boolean result = (Boolean) condition.eval(row);
+        Boolean result = (Boolean) condition.eval(row, condition);
         assert result : "Expected condition to evaluate to true";
 
         // Test with a different value
         row.getFields().put("events_eventName", "anotherEvent");
-        result = (Boolean) condition.eval(row);
+        result = (Boolean) condition.eval(row, condition);
         assert !result : "Expected condition to evaluate to false";
     }
 
@@ -269,12 +269,12 @@ public class EvaluationTest {
         row.getFields().put("events_eventName", "testEvent");
         row.getFields().put("events_duration", 1500.0);
         
-        Boolean result = (Boolean) combinedCondition.eval(row);
+        Boolean result = (Boolean) combinedCondition.eval(row, combinedCondition);
         assert result : "Expected combined condition to evaluate to true";
 
         // Test with a different value
         row.getFields().put("events_duration", 500.0);
-        result = (Boolean) combinedCondition.eval(row);
+        result = (Boolean) combinedCondition.eval(row, combinedCondition);
         assert !result : "Expected combined condition to evaluate to false";
     }
 
@@ -308,19 +308,19 @@ public void testMultipleComplexConditions() {
     row.getFields().put("events_eventType", "specialEvent");
 
     // Evaluate the combined condition
-    Boolean result = (Boolean) combinedCondition.eval(row);
+    Boolean result = (Boolean) combinedCondition.eval(row, combinedCondition);
     assert result : "Expected combined condition to evaluate to true";
 
     // Test with a different value
     row.getFields().put("events_eventName", "notEvent");
     row.getFields().put("events_duration", Duration.ofNanos(101L));
     row.getFields().put("events_eventType", "specialEvent");
-    result = (Boolean) combinedCondition.eval(row);
+    result = (Boolean) combinedCondition.eval(row, combinedCondition);
     assert result : "Expected combined condition to evaluate to true because of the third condition";
 
     // Test with all conditions failing
     row.getFields().put("events_eventType", "normalEvent");
-    result = (Boolean) combinedCondition.eval(row);
+    result = (Boolean) combinedCondition.eval(row, combinedCondition);
     assert !result : "Expected combined condition to evaluate to false";
 }
 

@@ -17,7 +17,7 @@ public class NumberNode extends AstConditional {
     }
 
     @Override
-    public Object eval(Object row) {
+    public Object eval(Object row, AstNode root) {
         return value != null ? Double.parseDouble(value) : null;
     }
 

@@ -25,7 +25,7 @@ public class StringNode extends AstConditional {
     }
 
     @Override
-    public Object eval(Object row) {
+    public Object eval(Object row, AstNode root) {
         if (value == null) {
             throw new IllegalStateException("String value has not been set");
         }

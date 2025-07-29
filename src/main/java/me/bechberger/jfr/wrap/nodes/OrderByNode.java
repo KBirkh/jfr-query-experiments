@@ -71,9 +71,9 @@ public class OrderByNode extends AstNode {
     }
 
     @Override
-    public Object eval() {
+    public Object eval(AstNode root) {
         Evaluator evaluator = Evaluator.getInstance();
-        EvalTable table = evaluator.getFirstTable();
+        EvalTable table = evaluator.getTable(root);
         if (table == null) {
             throw new IllegalStateException("No EvalTable found to sort");
         }
@@ -85,8 +85,8 @@ public class OrderByNode extends AstNode {
             for (int i = 0; i < identifiers.size(); i++) {
                 AstNode identifier = identifiers.get(i);
                 String direction = directions.size() > i ? directions.get(i) : "ASC";
-                Object value1 = identifier.eval(row1);
-                Object value2 = identifier.eval(row2);
+                Object value1 = identifier.eval(row1, root);
+                Object value2 = identifier.eval(row2, root);
 
                 int comparison = compareValues(value1, value2);
                 if (comparison != 0) {
@@ -96,13 +96,13 @@ public class OrderByNode extends AstNode {
             return 0; // If all identifiers are equal
         });
         table.rows = rows;
-        evaluator.switchTable(table.getQuery(), table);
+        evaluator.switchTable(root, table);
         return null;
     }
     
-    public List<EvalRow> evalForPercentile() {
+    public List<EvalRow> evalForPercentile(AstNode root) {
         Evaluator evaluator = Evaluator.getInstance();
-        EvalTable table = evaluator.getFirstTable();
+        EvalTable table = evaluator.getTable(root);
         if (table == null) {
             throw new IllegalStateException("No EvalTable found to sort");
         }
@@ -114,8 +114,8 @@ public class OrderByNode extends AstNode {
             for (int i = 0; i < identifiers.size(); i++) {
                 AstNode identifier = identifiers.get(i);
                 String direction = directions.size() > i ? directions.get(i) : "ASC";
-                Object value1 = identifier.eval(row1);
-                Object value2 = identifier.eval(row2);
+                Object value1 = identifier.eval(row1, root);
+                Object value2 = identifier.eval(row2, root);
 
                 int comparison = compareValues(value1, value2);
                 if (comparison != 0) {

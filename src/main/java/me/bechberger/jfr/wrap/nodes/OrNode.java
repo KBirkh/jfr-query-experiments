@@ -43,15 +43,15 @@ public class OrNode extends AstConditional {
     }
 
     @Override
-    public Object eval(Object row) {
+    public Object eval(Object row, AstNode root) {
         if (left == null || right == null) {
             throw new IllegalStateException("Left and right nodes must be set before evaluation");
         }
-        Boolean leftValue = (Boolean) left.eval(row);
+        Boolean leftValue = (Boolean) left.eval(row, root);
         if (leftValue) {
             return true;
         }
-        Boolean rightValue = (Boolean) right.eval(row);
+        Boolean rightValue = (Boolean) right.eval(row, root);
         if (leftValue instanceof Boolean && rightValue instanceof Boolean) {
             return (Boolean) leftValue || (Boolean) rightValue;
         } else {

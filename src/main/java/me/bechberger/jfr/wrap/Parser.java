@@ -43,11 +43,11 @@ public class Parser {
         this.input = input;
     }
 
-    public AstNode parse() throws ParseException {
+    public ProgramNode parse() throws ParseException {
         return program();
     }
 
-    private AstNode program() throws ParseException {
+    private ProgramNode program() throws ParseException {
         if(isIn(TokenType.IDENTIFIER, TokenType.VIEW, TokenType.AT, TokenType.SELECT)) {
             return statementList();
         } else if(isIn(TokenType.EOF)) {
@@ -57,7 +57,7 @@ public class Parser {
         }
     }
     
-    private AstNode statementList() throws ParseException {
+    private ProgramNode statementList() throws ParseException {
         ProgramNode programNode = new ProgramNode();
         if(isIn(TokenType.EOF)) {
             return programNode;

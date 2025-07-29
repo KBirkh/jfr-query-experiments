@@ -37,10 +37,9 @@ public class ProgramNode extends AstNode {
         }
         return sb.toString();
     }
-    @Override
     public Object eval() {
         for (AstNode statement : statements) {
-            statement.eval();
+            statement.eval(statement);
         }
     return null;
     }

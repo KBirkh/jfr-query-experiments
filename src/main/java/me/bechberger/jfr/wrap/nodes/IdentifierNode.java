@@ -98,7 +98,7 @@ public class IdentifierNode extends AstConditional {
     }
 
     @Override
-    public Object eval(Object row) {
+    public Object eval(Object row, AstNode root) {
         EvalRow evalrow = (EvalRow) row;
         if (row == null) {
             throw new IllegalArgumentException("EvalRow cannot be null");

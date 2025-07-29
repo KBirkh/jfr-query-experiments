@@ -48,7 +48,7 @@ public class TimeNode extends AstConditional {
     }
 
     @Override
-    public Object eval(Object row) {
+    public Object eval(Object row, AstNode root) {
         return Duration.ofNanos((long) timeValue * getUnitMultiplier());
     }
 

@@ -19,14 +19,14 @@ public class HavingNode extends AstNode {
     }
 
     @Override
-    public Object eval() {
+    public Object eval(AstNode root) {
         Evaluator evaluator = Evaluator.getInstance();
         if (condition == null) {
             throw new IllegalStateException("Condition has not been set for HavingNode");
         }
-        EvalTable table = evaluator.getFirstTable();
+        EvalTable table = evaluator.getTable(root);
         table.rows = table.getRows().parallelStream()
-            .filter(row -> (Boolean) condition.eval(row) == true)
+            .filter(row -> (Boolean) condition.eval(row, root) == true)
             .toList();
         return null;
     }

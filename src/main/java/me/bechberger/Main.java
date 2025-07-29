@@ -5,6 +5,7 @@ import me.bechberger.jfr.wrap.*;
 import me.bechberger.jfr.wrap.nodes.AstConditional;
 import me.bechberger.jfr.wrap.nodes.AstNode;
 import me.bechberger.jfr.wrap.nodes.BooleanNode;
+import me.bechberger.jfr.wrap.nodes.ProgramNode;
 import picocli.CommandLine;
 
 import java.text.ParseException;
@@ -69,7 +70,7 @@ public class Main /* implements Callable<Integer> */ {
         Lexer lexer = new Lexer(input);
         Parser parser = new Parser(lexer.tokenize(), input);
         try {
-            AstNode res = parser.parse();
+            ProgramNode res = parser.parse();
             res.eval();
             Evaluator evaluator = Evaluator.getInstance();
             System.out.println(evaluator);

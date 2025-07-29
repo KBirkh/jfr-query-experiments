@@ -14,7 +14,7 @@ import me.bechberger.jfr.wrap.nodes.OrderByNode;
 
 public class Evaluator {
     private static Evaluator instance;
-    private HashMap<String, EvalTable> tables;
+    private HashMap<AstNode, EvalTable> tables;
     private List<FunctionNode> aggregates;
     private List<AstNode> groupings;
     public EvalState state = EvalState.INITIAL;
@@ -22,20 +22,20 @@ public class Evaluator {
     private Map<AstNode, AstNode> assignments;
 
     private Evaluator() {
-        this.tables = new HashMap<String, EvalTable>();
+        this.tables = new HashMap<AstNode, EvalTable>();
         this.aggregates = new ArrayList<FunctionNode>();
         this.groupings = new ArrayList<AstNode>();
         this.assignments = new HashMap<AstNode, AstNode>();
     }
 
-    public void addTable(EvalTable table, String query) {
-        table.setQuery(query);
-        tables.put(query, table);
+    public void addTable(EvalTable table, AstNode root) {
+        table.setQuery(root);
+        tables.put(root, table);
     }
 
-    public void addToTable(EvalTable table, String query) {
+    public void addToTable(EvalTable table, AstNode root) {
         if(tables.isEmpty()) {
-            addTable(table, query);
+            addTable(table, root);
         } else {
             EvalTable tab1 = tables.values().stream().findFirst().orElse(null);
             tables.clear();
@@ -60,30 +60,24 @@ public class Evaluator {
                 }
             }
 
-            tables.put(query, res);
+            tables.put(root, res);
 
         }
     
     }
 
-    public EvalTable getTable(String query) {
-        return tables.get(query);
+    public EvalTable getTable(AstNode root) {
+        return tables.get(root);
     }
 
-    public void switchTable(String query, EvalTable table) {
-        if (tables.containsKey(query)) {
-            tables.replace(query, table);
+    public void switchTable(AstNode root, EvalTable table) {
+        if (tables.containsKey(root)) {
+            tables.replace(root, table);
         } else {
-            tables.put(query, table);
+            tables.put(root, table);
         }
     }
 
-    public EvalTable getFirstTable() {
-        if(tables.isEmpty()) {
-            return null;
-        }
-        return tables.values().stream().findFirst().orElse(null);
-    }
     
 
     public static Evaluator getInstance() {
@@ -95,7 +89,7 @@ public class Evaluator {
 
     public String toString() {
         StringBuilder sb = new StringBuilder();
-        for (Map.Entry<String, EvalTable> entry : tables.entrySet()) {
+        for (Map.Entry<AstNode, EvalTable> entry : tables.entrySet()) {
             EvalTable table = entry.getValue();
             sb.append("Rows:\n");
             for (EvalRow row : table.rows) {
@@ -105,7 +99,6 @@ public class Evaluator {
             for (Column column : table.columns) {
                 sb.append(column.getFullName()).append(", ");
             }
-            sb.append("\n").append(getFirstTable().rows.size()).append(" rows in resulting table");
         }
         return sb.toString();
     }
@@ -118,14 +111,14 @@ public class Evaluator {
         groupings.add(grouping);
     }
 
-    public void group() {
+    public void group(AstNode root) {
         // Ensure there is at least one table and groupings are defined
         if (tables.isEmpty() || groupings.isEmpty()) {
             return;
         }
 
         // Get the first table
-        EvalTable table = getFirstTable();
+        EvalTable table = tables.get(root);
         if (table == null) {
             throw new IllegalStateException("No table available for grouping.");
         }
@@ -133,7 +126,7 @@ public class Evaluator {
         // Group rows by the fields in the groupings list
         Map<List<Object>, List<EvalRow>> groupedRows = table.rows.stream()
             .collect(Collectors.groupingBy(row -> groupings.stream()
-                .map(grouping -> grouping.eval(row)) // Evaluate each grouping field
+                .map(grouping -> grouping.eval(row, root)) // Evaluate each grouping field
                 .collect(Collectors.toList())));    // Collect grouping field values into a list
 
         // Create a new list of rows for the grouped table
@@ -153,7 +146,7 @@ public class Evaluator {
 
             // Evaluate aggregate functions and add them to the new row
             for (FunctionNode aggregate : aggregates) {
-                Object aggregateValue = aggregate.eval(group); // Evaluate the aggregate function for the group
+                Object aggregateValue = aggregate.eval(group, root); // Evaluate the aggregate function for the group
                 String aggregateFieldName = aggregate.getName(); // Use the aggregate function's string representation
                 newRow.addField(aggregateFieldName, aggregateValue);
             }
@@ -174,7 +167,7 @@ public class Evaluator {
 
         // Replace the existing table with the new grouped table
         tables.clear();
-        tables.put("grouped_table", newTable);
+        tables.put(root, newTable);
     }
 
     private void addPercentile(AstNode node, Object[] percentiles) {
@@ -184,23 +177,22 @@ public class Evaluator {
         this.percentiles.put(node, percentiles);
     }
 
-    public Object[] getPercentiles(AstNode node) {
+    public Object[] getPercentiles(AstNode node, AstNode root) {
         if (this.percentiles == null) {
-            return calculatePercentiles(node);
+            return calculatePercentiles(node, root);
         }
         return this.percentiles.get(node);
     }
 
-    private Object[] calculatePercentiles(AstNode node) {
-        EvalTable table = getFirstTable();
-        String query = tables.keySet().stream().findFirst().orElse(null);
+    private Object[] calculatePercentiles(AstNode node, AstNode root) {
+        EvalTable table = tables.get(root);
         if (table == null || table.rows.isEmpty()) {
             return new Object[] {0.0, 0.0, 0.0, 0.0, 0.0}; // Default percentiles if no data
         }
         OrderByNode orderByNode = new OrderByNode();
         orderByNode.addOrder(node);
         orderByNode.addDirection("ASC");
-        List<EvalRow> ordered = orderByNode.evalForPercentile();
+        List<EvalRow> ordered = orderByNode.evalForPercentile(root);
         int index999 = (int) (table.rows.size() * 0.999);
         int index99 = (int) (table.rows.size() * 0.99);
         int index95 = (int) (table.rows.size() * 0.95);
@@ -212,11 +204,11 @@ public class Evaluator {
         EvalRow row90 = ordered.get(index90);
         EvalRow row50 = ordered.get(index50);
         Object[] percentiles = new Object[5];
-        percentiles[0] = node.eval(row999);
-        percentiles[1] = node.eval(row99);
-        percentiles[2] = node.eval(row95);
-        percentiles[3] = node.eval(row90);
-        percentiles[4] = node.eval(row50);
+        percentiles[0] = node.eval(row999, root);
+        percentiles[1] = node.eval(row99, root);
+        percentiles[2] = node.eval(row95, root);
+        percentiles[3] = node.eval(row90, root);
+        percentiles[4] = node.eval(row50, root);
         addPercentile(node, percentiles);
         return percentiles;
     }

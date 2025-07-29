@@ -54,7 +54,7 @@ public class OpenJDKQueryNode extends AstNode {
         return sb.toString();
     }
     @Override
-    public Object eval(Object aliasObj) {
+    public Object eval(Object aliasObj, AstNode root) {
         String alias = (String) aliasObj;
         QueryCommand queryCommand = new QueryCommand();
         queryCommand.setView(query);
@@ -68,7 +68,7 @@ public class OpenJDKQueryNode extends AstNode {
             }
             EvalTable evalTable = TableUtils.toEvalTable(table, alias);
             Evaluator evaluator = Evaluator.getInstance();
-            evaluator.addToTable(evalTable, query);
+            evaluator.addToTable(evalTable, root);
         } catch (UserSyntaxException | UserDataException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
@@ -77,7 +77,7 @@ public class OpenJDKQueryNode extends AstNode {
     }
 
     @Override
-    public Object eval() {
+    public Object eval(AstNode root) {
         QueryCommand queryCommand = new QueryCommand();
         queryCommand.setView(query);
         queryCommand.setFile("src/main/java/me/bechberger/jfr/voronoi2.jfr");
@@ -90,7 +90,7 @@ public class OpenJDKQueryNode extends AstNode {
             }
             EvalTable evalTable = TableUtils.toEvalTable(table);
             Evaluator evaluator = Evaluator.getInstance();
-            evaluator.addToTable(evalTable, query);
+            evaluator.addToTable(evalTable, root);
         } catch (UserSyntaxException | UserDataException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();

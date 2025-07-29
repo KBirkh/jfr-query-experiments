@@ -116,35 +116,35 @@ public class QueryNode extends AstNode {
     }
 
     @Override
-    public Object eval() {
+    public Object eval(AstNode root) {
         Evaluator evaluator = Evaluator.getInstance();
         evaluator.state = EvalState.FROM;
-        from.eval();
+        from.eval(root);
         if(where != null) {
             evaluator.state = EvalState.WHERE;
-            where.eval();
+            where.eval(root);
         }
         evaluator.state = EvalState.GROUP_BY;
         select.findAggregates();
         if(groupBy != null) {
             ((GroupByNode) groupBy).eval(new EvalRow());
         }
-        evaluator.group();
+        evaluator.group(root);
         if(having != null) {
             evaluator.state = EvalState.HAVING;
-            ((HavingNode) having).eval();
+            ((HavingNode) having).eval(root);
         }
         if(orderBy != null) {
             evaluator.state = EvalState.ORDER_BY;
-            orderBy.eval();
+            orderBy.eval(root);
         }
         if(limit != null) {
             evaluator.state = EvalState.LIMIT;
-            limit.eval();
+            limit.eval(root);
         }
         evaluator.state = EvalState.SELECT;
         if(!select.isStar) {
-            select.eval();
+            select.eval(root);
         }
 
         return null;

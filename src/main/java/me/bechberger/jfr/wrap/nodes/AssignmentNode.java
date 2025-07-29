@@ -39,8 +39,8 @@ public class AssignmentNode extends AstNode {
     }
 
     @Override
-    public Object eval(Object row) {
-        return node.eval(row);
+    public Object eval(Object row, AstNode root) {
+        return node.eval(row, root);
     }
 
 }

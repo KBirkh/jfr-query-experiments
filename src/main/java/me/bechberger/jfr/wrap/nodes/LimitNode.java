@@ -23,9 +23,9 @@ public class LimitNode extends AstNode {
     }
 
     @Override
-    public Object eval() {
+    public Object eval(AstNode root) {
         Evaluator evaluator = Evaluator.getInstance();
-        EvalTable table = evaluator.getFirstTable();
+        EvalTable table = evaluator.getTable(root);
         table.rows = table.rows.parallelStream().limit(count).toList();
         return null;
     }
