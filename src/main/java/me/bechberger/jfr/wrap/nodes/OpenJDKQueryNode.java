@@ -54,7 +54,8 @@ public class OpenJDKQueryNode extends AstNode {
         return sb.toString();
     }
     @Override
-    public Object eval(String alias) {
+    public Object eval(Object aliasObj) {
+        String alias = (String) aliasObj;
         QueryCommand queryCommand = new QueryCommand();
         queryCommand.setView(query);
         queryCommand.setFile("src/main/java/me/bechberger/jfr/voronoi2.jfr");

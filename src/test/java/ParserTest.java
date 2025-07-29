@@ -75,7 +75,7 @@ public class ParserTest {
         return new OrderByNode(columns, directions);
     }
 
-    public AstNode limit(AstNode count) {
+    public AstNode limit(String count) {
         return new LimitNode(count);
     }
 
@@ -87,7 +87,7 @@ public class ParserTest {
         return new ArithmeticNode(left, operator, right);
     }
 
-    public AstNode assignment(String variable, AstNode value) {
+    public AstNode assignment(AstNode variable, AstNode value) {
         return new AssignmentNode(variable, value);
     }
 
@@ -245,7 +245,7 @@ public class ParserTest {
 
         // Expected tree: x = SELECT * FROM events
         AstNode expected = program(
-            assignment("x", query(true, selectStar(), from(source("events", null)), null, null, null, null, null))
+            assignment(identifier("x"), query(true, selectStar(), from(source("events", null)), null, null, null, null, null))
         );
 
         assertEquals(expected.toString(0), res.toString(0), "Parsed tree for query assignment does not match expected structure");
@@ -406,7 +406,7 @@ public class ParserTest {
         AstNode expected = program(
             query(true, select(identifier("col")), from(source("table", null)), null, null, null, null, null),
             query(true, select(identifier("col2")), from(source("table2", null)), null, null, null, null, null),
-            assignment("x", query(true, selectStar(), from(source("events", null)), null, null, null, null, null))
+            assignment(identifier("x"), query(true, selectStar(), from(source("events", null)), null, null, null, null, null))
         );
 
         assertEquals(expected.toString(0), res.toString(0), "Parsed tree for multiple queries with assignment does not match expected structure");
@@ -431,9 +431,9 @@ public class ParserTest {
                 groupBy(identifier("col4")), 
                 having(condition(TokenType.LT, function("SUM", identifier("col5")), number("100"))), 
                 orderBy(arr(identifier("col6")), arr("ASC")), 
-                limit(number("10"))
+                limit("10")
             ),
-            assignment("x", query(true, selectStar(), from(source("events", null)), null, null, null, null, null)),
+            assignment(identifier("x"), query(true, selectStar(), from(source("events", null)), null, null, null, null, null)),
             openJDK("SELECT * FROM events"),
             query(true, selectStar(), from(source(openJDK("SELECT * FROM events"), "ho")), null, null, null, null, null)
         );
@@ -556,9 +556,9 @@ public class ParserTest {
                 groupBy(identifier("col4"), identifier("col6", "t")), 
                 having(condition(TokenType.LT, function("SUM", identifier("col5")), number("100"))), 
                 orderBy(arr(identifier("col6")), arr("DESC")), 
-                limit(number("10"))
+                limit("10")
             ),
-            assignment("x", query(true, selectStar(), from(source("events", null)), null, null, null, null, null)),
+            assignment(identifier("x"), query(true, selectStar(), from(source("events", null)), null, null, null, null, null)),
             openJDK("SELECT * FROM events"),
             query(true, selectStar(), from(source(openJDK("[SELECT * FROM events]"), "ho")), null, null, null, null, null),
             query(true, selectStar(), from(source(openJDK("[SELECT * FROM [SELECT * FROM events] AS t]"), "p")), null, null, null, null, null)

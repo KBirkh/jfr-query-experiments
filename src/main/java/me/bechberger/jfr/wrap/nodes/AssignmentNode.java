@@ -1,12 +1,12 @@
 package me.bechberger.jfr.wrap.nodes;
 
 public class AssignmentNode extends AstNode {
-    private String identifier;
+    private AstNode identifier;
     private AstNode node;
 
-    public void setIdentifier(String identifier) {
-        if (identifier == null || identifier.isEmpty()) {
-            throw new IllegalArgumentException("Identifier cannot be null or empty");
+    public void setIdentifier(AstNode identifier) {
+        if (identifier == null) {
+            throw new IllegalArgumentException("Identifier cannot be null");
         }
         this.identifier = identifier;
     }
@@ -15,7 +15,7 @@ public class AssignmentNode extends AstNode {
 
     }
 
-    public AssignmentNode(String identifier, AstNode expression) {
+    public AssignmentNode(AstNode identifier, AstNode expression) {
         setIdentifier(identifier);
         setNode(expression);
     }
@@ -31,11 +31,16 @@ public class AssignmentNode extends AstNode {
         StringBuilder sb = new StringBuilder();
         String dent = "  ".repeat(indent);
         sb.append("\n").append(dent).append(this.getClass().getSimpleName()).append(":");
-        sb.append("\n").append(dent).append("  Identifier: ").append(identifier);
+        sb.append("\n").append(dent).append("  Identifier: ").append(identifier.toString(indent + 1));
         if (node != null) {
             sb.append(node.toString(indent + 1));
         }
         return sb.toString();
+    }
+
+    @Override
+    public Object eval(Object row) {
+        return node.eval(row);
     }
 
 }

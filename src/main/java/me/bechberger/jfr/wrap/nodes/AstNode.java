@@ -15,11 +15,12 @@ public abstract class AstNode {
         return null;
     }
 
-    public Object eval(String alias) {
-        return null;
+    public Object eval(Object obj) {
+        throw new UnsupportedOperationException("eval(Object obj) not implemented for " + this.getClass().getSimpleName());
     }
 
-    public Object eval(EvalRow row) {
-        return false;
+
+    public String getName() {
+        return "AstNode abstract class";
     }
 }

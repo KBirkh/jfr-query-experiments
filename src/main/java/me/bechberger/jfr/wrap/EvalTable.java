@@ -5,10 +5,19 @@ import java.util.List;
 public class EvalTable {
     public List<Column> columns;
     public List<EvalRow> rows;
+    private String query;
 
     public EvalTable(List<Column> columns, List<EvalRow> rows) {
         this.columns = columns;
         this.rows = rows;
+    }
+
+    public void setQuery(String query) {
+        this.query = query;
+    }
+
+    public String getQuery() {
+        return query;
     }
 
     public void setAlias(String alias) {

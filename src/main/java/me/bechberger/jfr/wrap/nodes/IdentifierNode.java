@@ -1,6 +1,7 @@
 package me.bechberger.jfr.wrap.nodes;
 
 import me.bechberger.jfr.wrap.EvalRow;
+import me.bechberger.jfr.wrap.Evaluator;
 
 public class IdentifierNode extends AstConditional {
     private String identifier;
@@ -96,16 +97,24 @@ public class IdentifierNode extends AstConditional {
         this.type = type;
     }
 
-    public Object eval(EvalRow row) {
+    @Override
+    public Object eval(Object row) {
+        EvalRow evalrow = (EvalRow) row;
         if (row == null) {
             throw new IllegalArgumentException("EvalRow cannot be null");
         }
         String toSearch = hasTableAlias ? tableAlias + "_" + identifier : identifier;
-        Object value = row.getFields().get(toSearch);
+        Object value = evalrow.getFields().get(toSearch);
         if (value == null) {
-            throw new IllegalStateException("Identifier '" + (hasTableAlias ? tableAlias + "." + identifier : identifier) + "' not found in EvalRow");
+            Evaluator evaluator = Evaluator.getInstance();
+            value = evaluator.getAssignment(this);
         }
         return value;
+    }
+
+    @Override
+    public String getName() {
+        return hasTableAlias ? tableAlias + "." + identifier : identifier;
     }
     
 }

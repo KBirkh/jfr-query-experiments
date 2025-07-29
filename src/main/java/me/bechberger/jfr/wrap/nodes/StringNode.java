@@ -24,7 +24,8 @@ public class StringNode extends AstConditional {
         return value;
     }
 
-    public String eval(EvalRow row) {
+    @Override
+    public Object eval(Object row) {
         if (value == null) {
             throw new IllegalStateException("String value has not been set");
         }
@@ -36,5 +37,10 @@ public class StringNode extends AstConditional {
         String dent = "  ".repeat(indent);
         sb.append("\n").append(dent).append(this.getClass().getSimpleName()).append(": ").append(value);
         return sb.toString();
+    }
+
+    @Override
+    public String getName() {
+        return value != null ? value : "StringNode with no value";
     }
 }

@@ -26,6 +26,7 @@ public class Lexer {
         Map.entry("COLUMN", TokenType.COLUMN),
         Map.entry("FORMAT", TokenType.FORMAT),
         Map.entry("HAVING", TokenType.HAVING),
+        Map.entry("P50", TokenType.FUNCTION),
         Map.entry("P90", TokenType.FUNCTION),
         Map.entry("P95", TokenType.FUNCTION),
         Map.entry("P99", TokenType.FUNCTION),

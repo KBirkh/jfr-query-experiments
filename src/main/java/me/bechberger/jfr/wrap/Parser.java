@@ -90,7 +90,7 @@ public class Parser {
     private AstNode assignment() throws ParseException {
         AssignmentNode assignmentNode = new AssignmentNode();
         if(isIn(TokenType.IDENTIFIER)) {
-            assignmentNode.setIdentifier(expect(TokenType.IDENTIFIER).lexeme);
+            assignmentNode.setIdentifier(identifier());
             expect(TokenType.ASSIGNMENT);
             assignmentNode.setNode(query());
             return assignmentNode;
@@ -376,11 +376,7 @@ public class Parser {
         if(isIn(TokenType.HAVING)) {
             advance();
             HavingNode havingNode = new HavingNode();
-            havingNode.addCondition(condition());
-            while(isIn(TokenType.AND, TokenType.OR)) {
-                advance();
-                havingNode.addCondition(condition());
-            }
+            havingNode.setCondition(whereOr());
             if(isIn(TokenType.ORDER_BY, TokenType.LIMIT, TokenType.EOQ, TokenType.EOF)) {
                 return havingNode;
             } else {
@@ -421,7 +417,7 @@ public class Parser {
     private LimitNode limit() throws ParseException {
         if(isIn(TokenType.LIMIT)) {
             advance();
-            return new LimitNode(expression());
+            return new LimitNode(expect(TokenType.NUMBER).lexeme);
         } else if(isIn(TokenType.EOQ, TokenType.EOF)) {
             return null;
         } else {
@@ -539,7 +535,7 @@ public class Parser {
         }
     }
 
-    private FunctionNode functionCall() throws ParseException {
+    private AstConditional functionCall() throws ParseException {
         FunctionNode functionNode = new FunctionNode();
         if(isIn(TokenType.FUNCTION)) {
             functionNode.setName(expect(TokenType.FUNCTION).lexeme);
@@ -564,17 +560,23 @@ public class Parser {
         return pos < tokens.size() ? tokens.get(pos) : new Token(TokenType.EOF, "", pos);
     }
 
-    private AstConditional identifier() {
-        if(lookahead(1).type == TokenType.DOT) {
-            String table = expect(TokenType.IDENTIFIER).lexeme;
-            advance(); // Consume DOT
-            String identifier = expect(TokenType.IDENTIFIER).lexeme;
-            return new IdentifierNode(identifier, table);
-
+    private AstConditional identifier() throws ParseException {
+        if(isIn(TokenType.IDENTIFIER)) {
+            if(lookahead(1).type == TokenType.DOT) {
+                String table = expect(TokenType.IDENTIFIER).lexeme;
+                advance(); // Consume DOT
+                String identifier = expect(TokenType.IDENTIFIER).lexeme;
+                return new IdentifierNode(identifier, table);
+                
+            } else {
+                String identifier = expect(TokenType.IDENTIFIER).lexeme;
+                return new IdentifierNode(identifier);
+            }
+        } else if(isIn(TokenType.FUNCTION)) {
+            return functionCall();
         } else {
-            String identifier = expect(TokenType.IDENTIFIER).lexeme;
-            return new IdentifierNode(identifier);
-        }
+            throw new ParseException("Expected IDENTIFIER or FUNCTION, found " + peek().type, pos);
+        } 
     }
 
 

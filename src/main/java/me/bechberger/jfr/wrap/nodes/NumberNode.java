@@ -16,11 +16,17 @@ public class NumberNode extends AstConditional {
         return sb.toString();
     }
 
-    public Object eval(EvalRow row) {
+    @Override
+    public Object eval(Object row) {
         return value != null ? Double.parseDouble(value) : null;
     }
 
     public String getType() {
         return "Number";
+    }
+
+    @Override
+    public String getName() {
+        return value;
     }
 }

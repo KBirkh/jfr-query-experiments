@@ -61,8 +61,8 @@ public class ConditionNode extends AstNode {
         sb.append("\n").append(dent).append("  Right: ").append(right.toString(indent + 1));
         return sb.toString();
     }
-
-    public Boolean eval(EvalRow row) {
+    @Override
+    public Object eval(Object row) {
         if (left == null || right == null || operator == null) {
             throw new IllegalStateException("ConditionNode is not fully initialized");
         }

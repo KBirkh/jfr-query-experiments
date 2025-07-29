@@ -3,6 +3,9 @@ package me.bechberger.jfr.wrap.nodes;
 import java.util.ArrayList;
 import java.util.List;
 
+import me.bechberger.jfr.wrap.EvalRow;
+import me.bechberger.jfr.wrap.Evaluator;
+
 public class GroupByNode extends AstNode {
     private List<AstNode> identifiers;
 
@@ -37,6 +40,14 @@ public class GroupByNode extends AstNode {
             }
         }
         return sb.toString();
+    } 
+
+    public Object eval(EvalRow row) {
+        Evaluator evaluator = Evaluator.getInstance();
+        for(AstNode identifier : identifiers) {
+            evaluator.addGrouping(identifier);
+        }
+        return null;
     }
 
 }

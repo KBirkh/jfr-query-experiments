@@ -1,5 +1,9 @@
 package me.bechberger.jfr.wrap.nodes;
 
+import me.bechberger.jfr.wrap.EvalRow;
+import me.bechberger.jfr.wrap.EvalState;
+import me.bechberger.jfr.wrap.Evaluator;
+
 public class QueryNode extends AstNode {
     private ColumnNode columns;
     private SelectNode select;
@@ -113,14 +117,36 @@ public class QueryNode extends AstNode {
 
     @Override
     public Object eval() {
+        Evaluator evaluator = Evaluator.getInstance();
+        evaluator.state = EvalState.FROM;
+        from.eval();
+        if(where != null) {
+            evaluator.state = EvalState.WHERE;
+            where.eval();
+        }
+        evaluator.state = EvalState.GROUP_BY;
+        select.findAggregates();
+        if(groupBy != null) {
+            ((GroupByNode) groupBy).eval(new EvalRow());
+        }
+        evaluator.group();
+        if(having != null) {
+            evaluator.state = EvalState.HAVING;
+            ((HavingNode) having).eval();
+        }
+        if(orderBy != null) {
+            evaluator.state = EvalState.ORDER_BY;
+            orderBy.eval();
+        }
+        if(limit != null) {
+            evaluator.state = EvalState.LIMIT;
+            limit.eval();
+        }
+        evaluator.state = EvalState.SELECT;
         if(!select.isStar) {
             select.eval();
         }
-        from.eval();
-        if(where != null) {
-            where.eval();
-        }
-        select.findAggregates();
+
         return null;
     }
     

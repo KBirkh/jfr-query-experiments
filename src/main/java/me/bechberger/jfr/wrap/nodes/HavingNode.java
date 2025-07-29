@@ -1,42 +1,45 @@
 package me.bechberger.jfr.wrap.nodes;
 
-import java.util.List;
+import me.bechberger.jfr.wrap.EvalTable;
+import me.bechberger.jfr.wrap.Evaluator;
 
 public class HavingNode extends AstNode {
-    private List<AstNode> conditions;
+    private AstNode condition;
 
     public HavingNode() {
         // Default constructor
     }
-    public HavingNode(AstNode... conditions) {
-        this();
-        if (conditions == null || conditions.length == 0) {
-            throw new IllegalArgumentException("Conditions cannot be null or empty");
-        }
-        for (AstNode condition : conditions) {
-            addCondition(condition);
-        }
+
+    public HavingNode(AstNode condition) {
+        this.condition = condition;
     }
 
-    public void addCondition(AstNode condition) {
+    public void setCondition(AstNode condition) {
+        this.condition = condition;
+    }
+
+    @Override
+    public Object eval() {
+        Evaluator evaluator = Evaluator.getInstance();
         if (condition == null) {
-            throw new IllegalArgumentException("Condition cannot be null");
+            throw new IllegalStateException("Condition has not been set for HavingNode");
         }
-        if (conditions == null) {
-            conditions = new java.util.ArrayList<AstNode>();
-        }
-        conditions.add(condition);
+        EvalTable table = evaluator.getFirstTable();
+        table.rows = table.getRows().parallelStream()
+            .filter(row -> (Boolean) condition.eval(row) == true)
+            .toList();
+        return null;
     }
 
     @Override
     public String toString(int indent) {
         StringBuilder sb = new StringBuilder();
         String dent = "  ".repeat(indent);
-        sb.append("\n").append(dent).append(this.getClass().getSimpleName()).append(":");
-        if (conditions != null) {
-            for (AstNode condition : conditions) {
-                sb.append(condition.toString(indent + 1));
-            }
+        sb.append("\n").append(dent).append(this.getClass().getSimpleName()).append(": ");
+        if (condition != null) {
+            sb.append(condition.toString(indent + 1));
+        } else {
+            sb.append("No condition set");
         }
         return sb.toString();
     }

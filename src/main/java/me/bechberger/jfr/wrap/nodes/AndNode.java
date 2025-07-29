@@ -42,7 +42,8 @@ public class AndNode extends AstConditional {
         return sb.toString();
     }
 
-    public Object eval(EvalRow row) {
+    @Override
+    public Object eval(Object row) {
         if (left == null || right == null) {
             throw new IllegalStateException("Left and right nodes must be set before evaluation");
         }
@@ -50,7 +51,7 @@ public class AndNode extends AstConditional {
         if(!leftValue){ 
             return false;
         }   
-        Object rightValue = right.eval(row);
+        Object rightValue = (Boolean) right.eval(row);
         
         if (leftValue instanceof Boolean && rightValue instanceof Boolean) {
             return (Boolean) leftValue && (Boolean) rightValue;

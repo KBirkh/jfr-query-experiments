@@ -73,7 +73,7 @@ public class EvaluationTest {
         return new OrderByNode(columns, directions);
     }
 
-    public AstNode limit(AstNode count) {
+    public AstNode limit(String count) {
         return new LimitNode(count);
     }
 
@@ -85,7 +85,7 @@ public class EvaluationTest {
         return new ArithmeticNode(left, operator, right);
     }
 
-    public AstNode assignment(String variable, AstNode value) {
+    public AstNode assignment(AstNode variable, AstNode value) {
         return new AssignmentNode(variable, value);
     }
 

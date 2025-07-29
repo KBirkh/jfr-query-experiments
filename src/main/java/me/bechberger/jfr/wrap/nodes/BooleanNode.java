@@ -21,7 +21,8 @@ public class BooleanNode extends AstConditional {
         return value;
     }
 
-    public Boolean eval(EvalRow row) {
+    @Override
+    public Object eval(Object row) {
         return value;
     }
 }

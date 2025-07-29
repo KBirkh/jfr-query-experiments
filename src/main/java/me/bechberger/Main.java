@@ -2,6 +2,7 @@ package me.bechberger;
 
 import me.bechberger.jfr.tool.*;
 import me.bechberger.jfr.wrap.*;
+import me.bechberger.jfr.wrap.nodes.AstConditional;
 import me.bechberger.jfr.wrap.nodes.AstNode;
 import me.bechberger.jfr.wrap.nodes.BooleanNode;
 import picocli.CommandLine;
@@ -64,7 +65,7 @@ public class Main /* implements Callable<Integer> */ {
     } */
 
     public static void main(String[] args) {
-        String input = "@SELECT AVG(gcP.duration) FROM [SELECT * FROM GCPhaseParallel] AS gcP WHERE gcP.duration < 1us AND gcP.eventThread == \"GC Thread#2\" OR gcP.eventThread == \"GC Thread#3\";";
+        String input = "@SELECT COUNT(), SUM(gcP.duration), MIN(gcP.duration), MAX(gcP.duration), AVG(gcP.duration) FROM [SELECT * FROM GCPhaseParallel] AS gcP WHERE p90(gcP.duration) GROUP BY gcP.eventThread, gcP.name HAVING COUNT() > 1 ORDER BY SUM(gcP.duration) LIMIT 6";
         Lexer lexer = new Lexer(input);
         Parser parser = new Parser(lexer.tokenize(), input);
         try {
@@ -76,8 +77,6 @@ public class Main /* implements Callable<Integer> */ {
         } catch (ParseException e) {
             
             e.printStackTrace();
-        }
-
-        
+        }   
     }
 }

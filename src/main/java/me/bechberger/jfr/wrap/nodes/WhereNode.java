@@ -38,8 +38,8 @@ public class WhereNode extends AstNode {
     public Object eval() {
         Evaluator evaluator = Evaluator.getInstance();
         EvalTable evalTable = evaluator.getFirstTable();
-        evalTable.rows = evalTable.getRows().stream()
-            .filter(row -> (Boolean) condition.eval(row) == true)
+        evalTable.rows = evalTable.getRows().parallelStream()
+            .filter(row -> (Boolean) condition.eval(row) != null && (Boolean) condition.eval(row))
             .toList();
         return null;
     }
