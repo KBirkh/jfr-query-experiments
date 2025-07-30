@@ -85,7 +85,7 @@ public class OpenJDKQueryNode extends AstNode {
         try {
             Table table = queryCommand.call();
             if(table == null) {
-                System.err.println("Query returned null table: " + query);
+                System.out.println("Query returned null table: " + query);
                 return null;
             }
             EvalTable evalTable = TableUtils.toEvalTable(table);

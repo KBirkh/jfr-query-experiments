@@ -42,10 +42,10 @@ public class GroupByNode extends AstNode {
         return sb.toString();
     } 
 
-    public Object eval(EvalRow row) {
+    public Object eval(EvalRow row, AstNode root) {
         Evaluator evaluator = Evaluator.getInstance();
         for(AstNode identifier : identifiers) {
-            evaluator.addGrouping(identifier);
+            evaluator.addGrouping(identifier, root);
         }
         return null;
     }

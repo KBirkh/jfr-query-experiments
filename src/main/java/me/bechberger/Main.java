@@ -66,7 +66,8 @@ public class Main /* implements Callable<Integer> */ {
     } */
 
     public static void main(String[] args) {
-        String input = "@SELECT COUNT(), SUM(gcP.duration), MIN(gcP.duration), MAX(gcP.duration), AVG(gcP.duration) FROM [SELECT * FROM GCPhaseParallel] AS gcP WHERE p90(gcP.duration) GROUP BY gcP.eventThread, gcP.name HAVING COUNT() > 1 ORDER BY SUM(gcP.duration) LIMIT 6";
+        String input2 = "@SELECT gcP.eventThread, gcP.name, COUNT(), SUM(gcP.duration), MIN(gcP.duration), MAX(gcP.duration), AVG(gcP.duration) FROM [SELECT * FROM GCPhaseParallel] AS gcP WHERE p90(gcP.duration) GROUP BY gcP.eventThread, gcP.name HAVING COUNT() > 1 ORDER BY SUM(gcP.duration) LIMIT 6";
+        String input = "@SELECT * FROM x AS t; x = @SELECT * FROM [SELECT * FROM GCPhaseParallel]";
         Lexer lexer = new Lexer(input);
         Parser parser = new Parser(lexer.tokenize(), input);
         try {
@@ -76,7 +77,6 @@ public class Main /* implements Callable<Integer> */ {
             System.out.println(evaluator);
             /* System.out.println(res.toString(0)); */
         } catch (ParseException e) {
-            
             e.printStackTrace();
         }   
     }

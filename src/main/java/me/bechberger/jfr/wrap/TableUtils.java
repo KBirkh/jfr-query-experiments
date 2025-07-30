@@ -44,4 +44,9 @@ public class TableUtils {
             .toList();
         return new EvalTable(columns, evalRows);
     }
+
+    public static EvalTable addAlias(EvalTable table, String alias) {
+        table.columns.forEach(col -> col.setAlias(alias));
+        return table;
+    }
 }

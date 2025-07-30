@@ -1,5 +1,8 @@
 package me.bechberger.jfr.wrap.nodes;
 
+import me.bechberger.jfr.wrap.Evaluator;
+import me.bechberger.jfr.wrap.TableUtils;
+
 public class SourceNode extends AstNode {
     private String name;
     private String alias;
@@ -64,7 +67,18 @@ public class SourceNode extends AstNode {
             if(alias == null || alias.isEmpty()) {
                 subquery.eval(root);
             } else {
-                subquery.eval(alias, root);
+                subquery.eval(root);
+            }
+        } else {
+            Evaluator evaluator = Evaluator.getInstance();
+            AstNode assignment = (AstNode) evaluator.getAssignment(name);
+            if(assignment != null) {
+                assignment.eval(assignment);
+                if(alias != null && !alias.isEmpty()) {
+                    evaluator.switchTable(assignment, TableUtils.addAlias(evaluator.getTable(assignment), alias));
+                }
+            } else {
+                evaluator.addTodo(name, evaluator.getCurrentRoot());
             }
         }
         return null;

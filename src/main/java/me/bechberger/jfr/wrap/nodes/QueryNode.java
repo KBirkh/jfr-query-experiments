@@ -125,9 +125,9 @@ public class QueryNode extends AstNode {
             where.eval(root);
         }
         evaluator.state = EvalState.GROUP_BY;
-        select.findAggregates();
+        select.findAggregates(root);
         if(groupBy != null) {
-            ((GroupByNode) groupBy).eval(new EvalRow());
+            ((GroupByNode) groupBy).eval(new EvalRow(), root);
         }
         evaluator.group(root);
         if(having != null) {

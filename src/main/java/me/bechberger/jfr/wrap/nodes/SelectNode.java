@@ -1,7 +1,10 @@
 package me.bechberger.jfr.wrap.nodes;
 
+import java.util.ArrayList;
 import java.util.List;
 
+import me.bechberger.jfr.wrap.Column;
+import me.bechberger.jfr.wrap.EvalTable;
 import me.bechberger.jfr.wrap.Evaluator;
 
 public class SelectNode extends AstNode {
@@ -41,13 +44,40 @@ public class SelectNode extends AstNode {
         columns.add(expression);
     }
     
-    public void findAggregates() {
+    public void findAggregates(AstNode root) {
         Evaluator evaluator = Evaluator.getInstance();
         for (AstNode column : columns) {
             if (column instanceof FunctionNode) {
-                evaluator.addAggregate(column);
+                evaluator.addAggregate(column, root);
             }
         }
     }
+
+    @Override
+    public Object eval(AstNode root) {
+        Evaluator evaluator = Evaluator.getInstance();
+        EvalTable table = evaluator.getTable(root);
+        List<Column> keep = new ArrayList<>();
+        if (isStar) {
+            // If it's a star selection, keep all columns
+            keep.addAll(table.getColumns());
+            return null;
+        } else {
+            for(AstNode col : columns) {
+                table.getColumns().stream()
+                    .filter(c -> c.getName().equals(col.getName()))
+                    .findFirst()
+                    .ifPresent(keep::add);
+            }
+        }
+        List<Column> allColumns = List.copyOf(table.getColumns());
+        for(Column col : allColumns) {
+            if(!keep.contains(col)) {
+                evaluator.removeCol(col, root);
+            }
+        }
+        return null;
+    }
+
 
 }

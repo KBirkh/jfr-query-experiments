@@ -8,6 +8,7 @@ public class EvalTable {
     public List<Column> columns;
     public List<EvalRow> rows;
     private AstNode root;
+    private boolean isGrouped = false;
 
     public EvalTable(List<Column> columns, List<EvalRow> rows) {
         this.columns = columns;
@@ -66,5 +67,13 @@ public class EvalTable {
 
     public List<EvalRow> getRows() {
         return rows;
+    }
+
+    public boolean isGrouped() {
+        return isGrouped;
+    }
+
+    public void setGrouped(boolean isGrouped) {
+        this.isGrouped = isGrouped;
     }
 }

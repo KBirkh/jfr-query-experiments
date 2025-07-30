@@ -38,6 +38,14 @@ public class AssignmentNode extends AstNode {
         return sb.toString();
     }
 
+    public AstNode getIdentifier() {
+        return identifier;
+    }
+
+    public AstNode getNode() {
+        return node;
+    }
+
     @Override
     public Object eval(Object row, AstNode root) {
         return node.eval(row, root);

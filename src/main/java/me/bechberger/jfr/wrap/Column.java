@@ -21,4 +21,8 @@ public class Column {
     public void setAlias(String alias) {
         this.alias = alias;
     }
+
+    public String getName() {
+        return name;
+    }
 }

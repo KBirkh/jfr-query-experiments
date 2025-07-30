@@ -3,6 +3,8 @@ package me.bechberger.jfr.wrap.nodes;
 import java.util.ArrayList;
 import java.util.List;
 
+import me.bechberger.jfr.wrap.Evaluator;
+
 
 public class ProgramNode extends AstNode {
     private List<AstNode> statements;
@@ -38,10 +40,13 @@ public class ProgramNode extends AstNode {
         return sb.toString();
     }
     public Object eval() {
+        Evaluator evaluator = Evaluator.getInstance();
         for (AstNode statement : statements) {
+            evaluator.setRoot(statement);
             statement.eval(statement);
         }
-    return null;
+        evaluator.evalTodos();
+        return null;
     }
     
 }

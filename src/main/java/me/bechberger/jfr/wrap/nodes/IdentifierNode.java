@@ -107,7 +107,7 @@ public class IdentifierNode extends AstConditional {
         Object value = evalrow.getFields().get(toSearch);
         if (value == null) {
             Evaluator evaluator = Evaluator.getInstance();
-            value = evaluator.getAssignment(this);
+            value = evaluator.getAssignment(getName());
         }
         return value;
     }

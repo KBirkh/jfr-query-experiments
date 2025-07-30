@@ -93,6 +93,8 @@ public class Parser {
             assignmentNode.setIdentifier(identifier());
             expect(TokenType.ASSIGNMENT);
             assignmentNode.setNode(query());
+            Evaluator evaluator = Evaluator.getInstance();
+            evaluator.addAssignment(assignmentNode.getIdentifier().getName(), assignmentNode.getNode());
             return assignmentNode;
         } else {
             throw new ParseException("Expected IDENTIFIER for assignment, found " + peek().type, pos);

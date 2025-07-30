@@ -15,17 +15,24 @@ import me.bechberger.jfr.wrap.nodes.OrderByNode;
 public class Evaluator {
     private static Evaluator instance;
     private HashMap<AstNode, EvalTable> tables;
-    private List<FunctionNode> aggregates;
-    private List<AstNode> groupings;
+    private Map<AstNode, List<FunctionNode>> aggregates;
+    private Map<AstNode, List<AstNode>> aggregateColumns;
+    private Map<AstNode, List<AstNode>> groupings;
     public EvalState state = EvalState.INITIAL;
-    private Map<AstNode, Object[]> percentiles;
-    private Map<AstNode, AstNode> assignments;
+    private Map<AstNode, Map<AstNode, Object[]>> percentiles;
+    private Map<String, AstNode> assignments;
+    private Map<String, AstNode> todos;
+    private AstNode currentRoot;
 
     private Evaluator() {
         this.tables = new HashMap<AstNode, EvalTable>();
-        this.aggregates = new ArrayList<FunctionNode>();
-        this.groupings = new ArrayList<AstNode>();
-        this.assignments = new HashMap<AstNode, AstNode>();
+        this.aggregates = new HashMap<AstNode, List<FunctionNode>>();
+        this.groupings = new HashMap<AstNode, List<AstNode>>();
+        this.assignments = new HashMap<String, AstNode>();
+        this.percentiles = new HashMap<AstNode, Map<AstNode, Object[]>>();
+        this.aggregateColumns = new HashMap<AstNode, List<AstNode>>();
+        this.todos = new HashMap<String, AstNode>();
+        this.currentRoot = null;
     }
 
     public void addTable(EvalTable table, AstNode root) {
@@ -34,7 +41,7 @@ public class Evaluator {
     }
 
     public void addToTable(EvalTable table, AstNode root) {
-        if(tables.isEmpty()) {
+        if(!tables.containsKey(root)) {
             addTable(table, root);
         } else {
             EvalTable tab1 = tables.values().stream().findFirst().orElse(null);
@@ -87,103 +94,102 @@ public class Evaluator {
         return instance;
     }
 
-    public String toString() {
-        StringBuilder sb = new StringBuilder();
-        for (Map.Entry<AstNode, EvalTable> entry : tables.entrySet()) {
-            EvalTable table = entry.getValue();
-            sb.append("Rows:\n");
-            for (EvalRow row : table.rows) {
-                sb.append(row).append("\n");
-            }
-            sb.append("\nColumns: ");
-            for (Column column : table.columns) {
-                sb.append(column.getFullName()).append(", ");
-            }
+    public void addTodo(String todo, AstNode root) {
+        todos.put(todo, root);
+    }
+
+    public void evalTodos() {
+        todos.forEach((String, node) -> node.eval(node));
+    }
+
+    
+    public void addAggregate(AstNode aggregate, AstNode root) {
+        if(aggregates.get(root) == null) {
+            aggregates.put(root, new ArrayList<FunctionNode>());
         }
-        return sb.toString();
+        aggregates.get(root).add((FunctionNode) aggregate);
+        aggregateColumns.putIfAbsent(root, new ArrayList<AstNode>());
     }
-
-    public void addAggregate(AstNode aggregate) {
-        aggregates.add((FunctionNode) aggregate);
+    
+    public void addGrouping(AstNode grouping, AstNode root) {
+        if (groupings.get(root) == null) {
+            groupings.put(root, new ArrayList<AstNode>());
+        }
+        groupings.get(root).add(grouping);
+        aggregateColumns.putIfAbsent(root, new ArrayList<AstNode>());
     }
-
-    public void addGrouping(AstNode grouping) {
-        groupings.add(grouping);
-    }
-
+    
     public void group(AstNode root) {
         // Ensure there is at least one table and groupings are defined
         if (tables.isEmpty() || groupings.isEmpty()) {
             return;
         }
-
-        // Get the first table
+        
+        // Get the table
         EvalTable table = tables.get(root);
-        if (table == null) {
-            throw new IllegalStateException("No table available for grouping.");
-        }
-
+        
         // Group rows by the fields in the groupings list
         Map<List<Object>, List<EvalRow>> groupedRows = table.rows.stream()
-            .collect(Collectors.groupingBy(row -> groupings.stream()
-                .map(grouping -> grouping.eval(row, root)) // Evaluate each grouping field
-                .collect(Collectors.toList())));    // Collect grouping field values into a list
-
+        .collect(Collectors.groupingBy(row -> groupings.get(root).stream()
+        .map(grouping -> grouping.eval(row, root)) // Evaluate each grouping field
+        .collect(Collectors.toList())));    // Collect grouping field values into a list
+        
         // Create a new list of rows for the grouped table
         List<EvalRow> newRows = new ArrayList<>();
         for (Map.Entry<List<Object>, List<EvalRow>> entry : groupedRows.entrySet()) {
             List<Object> groupKey = entry.getKey();
             List<EvalRow> group = entry.getValue();
-
+            
             // Create a new row for the group
             EvalRow newRow = new EvalRow();
-
+            
             // Add grouping fields to the new row
-            for (int i = 0; i < groupings.size(); i++) {
-                String groupingFieldName = groupings.get(i).toString(); // Use the grouping field's string representation
+            for (int i = 0; i < groupings.get(root).size(); i++) {
+                String groupingFieldName = groupings.get(root).get(i).getName(); // Use the grouping field's string representation
                 newRow.addField(groupingFieldName, groupKey.get(i));
             }
-
+            
             // Evaluate aggregate functions and add them to the new row
-            for (FunctionNode aggregate : aggregates) {
+            for (FunctionNode aggregate : aggregates.get(root)) {
                 Object aggregateValue = aggregate.eval(group, root); // Evaluate the aggregate function for the group
                 String aggregateFieldName = aggregate.getName(); // Use the aggregate function's string representation
                 newRow.addField(aggregateFieldName, aggregateValue);
             }
-
+            
             // Add the new row to the list of new rows
             newRows.add(newRow);
         }
-
+        
         // Create a new table with the grouped rows
         List<Column> newColumns = new ArrayList<>();
-        for (AstNode grouping : groupings) {
+        for (AstNode grouping : groupings.get(root)) {
             newColumns.add(new Column(grouping.getName(), null)); // Add grouping columns
         }
-        for (AstNode aggregate : aggregates) {
+        for (AstNode aggregate : aggregates.get(root)) {
             newColumns.add(new Column(aggregate.getName(), null)); // Add aggregate columns
         }
         EvalTable newTable = new EvalTable(newColumns, newRows);
-
+        newTable.setGrouped(true);
+        
         // Replace the existing table with the new grouped table
         tables.clear();
         tables.put(root, newTable);
     }
-
-    private void addPercentile(AstNode node, Object[] percentiles) {
-        if (this.percentiles == null) {
-            this.percentiles = new HashMap<>();
+    
+    private void addPercentile(AstNode node, Object[] percentiles, AstNode root) {
+        if(this.percentiles.get(root) == null) {
+            this.percentiles.put(root, new HashMap<AstNode, Object[]>());
         }
-        this.percentiles.put(node, percentiles);
+        this.percentiles.get(root).put(node, percentiles);
     }
-
+    
     public Object[] getPercentiles(AstNode node, AstNode root) {
-        if (this.percentiles == null) {
+        if (this.percentiles.get(root) == null) {
             return calculatePercentiles(node, root);
         }
-        return this.percentiles.get(node);
+        return this.percentiles.get(root).get(node);
     }
-
+    
     private Object[] calculatePercentiles(AstNode node, AstNode root) {
         EvalTable table = tables.get(root);
         if (table == null || table.rows.isEmpty()) {
@@ -209,23 +215,61 @@ public class Evaluator {
         percentiles[2] = node.eval(row95, root);
         percentiles[3] = node.eval(row90, root);
         percentiles[4] = node.eval(row50, root);
-        addPercentile(node, percentiles);
+        addPercentile(node, percentiles, root);
         return percentiles;
     }
-
-    public Object getAssignment(IdentifierNode identifierNode) {
-        return assignments.get(identifierNode);
+    
+    public Object getAssignment(String identifier) {
+        return assignments.get(identifier);
     }
-
-    public void addAssignment(AstNode identifier, AstNode node) {
+    
+    public void addAssignment(String identifier, AstNode node) {
         if (identifier == null || node == null) {
             throw new IllegalArgumentException("Identifier and node cannot be null");
-        }
-        if (!(identifier instanceof IdentifierNode)) {
-            throw new IllegalArgumentException("Identifier must be an instance of IdentifierNode");
         }
         assignments.put(identifier, node);
     }
 
+    public void setRoot(AstNode root) {
+        this.currentRoot = root;
+    }
+
+    public AstNode getCurrentRoot() {
+        return this.currentRoot;
+    }
+    
+    public void removeCol(Column col, AstNode root) {
+        if (col == null) {
+            throw new IllegalArgumentException("Column cannot be null");
+        }
+        EvalTable table = tables.get(root);
+        if (table == null) {
+            throw new IllegalStateException("No table found for the given root node");
+        }
+        String toSearch =  col.getName();
+        ArrayList<Column> mutable = new ArrayList<Column>(table.getColumns());
+        mutable.removeIf(column -> column.getFullName().equals(toSearch));
+        for (EvalRow row : table.rows) {
+            row.getFields().remove(toSearch);
+        }
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        for (Map.Entry<AstNode, EvalTable> entry : tables.entrySet()) {
+            EvalTable table = entry.getValue();
+            sb.append("Rows:\n");
+            for (EvalRow row : table.rows) {
+                sb.append(row).append("\n");
+            }
+            sb.append("\nColumns: ");
+            for (Column column : table.columns) {
+                sb.append(column.getFullName()).append(", ");
+            }
+        }
+        return sb.toString();
+    }
+    
 }
 
