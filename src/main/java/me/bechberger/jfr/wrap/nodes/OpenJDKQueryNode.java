@@ -58,7 +58,7 @@ public class OpenJDKQueryNode extends AstNode {
         String alias = (String) aliasObj;
         QueryCommand queryCommand = new QueryCommand();
         queryCommand.setView(query);
-        queryCommand.setFile("src/main/java/me/bechberger/jfr/voronoi2.jfr");
+        queryCommand.setFile("src/main/java/me/bechberger/jfr/renaissance.jfr");
         queryCommand.setConfigOptions(new ConfigOptions());
         try {
             Table table = queryCommand.call();
@@ -80,7 +80,7 @@ public class OpenJDKQueryNode extends AstNode {
     public Object eval(AstNode root) {
         QueryCommand queryCommand = new QueryCommand();
         queryCommand.setView(query);
-        queryCommand.setFile("src/main/java/me/bechberger/jfr/voronoi2.jfr");
+        queryCommand.setFile("src/main/java/me/bechberger/jfr/renaissance.jfr");
         queryCommand.setConfigOptions(new ConfigOptions());
         try {
             Table table = queryCommand.call();

@@ -149,11 +149,24 @@ public class Evaluator {
                 newRow.addField(groupingFieldName, groupKey.get(i));
             }
             
-            // Evaluate aggregate functions and add them to the new row
-            for (FunctionNode aggregate : aggregates.get(root)) {
-                Object aggregateValue = aggregate.eval(group, root); // Evaluate the aggregate function for the group
-                String aggregateFieldName = aggregate.getName(); // Use the aggregate function's string representation
-                newRow.addField(aggregateFieldName, aggregateValue);
+            if(aggregates.get(root) == null || aggregates.get(root).isEmpty()) {
+                // If no aggregates are defined, just add the first row's fields
+                for (EvalRow row : group) {
+                    for (Map.Entry<String, Object> entryField : row.getFields().entrySet()) {
+                        if (!newRow.getFields().containsKey(entryField.getKey())) {
+                            newRow.addField(entryField.getKey(), entryField.getValue());
+                        }
+                    }
+                }
+                newRows.add(newRow);
+                continue;
+            } else {
+                // Evaluate aggregate functions and add them to the new row
+                for (FunctionNode aggregate : aggregates.get(root)) {
+                    Object aggregateValue = aggregate.eval(group, root); // Evaluate the aggregate function for the group
+                    String aggregateFieldName = aggregate.getName(); // Use the aggregate function's string representation
+                    newRow.addField(aggregateFieldName, aggregateValue);
+                }
             }
             
             // Add the new row to the list of new rows
@@ -165,8 +178,19 @@ public class Evaluator {
         for (AstNode grouping : groupings.get(root)) {
             newColumns.add(new Column(grouping.getName(), null)); // Add grouping columns
         }
-        for (AstNode aggregate : aggregates.get(root)) {
-            newColumns.add(new Column(aggregate.getName(), null)); // Add aggregate columns
+
+        if(aggregates.get(root) == null || aggregates.get(root).isEmpty()) {
+            // If no aggregates are defined, just add the original columns
+            EvalTable originalTable = tables.get(root);
+            for (Column col : originalTable.getColumns()) {
+                if (!newColumns.stream().anyMatch(c -> c.getFullName().equals(col.getFullName()))) {
+                    newColumns.add(col); // Add original columns that are not grouping or aggregate columns
+                }
+            }
+        } else {
+            for (AstNode aggregate : aggregates.get(root)) {
+                newColumns.add(new Column(aggregate.getName(), null)); // Add aggregate columns
+            }
         }
         EvalTable newTable = new EvalTable(newColumns, newRows);
         newTable.setGrouped(true);

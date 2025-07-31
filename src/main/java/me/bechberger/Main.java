@@ -67,7 +67,7 @@ public class Main /* implements Callable<Integer> */ {
 
     public static void main(String[] args) {
         String input2 = "@SELECT gcP.eventThread, gcP.name, COUNT(), SUM(gcP.duration), MIN(gcP.duration), MAX(gcP.duration), AVG(gcP.duration) FROM [SELECT * FROM GCPhaseParallel] AS gcP WHERE p90(gcP.duration) GROUP BY gcP.eventThread, gcP.name HAVING COUNT() > 1 ORDER BY SUM(gcP.duration) LIMIT 6";
-        String input = "@SELECT * FROM x AS t; x = @SELECT * FROM [SELECT * FROM GCPhaseParallel]";
+        String input = "@SELECT eventThread, name, AVG(duration), SUM(duration), MAX(duration), MIN(duration) FROM [SELECT * FROM GCPhaseParallel] WHERE p999(duration) GROUP BY eventThread, name ORDER BY AVG(duration)";
         Lexer lexer = new Lexer(input);
         Parser parser = new Parser(lexer.tokenize(), input);
         try {
