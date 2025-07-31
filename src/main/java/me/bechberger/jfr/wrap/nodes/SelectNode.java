@@ -51,6 +51,12 @@ public class SelectNode extends AstNode {
                 evaluator.addAggregate(column, root);
             }
         }
+        if(root instanceof QueryNode) {
+            QueryNode queryNode = (QueryNode) root;
+            if(queryNode.getHaving() != null) {
+                ((HavingNode) queryNode.getHaving()).findAggregates(root);
+            }
+        }
     }
 
     @Override

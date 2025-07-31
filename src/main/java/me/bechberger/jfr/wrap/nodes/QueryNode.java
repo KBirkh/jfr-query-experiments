@@ -82,6 +82,10 @@ public class QueryNode extends AstNode {
     public void setColumn(AstNode columns) {
         this.columns = (ColumnNode) columns;
     }
+
+    public AstNode getHaving() {
+        return having;
+    }
     @Override
     public String toString(int indent) {
         StringBuilder sb = new StringBuilder();
@@ -143,9 +147,7 @@ public class QueryNode extends AstNode {
             limit.eval(root);
         }
         evaluator.state = EvalState.SELECT;
-        if(!select.isStar) {
-            select.eval(root);
-        }
+        select.eval(root);
 
         return null;
     }

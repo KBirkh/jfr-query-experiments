@@ -9,6 +9,7 @@ import me.bechberger.jfr.wrap.nodes.ProgramNode;
 import picocli.CommandLine;
 
 import java.text.ParseException;
+import java.util.Arrays;
 import java.util.concurrent.Callable;
 
 /* @CommandLine.Command(
@@ -66,15 +67,29 @@ public class Main /* implements Callable<Integer> */ {
     } */
 
     public static void main(String[] args) {
-        String input2 = "@SELECT gcP.eventThread, gcP.name, COUNT(), SUM(gcP.duration), MIN(gcP.duration), MAX(gcP.duration), AVG(gcP.duration) FROM [SELECT * FROM GCPhaseParallel] AS gcP WHERE p90(gcP.duration) GROUP BY gcP.eventThread, gcP.name HAVING COUNT() > 1 ORDER BY SUM(gcP.duration) LIMIT 6";
-        String input = "@SELECT eventThread, name, AVG(duration), SUM(duration), MAX(duration), MIN(duration) FROM [SELECT * FROM GCPhaseParallel] WHERE p999(duration) GROUP BY eventThread, name ORDER BY AVG(duration)";
+        Evaluator evaluator = Evaluator.getInstance();
+        String input;
+        if(args.length > 1) {
+            System.out.println("Using file: " + args[1]);
+            evaluator.setFile(args[1]);
+            input = args[0];
+        } else if (args.length > 0) {
+            System.err.println("No file specified, using default: src/main/java/me/bechberger/jfr/renaissance.jfr");
+            evaluator.setFile("src/main/java/me/bechberger/jfr/voronoi2.jfr");
+            input = args[0];
+
+        } else {
+            System.err.println("Neither query nor file specified, using as hard coded in main method");
+            evaluator.setFile("src/main/java/me/bechberger/jfr/voronoi2.jfr");
+            input = "@SELECT * FROM [SELECT * FROM GCPhaseParallel] AS gcP WHERE p90(gcP.duration) GROUP BY gcP.eventThread, gcP.name HAVING COUNT() > 1 ORDER BY SUM(gcP.duration) LIMIT 6";
+        }
         Lexer lexer = new Lexer(input);
         Parser parser = new Parser(lexer.tokenize(), input);
         try {
             ProgramNode res = parser.parse();
             res.eval();
-            Evaluator evaluator = Evaluator.getInstance();
             System.out.println(evaluator);
+            System.out.println(Arrays.toString(args));
             /* System.out.println(res.toString(0)); */
         } catch (ParseException e) {
             e.printStackTrace();

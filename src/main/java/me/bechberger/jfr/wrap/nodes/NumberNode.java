@@ -21,6 +21,11 @@ public class NumberNode extends AstConditional {
         return value != null ? Double.parseDouble(value) : null;
     }
 
+    @Override
+    public void findAggregates(AstNode root) {
+        
+    }
+
     public String getType() {
         return "Number";
     }

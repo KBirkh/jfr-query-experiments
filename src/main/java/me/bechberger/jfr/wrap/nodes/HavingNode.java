@@ -18,6 +18,14 @@ public class HavingNode extends AstNode {
         this.condition = condition;
     }
 
+    public void findAggregates(AstNode root) {
+        if (condition != null) {
+            condition.findAggregates(root);
+        } else {
+            throw new IllegalStateException("Condition has not been set for HavingNode");
+        }
+    }
+
     @Override
     public Object eval(AstNode root) {
         Evaluator evaluator = Evaluator.getInstance();

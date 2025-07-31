@@ -54,6 +54,16 @@ public class ArithmeticNode extends AstConditional {
         this.right = right;
     }
 
+    @Override
+    public void findAggregates(AstNode root) {
+        if(left != null) {
+            left.findAggregates(root);
+        }
+        if(right != null) {
+            right.findAggregates(root);
+        }
+    }
+
     public String toString(int indent) {
         StringBuilder sb = new StringBuilder();
         String dent = "  ".repeat(indent);

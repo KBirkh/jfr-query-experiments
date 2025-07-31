@@ -43,4 +43,9 @@ public class StringNode extends AstConditional {
     public String getName() {
         return value != null ? value : "StringNode with no value";
     }
+
+    @Override
+    public void findAggregates(AstNode root) {
+        
+    }
 }

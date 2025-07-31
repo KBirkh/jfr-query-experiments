@@ -52,6 +52,11 @@ public class TimeNode extends AstConditional {
         return Duration.ofNanos((long) timeValue * getUnitMultiplier());
     }
 
+    @Override
+    public void findAggregates(AstNode root) {
+        // No aggregates to find in TimeNode
+    }
+
     public String toString(int indent) {
         StringBuilder sb = new StringBuilder();
         String dent = "  ".repeat(indent);

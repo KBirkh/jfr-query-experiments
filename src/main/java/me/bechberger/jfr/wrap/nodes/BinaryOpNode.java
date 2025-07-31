@@ -19,6 +19,17 @@ public class BinaryOpNode extends AstConditional {
         this.leftOperand = leftOperand;
         this.rightOperand = rightOperand;
     }
+
+    @Override
+    public void findAggregates(AstNode root) {
+        if (leftOperand != null) {
+            leftOperand.findAggregates(root);
+        }
+        if (rightOperand != null) {
+            rightOperand.findAggregates(root);
+        }
+    }
+
     @Override
     public String toString(int indent) {
         StringBuilder sb = new StringBuilder();

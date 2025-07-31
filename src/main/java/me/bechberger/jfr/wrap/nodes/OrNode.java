@@ -58,5 +58,15 @@ public class OrNode extends AstConditional {
             throw new IllegalArgumentException("Both left and right nodes must evaluate to Boolean values");
         }
     }
+
+    @Override
+    public void findAggregates(AstNode root) {
+        if(left != null) {
+            left.findAggregates(root);
+        }
+        if(right != null) {
+            right.findAggregates(root);
+        }
+    }
     
 }

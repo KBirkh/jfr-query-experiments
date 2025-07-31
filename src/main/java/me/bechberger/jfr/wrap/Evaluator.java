@@ -13,6 +13,7 @@ import me.bechberger.jfr.wrap.nodes.OrderByNode;
 
 
 public class Evaluator {
+    private String pathToFile;
     private static Evaluator instance;
     private HashMap<AstNode, EvalTable> tables;
     private Map<AstNode, List<FunctionNode>> aggregates;
@@ -33,6 +34,14 @@ public class Evaluator {
         this.aggregateColumns = new HashMap<AstNode, List<AstNode>>();
         this.todos = new HashMap<String, AstNode>();
         this.currentRoot = null;
+    }
+
+    public void setFile(String path) {
+        pathToFile = path;
+    }
+
+    public String getFile() {
+        return pathToFile;
     }
 
     public void addTable(EvalTable table, AstNode root) {

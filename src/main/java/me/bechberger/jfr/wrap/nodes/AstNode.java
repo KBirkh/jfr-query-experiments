@@ -23,4 +23,8 @@ public abstract class AstNode {
     public String getName() {
         return "AstNode abstract class";
     }
+
+    public void findAggregates(AstNode root) {
+        throw new UnsupportedOperationException("findAggregates(AstNode root) not implemented for " + this.getClass().getSimpleName());
+    }
 }

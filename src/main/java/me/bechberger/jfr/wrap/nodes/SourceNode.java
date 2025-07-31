@@ -67,7 +67,7 @@ public class SourceNode extends AstNode {
             if(alias == null || alias.isEmpty()) {
                 subquery.eval(root);
             } else {
-                subquery.eval(root);
+                subquery.eval(alias, root);
             }
         } else {
             Evaluator evaluator = Evaluator.getInstance();

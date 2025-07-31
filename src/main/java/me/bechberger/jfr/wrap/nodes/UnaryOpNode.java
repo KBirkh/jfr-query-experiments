@@ -21,5 +21,12 @@ public class UnaryOpNode extends AstConditional {
         sb.append("\n").append(dent).append(this.getClass().getSimpleName()).append(": ").append(operator).append(" ").append(operand.toString(indent + 1));
         return sb.toString();
     }
+
+    @Override
+    public void findAggregates(AstNode root) {
+        if(operand != null) {
+            operand.findAggregates(root);
+        }
+    }
     
 }

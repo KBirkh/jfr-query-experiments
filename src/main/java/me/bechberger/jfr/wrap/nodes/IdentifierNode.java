@@ -98,6 +98,11 @@ public class IdentifierNode extends AstConditional {
     }
 
     @Override
+    public void findAggregates(AstNode root) {
+        // No aggregates to find in IdentifierNode
+    }
+
+    @Override
     public Object eval(Object row, AstNode root) {
         EvalRow evalrow = (EvalRow) row;
         if (row == null) {

@@ -100,6 +100,31 @@ public class FunctionNode extends AstConditional {
     }
 
     @Override
+    public void findAggregates(AstNode root) {
+        switch(type) {
+            case SUM:
+            case AVG:
+            case COUNT:
+            case MIN:
+            case MAX:
+                Evaluator evaluator = Evaluator.getInstance();
+                evaluator.addAggregate(this, root);
+                break;
+            case P50:
+            case P90:
+            case P95:
+            case P99:
+            case P999:
+            case BEFORE_GC:
+            case AFTER_GC:
+            case NEAR_GC:
+                break;
+            default:
+                throw new IllegalArgumentException("Unknown function type: " + type);
+        }
+    }
+
+    @Override
     public String toString(int indent) {
         StringBuilder sb = new StringBuilder();
         String dent = "  ".repeat(indent);

@@ -28,7 +28,14 @@ public class EvalRow {
             if(value instanceof RecordedThread) {
                 value = ((RecordedThread) value).getOSName(); 
             } else if(value instanceof Duration) {
-                value = ((Duration) value).getNano() + " ns"; // Convert Duration to milliseconds
+                long durationNanos = ((Duration) value).toNanos(); // Convert Duration to nanoseconds
+                if(durationNanos < 1000) {
+                    value = durationNanos + " ns"; // Keep as nanoseconds
+                } else if(durationNanos < 1_000_000) {
+                    value = durationNanos / 1_000F + " μs"; // Convert Duration to microseconds
+                } else {
+                    value = (durationNanos / 1_000_000F) + " ms"; // Convert Duration to picoseconds
+                }
             } else if (value instanceof RecordedEvent) {
                 value = ((RecordedEvent) value).getEventType().getName(); // Use event type name for RecordedEvent
             } else if (value instanceof RecordedObject) {

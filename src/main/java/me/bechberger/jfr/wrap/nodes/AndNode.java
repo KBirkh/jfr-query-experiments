@@ -43,6 +43,16 @@ public class AndNode extends AstConditional {
     }
 
     @Override
+    public void findAggregates(AstNode root) {
+        if (left != null) {
+            left.findAggregates(root);
+        }
+        if (right != null) {
+            right.findAggregates(root);
+        }
+    }   
+
+    @Override
     public Object eval(Object row, AstNode root) {
         if (left == null || right == null) {
             throw new IllegalStateException("Left and right nodes must be set before evaluation");

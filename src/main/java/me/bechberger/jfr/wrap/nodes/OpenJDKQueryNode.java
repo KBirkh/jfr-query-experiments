@@ -56,9 +56,10 @@ public class OpenJDKQueryNode extends AstNode {
     @Override
     public Object eval(Object aliasObj, AstNode root) {
         String alias = (String) aliasObj;
+        Evaluator evaluator = Evaluator.getInstance();
         QueryCommand queryCommand = new QueryCommand();
         queryCommand.setView(query);
-        queryCommand.setFile("src/main/java/me/bechberger/jfr/renaissance.jfr");
+        queryCommand.setFile(evaluator.getFile());
         queryCommand.setConfigOptions(new ConfigOptions());
         try {
             Table table = queryCommand.call();
@@ -67,7 +68,6 @@ public class OpenJDKQueryNode extends AstNode {
                 return null;
             }
             EvalTable evalTable = TableUtils.toEvalTable(table, alias);
-            Evaluator evaluator = Evaluator.getInstance();
             evaluator.addToTable(evalTable, root);
         } catch (UserSyntaxException | UserDataException e) {
             // TODO Auto-generated catch block
@@ -78,9 +78,10 @@ public class OpenJDKQueryNode extends AstNode {
 
     @Override
     public Object eval(AstNode root) {
+        Evaluator evaluator = Evaluator.getInstance();
         QueryCommand queryCommand = new QueryCommand();
         queryCommand.setView(query);
-        queryCommand.setFile("src/main/java/me/bechberger/jfr/renaissance.jfr");
+        queryCommand.setFile(evaluator.getFile());
         queryCommand.setConfigOptions(new ConfigOptions());
         try {
             Table table = queryCommand.call();
@@ -89,7 +90,6 @@ public class OpenJDKQueryNode extends AstNode {
                 return null;
             }
             EvalTable evalTable = TableUtils.toEvalTable(table);
-            Evaluator evaluator = Evaluator.getInstance();
             evaluator.addToTable(evalTable, root);
         } catch (UserSyntaxException | UserDataException e) {
             // TODO Auto-generated catch block

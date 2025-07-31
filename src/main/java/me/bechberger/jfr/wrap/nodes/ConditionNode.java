@@ -98,4 +98,14 @@ public class ConditionNode extends AstNode {
         }
     }
 
+    @Override
+    public void findAggregates(AstNode root) {
+        if (left != null) {
+            left.findAggregates(root);
+        }
+        if (right != null) {
+            right.findAggregates(root);
+        }
+    }
+
 }

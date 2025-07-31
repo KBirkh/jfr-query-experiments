@@ -22,6 +22,11 @@ public class BooleanNode extends AstConditional {
     }
 
     @Override
+    public void findAggregates(AstNode root) {
+        // No aggregates to find in a BooleanNode
+    }
+
+    @Override
     public Object eval(Object row, AstNode root) {
         return value;
     }
