@@ -81,7 +81,7 @@ public class Main /* implements Callable<Integer> */ {
         } else {
             System.err.println("Neither query nor file specified, using as hard coded in main method");
             evaluator.setFile("src/main/java/me/bechberger/jfr/voronoi2.jfr");
-            input = "@SELECT * FROM [SELECT * FROM GCPhaseParallel] AS gcP WHERE p90(gcP.duration) GROUP BY gcP.eventThread, gcP.name HAVING COUNT() > 1 ORDER BY SUM(gcP.duration) LIMIT 6";
+            input = "@SELECT COUNT(), eventThread FROM [SELECT * FROM GCPhaseParallel] GROUP BY eventThread LIMIT 1";
         }
         Lexer lexer = new Lexer(input);
         Parser parser = new Parser(lexer.tokenize(), input);
@@ -89,7 +89,6 @@ public class Main /* implements Callable<Integer> */ {
             ProgramNode res = parser.parse();
             res.eval();
             System.out.println(evaluator);
-            System.out.println(Arrays.toString(args));
             /* System.out.println(res.toString(0)); */
         } catch (ParseException e) {
             e.printStackTrace();

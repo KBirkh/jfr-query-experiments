@@ -76,4 +76,10 @@ public class EvalTable {
     public void setGrouped(boolean isGrouped) {
         this.isGrouped = isGrouped;
     }
+
+    public void limit(int count) {
+        if (rows != null && rows.size() > count) {
+            rows = rows.subList(0, count);
+        }
+    }
 }

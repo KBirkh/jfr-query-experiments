@@ -2,6 +2,7 @@ package me.bechberger.jfr.wrap;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -141,7 +142,9 @@ public class Evaluator {
         Map<List<Object>, List<EvalRow>> groupedRows = table.rows.stream()
         .collect(Collectors.groupingBy(row -> groupings.get(root).stream()
         .map(grouping -> grouping.eval(row, root)) // Evaluate each grouping field
-        .collect(Collectors.toList())));    // Collect grouping field values into a list
+        .collect(Collectors.toList()),
+        LinkedHashMap::new,
+        Collectors.toList()));    // Collect grouping field values into a list
         
         // Create a new list of rows for the grouped table
         List<EvalRow> newRows = new ArrayList<>();

@@ -1,5 +1,9 @@
 package me.bechberger.jfr.wrap.nodes;
 
+import java.util.ArrayList;
+import java.util.Collections;
+
+import me.bechberger.jfr.wrap.EvalRow;
 import me.bechberger.jfr.wrap.EvalTable;
 import me.bechberger.jfr.wrap.Evaluator;
 
@@ -26,7 +30,7 @@ public class LimitNode extends AstNode {
     public Object eval(AstNode root) {
         Evaluator evaluator = Evaluator.getInstance();
         EvalTable table = evaluator.getTable(root);
-        table.rows = table.rows.parallelStream().limit(count).toList();
+        table.limit(count);
         return null;
     }
 
