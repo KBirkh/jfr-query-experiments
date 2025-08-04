@@ -3,6 +3,7 @@ package me.bechberger.jfr.wrap.nodes;
 import java.util.ArrayList;
 import java.util.List;
 
+import jdk.jfr.consumer.RecordedThread;
 import me.bechberger.jfr.wrap.EvalRow;
 import me.bechberger.jfr.wrap.EvalTable;
 import me.bechberger.jfr.wrap.Evaluator;
@@ -139,7 +140,9 @@ public class OrderByNode extends AstNode {
         }
         if (val1 instanceof Comparable && val2 instanceof Comparable) {
             return ((Comparable<Object>) val1).compareTo(val2);
-        }
+        } else if(val1 instanceof RecordedThread && val2 instanceof RecordedThread) {
+            return ((RecordedThread) val1).getOSName().compareTo(((RecordedThread) val2).getOSName());
+        } 
         throw new IllegalArgumentException("Values are not comparable: " + val1 + ", " + val2);
     }
 

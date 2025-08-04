@@ -368,4 +368,12 @@ public class FunctionNode extends AstConditional {
     public String getName() {
         return name + "(" + String.join(", ", arguments.stream().map(AstNode::getName).toArray(String[]::new)) + ")";
     }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) return true;
+        if (!(obj instanceof FunctionNode)) return false;
+        FunctionNode that = (FunctionNode) obj;
+        return this.getName().equals(that.getName());
+    }
 }

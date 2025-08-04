@@ -65,6 +65,10 @@ public class EvalTable {
         return columns;
     }
 
+    public void setColumns(List<Column> columns) {
+        this.columns = columns;
+    }
+
     public List<EvalRow> getRows() {
         return rows;
     }
@@ -81,5 +85,19 @@ public class EvalTable {
         if (rows != null && rows.size() > count) {
             rows = rows.subList(0, count);
         }
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("Rows:\n");
+        for (EvalRow row : rows) {
+            sb.append(row).append("\n");
+        }
+        sb.append("\nColumns: ");
+        for (Column column : columns) {
+            sb.append(column.getFullName()).append(", ");
+        }
+        return sb.append("\n").toString();
     }
 }

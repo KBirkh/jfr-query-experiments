@@ -53,11 +53,12 @@ public class EvalRow {
         return sb.toString();
     }
     
-    public void addField(String name, Object value) {
+    public EvalRow addField(String name, Object value) {
         if (fields == null) {
             fields = new LinkedHashMap<>();
         }
         fields.put(name, value);
+        return this;
     }
 
     public void addFieldFirst(String name, Object value) {

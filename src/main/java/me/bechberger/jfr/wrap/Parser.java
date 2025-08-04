@@ -548,6 +548,8 @@ public class Parser {
                     advance();
                     functionNode.addArgument(expression());
                 }
+            } else if(isIn(TokenType.STAR)) {
+                advance();
             }
             expect(TokenType.RPAREN);
             return functionNode;

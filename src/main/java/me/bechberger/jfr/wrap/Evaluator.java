@@ -117,8 +117,12 @@ public class Evaluator {
         if(aggregates.get(root) == null) {
             aggregates.put(root, new ArrayList<FunctionNode>());
         }
-        aggregates.get(root).add((FunctionNode) aggregate);
-        aggregateColumns.putIfAbsent(root, new ArrayList<AstNode>());
+        if(aggregates.get(root).contains(aggregate)) {
+            // Avoid adding the same aggregate multiple times
+        } else {
+            aggregates.get(root).add((FunctionNode) aggregate);
+            aggregateColumns.putIfAbsent(root, new ArrayList<AstNode>());
+        }
     }
     
     public void addGrouping(AstNode grouping, AstNode root) {
@@ -131,21 +135,26 @@ public class Evaluator {
     
     public void group(AstNode root) {
         // Ensure there is at least one table and groupings are defined
-        if (tables.isEmpty() || groupings.isEmpty()) {
+        if (tables.isEmpty()) {
             return;
         }
         
         // Get the table
         EvalTable table = tables.get(root);
         
-        // Group rows by the fields in the groupings list
-        Map<List<Object>, List<EvalRow>> groupedRows = table.rows.stream()
-        .collect(Collectors.groupingBy(row -> groupings.get(root).stream()
-        .map(grouping -> grouping.eval(row, root)) // Evaluate each grouping field
-        .collect(Collectors.toList()),
-        LinkedHashMap::new,
-        Collectors.toList()));    // Collect grouping field values into a list
-        
+        Map<List<Object>, List<EvalRow>> groupedRows = new LinkedHashMap<>();
+        if(!groupings.isEmpty()) {
+            // Group rows by the fields in the groupings list
+            groupedRows = table.rows.stream()
+            .collect(Collectors.groupingBy(row -> groupings.get(root).stream()
+            .map(grouping -> grouping.eval(row, root)) // Evaluate each grouping field
+            .collect(Collectors.toList()),
+            LinkedHashMap::new,
+            Collectors.toList()));    // Collect grouping field values into a list
+        } else {
+            groupedRows.put(new ArrayList<Object>(), table.rows); // If no groupings, use all rows as a single group
+        }
+            
         // Create a new list of rows for the grouped table
         List<EvalRow> newRows = new ArrayList<>();
         for (Map.Entry<List<Object>, List<EvalRow>> entry : groupedRows.entrySet()) {
@@ -155,10 +164,12 @@ public class Evaluator {
             // Create a new row for the group
             EvalRow newRow = new EvalRow();
             
-            // Add grouping fields to the new row
-            for (int i = 0; i < groupings.get(root).size(); i++) {
-                String groupingFieldName = groupings.get(root).get(i).getName(); // Use the grouping field's string representation
-                newRow.addField(groupingFieldName, groupKey.get(i));
+            if(!groupings.isEmpty()) {
+                // Add grouping fields to the new row
+                for (int i = 0; i < groupings.get(root).size(); i++) {
+                    String groupingFieldName = groupings.get(root).get(i).getName(); // Use the grouping field's string representation
+                    newRow.addField(groupingFieldName, groupKey.get(i));
+                }
             }
             
             if(aggregates.get(root) == null || aggregates.get(root).isEmpty()) {
@@ -187,8 +198,10 @@ public class Evaluator {
         
         // Create a new table with the grouped rows
         List<Column> newColumns = new ArrayList<>();
-        for (AstNode grouping : groupings.get(root)) {
-            newColumns.add(new Column(grouping.getName(), null)); // Add grouping columns
+        if(!groupings.isEmpty()) {
+            for (AstNode grouping : groupings.get(root)) {
+                newColumns.add(new Column(grouping.getName(), null)); // Add grouping columns
+            }    
         }
 
         if(aggregates.get(root) == null || aggregates.get(root).isEmpty()) {
@@ -273,6 +286,10 @@ public class Evaluator {
     public AstNode getCurrentRoot() {
         return this.currentRoot;
     }
+
+    public void destruct() {
+        instance = null;
+    }
     
     public void removeCol(Column col, AstNode root) {
         if (col == null) {
@@ -285,6 +302,7 @@ public class Evaluator {
         String toSearch =  col.getName();
         ArrayList<Column> mutable = new ArrayList<Column>(table.getColumns());
         mutable.removeIf(column -> column.getFullName().equals(toSearch));
+        table.setColumns(mutable);
         for (EvalRow row : table.rows) {
             row.getFields().remove(toSearch);
         }
@@ -295,14 +313,7 @@ public class Evaluator {
         StringBuilder sb = new StringBuilder();
         for (Map.Entry<AstNode, EvalTable> entry : tables.entrySet()) {
             EvalTable table = entry.getValue();
-            sb.append("Rows:\n");
-            for (EvalRow row : table.rows) {
-                sb.append(row).append("\n");
-            }
-            sb.append("\nColumns: ");
-            for (Column column : table.columns) {
-                sb.append(column.getFullName()).append(", ");
-            }
+            sb.append(table.toString());
         }
         return sb.toString();
     }
