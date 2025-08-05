@@ -73,15 +73,15 @@ public class Main /* implements Callable<Integer> */ {
             System.out.println("Using file: " + args[1]);
             evaluator.setFile(args[1]);
             input = args[0];
-        } else if (args.length > 0) {
+        } else if (args.length == 1) {
             System.err.println("No file specified, using default: src/main/java/me/bechberger/jfr/renaissance.jfr");
-            evaluator.setFile("src/main/java/me/bechberger/jfr/voronoi2.jfr");
+            evaluator.setFile("src/main/java/me/bechberger/jfr/renaissance.jfr");
             input = args[0];
 
         } else {
             System.err.println("Neither query nor file specified, using as hard coded in main method");
-            evaluator.setFile("src/main/java/me/bechberger/jfr/voronoi2.jfr");
-            input = "@SELECT COUNT() FROM [SELECT * FROM GCPhaseParallel]";
+            evaluator.setFile("src/main/java/me/bechberger/jfr/renaissance.jfr");
+            input = "@SELECT startTime, gcId, eventThread FROM [SELECT * FROM GarbageCollection] ORDER BY gcId DESC";
         }
         Lexer lexer = new Lexer(input);
         Parser parser = new Parser(lexer.tokenize(), input);

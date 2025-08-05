@@ -1,6 +1,7 @@
 package me.bechberger.jfr.wrap.nodes;
 
 import java.time.Duration;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -320,6 +321,11 @@ public class FunctionNode extends AstConditional {
                 .map(row -> (Duration) arg.eval(row, root))
                 .min(Duration::compareTo)
                 .orElse(Duration.ZERO);
+        } else if(arg.eval(rows.get(0), root) instanceof Instant) {
+            return rows.stream()
+                .map(row -> (Instant) arg.eval(row, root))
+                .min(Instant::compareTo)
+                .orElse(Instant.ofEpochMilli(0));
         } else {
             throw new IllegalArgumentException("MIN can only be applied to Number or Duration types");
         }

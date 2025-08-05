@@ -135,7 +135,7 @@ public class Evaluator {
     
     public void group(AstNode root) {
         // Ensure there is at least one table and groupings are defined
-        if (tables.isEmpty()) {
+        if (tables.isEmpty() || (aggregates.isEmpty() && groupings.isEmpty())) {
             return;
         }
         

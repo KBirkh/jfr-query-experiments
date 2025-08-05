@@ -26,6 +26,6 @@
 hs_err_pid*
 replay_pid*
 
-target/
+target/*
 # potentially very large files with query data
 *.jfr
