@@ -1,15 +1,22 @@
 package me.bechberger.jfr.wrap;
 
+import java.time.Duration;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
 import java.util.stream.Collectors;
 
+import me.bechberger.jfr.query.Table;
+import me.bechberger.jfr.tool.ConfigOptions;
+import me.bechberger.jfr.tool.QueryCommand;
+import me.bechberger.jfr.util.UserDataException;
+import me.bechberger.jfr.util.UserSyntaxException;
 import me.bechberger.jfr.wrap.nodes.AstNode;
 import me.bechberger.jfr.wrap.nodes.FunctionNode;
-import me.bechberger.jfr.wrap.nodes.IdentifierNode;
 import me.bechberger.jfr.wrap.nodes.OrderByNode;
 
 
@@ -19,21 +26,25 @@ public class Evaluator {
     private HashMap<AstNode, EvalTable> tables;
     private Map<AstNode, List<FunctionNode>> aggregates;
     private Map<AstNode, List<AstNode>> aggregateColumns;
+    private Map<AstNode, List<AstNode>> nonAggregates;
     private Map<AstNode, List<AstNode>> groupings;
     public EvalState state = EvalState.INITIAL;
     private Map<AstNode, Map<AstNode, Object[]>> percentiles;
     private Map<String, AstNode> assignments;
     private Map<String, AstNode> todos;
+    private Map<AstNode, TreeMap<Instant, Integer>> gcTables;
     private AstNode currentRoot;
 
     private Evaluator() {
         this.tables = new HashMap<AstNode, EvalTable>();
         this.aggregates = new HashMap<AstNode, List<FunctionNode>>();
+        this.nonAggregates = new HashMap<AstNode, List<AstNode>>();
         this.groupings = new HashMap<AstNode, List<AstNode>>();
         this.assignments = new HashMap<String, AstNode>();
         this.percentiles = new HashMap<AstNode, Map<AstNode, Object[]>>();
         this.aggregateColumns = new HashMap<AstNode, List<AstNode>>();
         this.todos = new HashMap<String, AstNode>();
+        this.gcTables = new HashMap<AstNode, TreeMap<Instant, Integer>>();
         this.currentRoot = null;
     }
 
@@ -86,7 +97,7 @@ public class Evaluator {
     public EvalTable getTable(AstNode root) {
         return tables.get(root);
     }
-
+    
     public void switchTable(AstNode root, EvalTable table) {
         if (tables.containsKey(root)) {
             tables.replace(root, table);
@@ -94,14 +105,16 @@ public class Evaluator {
             tables.put(root, table);
         }
     }
-
     
-
     public static Evaluator getInstance() {
         if(instance == null) {
             instance = new Evaluator();
         }
         return instance;
+    }
+    
+    public void destruct() {
+        instance = null;
     }
 
     public void addTodo(String todo, AstNode root) {
@@ -112,7 +125,6 @@ public class Evaluator {
         todos.forEach((String, node) -> node.eval(node));
     }
 
-    
     public void addAggregate(AstNode aggregate, AstNode root) {
         if(aggregates.get(root) == null) {
             aggregates.put(root, new ArrayList<FunctionNode>());
@@ -122,6 +134,17 @@ public class Evaluator {
         } else {
             aggregates.get(root).add((FunctionNode) aggregate);
             aggregateColumns.putIfAbsent(root, new ArrayList<AstNode>());
+        }
+    }
+
+    public void addNonAggregate(AstNode nonAggregate, AstNode root) {
+        if(nonAggregates.get(root) == null) {
+            nonAggregates.put(root, new ArrayList<AstNode>());
+        }
+        if(nonAggregates.get(root).contains(nonAggregate)) {
+            // Avoid adding the same non-aggregate multiple times
+        } else {
+            nonAggregates.get(root).add(nonAggregate);
         }
     }
     
@@ -287,8 +310,50 @@ public class Evaluator {
         return this.currentRoot;
     }
 
-    public void destruct() {
-        instance = null;
+    public Object[] evalGC(Instant timestamp, AstNode root) {
+        if (gcTables == null) {
+            gcTables = new HashMap<>();
+        }
+        if (!gcTables.containsKey(root)) {
+            EvalTable evalTable = new EvalTable(new ArrayList<Column>(), new ArrayList<EvalRow>());
+            QueryCommand queryCommand = new QueryCommand();
+            queryCommand.setView("SELECT startTime, gcId FROM GarbageCollection");
+            queryCommand.setFile(getFile());
+            queryCommand.setConfigOptions(new ConfigOptions());
+            try {
+                Table table = queryCommand.call();
+                evalTable = TableUtils.toEvalTable(table);
+            } catch (UserSyntaxException | UserDataException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+            for(EvalRow row : evalTable.rows) {
+                Instant startTime = (Instant) row.getFields().get("startTime");
+                int gcId = (int) row.getFields().get("gcId");
+                gcTables.computeIfAbsent(root, k -> new TreeMap<>()).put(startTime, gcId);
+            }
+        }
+        TreeMap<Instant, Integer> treemap = gcTables.get(root);
+        if (treemap == null) {
+            throw new IllegalStateException("No GC table found for the given root node");
+        }
+        Map.Entry<Instant, Integer> floorEntry = treemap.floorEntry(timestamp);
+        Map.Entry<Instant, Integer> ceilingEntry = treemap.ceilingEntry(timestamp);
+        Map.Entry<Instant, Integer> closestEntry;
+        if(floorEntry == null) {
+            closestEntry = ceilingEntry;
+        }
+        if (ceilingEntry == null) {
+            closestEntry = null;
+            return new Object[] {null, null, null};
+        } else {
+            // Choose the closest entry based on the timestamp
+            closestEntry = Duration.between(timestamp, floorEntry.getKey()).compareTo(Duration.between(timestamp, ceilingEntry.getKey())) < 0 ? floorEntry : ceilingEntry;
+        }
+        Integer beforeGc = floorEntry.getValue();
+        Integer afterGc = ceilingEntry.getValue();
+        Integer nearGc = closestEntry.getValue();
+        return new Object[] {beforeGc, afterGc, nearGc};
     }
     
     public void removeCol(Column col, AstNode root) {
@@ -316,6 +381,21 @@ public class Evaluator {
             sb.append(table.toString());
         }
         return sb.toString();
+    }
+
+    public void evalNonAggregates(AstNode root) {
+        EvalTable table = tables.get(root);
+        List<AstNode> nonAggregatesList = nonAggregates.get(root);
+        if (table == null || nonAggregatesList == null) {
+            return; // No non-aggregates to evaluate
+        }
+        for (AstNode nonAggregate : nonAggregatesList) {
+            table.addColumn(new Column(nonAggregate.getName(), null));
+            for (EvalRow row : table.rows) {
+                Object value = nonAggregate.eval(row, root);
+                row.addField(nonAggregate.getName(), value);
+            }
+        }
     }
     
 }

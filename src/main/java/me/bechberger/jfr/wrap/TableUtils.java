@@ -2,6 +2,8 @@ package me.bechberger.jfr.wrap;
 
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.ArrayList;
+import java.util.stream.Collectors;
 
 import me.bechberger.jfr.query.Field;
 import me.bechberger.jfr.query.Row;
@@ -14,7 +16,7 @@ public class TableUtils {
         List<Row> rows = table.getRows();
         List<Column> columns = fields.stream()
             .map(field -> new Column(field.getName(), field.getType()))
-            .toList();
+            .collect(Collectors.toCollection(ArrayList::new));
         List<EvalRow> evalRows = rows.stream()
             .map(row -> {
                 LinkedHashMap<String, Object> evalRow = new LinkedHashMap<String, Object>();
@@ -23,7 +25,7 @@ public class TableUtils {
                 }
                 return new EvalRow(evalRow);
             })
-            .toList();
+            .collect(Collectors.toCollection(ArrayList::new));
         return new EvalTable(columns, evalRows);
     }
 
@@ -32,7 +34,7 @@ public class TableUtils {
         List<Row> rows = table.getRows();
         List<Column> columns = fields.stream()
             .map(field -> new Column(field.getName(), field.getType(), alias))
-            .toList();
+            .collect(Collectors.toCollection(ArrayList::new));
         List<EvalRow> evalRows = rows.stream()
             .map(row -> {
                 LinkedHashMap<String, Object> evalRow = new LinkedHashMap<String, Object>();
@@ -41,7 +43,7 @@ public class TableUtils {
                 }
                 return new EvalRow(evalRow);
             })
-            .toList();
+            .collect(Collectors.toCollection(ArrayList::new));
         return new EvalTable(columns, evalRows);
     }
 

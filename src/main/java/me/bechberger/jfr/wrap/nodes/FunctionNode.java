@@ -51,7 +51,7 @@ public class FunctionNode extends AstConditional {
     }
 
     private void setType() {
-        switch(name) {
+        switch(name.toUpperCase()) {
             case "SUM":
                 this.type = FunctionType.SUM;
                 break;
@@ -70,28 +70,28 @@ public class FunctionNode extends AstConditional {
             case "MAX": 
                 this.type = FunctionType.MAX;
                 break;
-            case "p50":
+            case "P50":
                 this.type = FunctionType.P50;
                 break;
-            case "p90":
+            case "P90":
                 this.type = FunctionType.P90;
                 break;
-            case "p95":
+            case "P95":
                 this.type = FunctionType.P95;
                 break;
-            case "p99":
+            case "P99":
                 this.type = FunctionType.P99;
                 break;
-            case "p999":
+            case "P999":
                 this.type = FunctionType.P999;
                 break;
-            case "beforeGC":
+            case "BEFOREGC":
                 this.type = FunctionType.BEFORE_GC;
                 break;
-            case "afterGC":
+            case "AFTERGC":
                 this.type = FunctionType.AFTER_GC;
                 break;
-            case "nearGc":
+            case "NEARGC":
                 this.type = FunctionType.NEAR_GC;
                 break;
             default:
@@ -149,6 +149,9 @@ public class FunctionNode extends AstConditional {
     public Object eval(Object obj, AstNode root) {
         Evaluator evaluator = Evaluator.getInstance();
         if(evaluator.state == EvalState.GROUP_BY) {
+            if(obj instanceof EvalRow) {
+                return evalWhere((EvalRow) obj, root);
+            }
             return evalGroup(obj, root);
         } else if(evaluator.state == EvalState.WHERE) {
             return evalWhere((EvalRow) obj, root);
@@ -175,11 +178,10 @@ public class FunctionNode extends AstConditional {
             case P999:
                 return evalWhere(row, root);
             case BEFORE_GC:
-                return evalBeforeGC(List.of(row));
             case AFTER_GC:
-                return evalAfterGC(List.of(row));
             case NEAR_GC:
-                return evalNearGC(List.of(row));
+                // These functions are not evaluated in HAVING context
+                throw new UnsupportedOperationException("Function " + name + " cannot be used in HAVING clause");
             default:
                 throw new IllegalArgumentException("Unknown function type: " + type);
         }
@@ -224,10 +226,11 @@ public class FunctionNode extends AstConditional {
                     return false;
                 } else return true;
             case BEFORE_GC:
+                return evalBeforeGC(row, arguments.get(0), root);
             case AFTER_GC:
+                return evalAfterGC(row, arguments.get(0), root);
             case NEAR_GC:
-                // Placeholder for GC related logic
-                return null;
+                return evalNearGC(row, arguments.get(0), root);
             default:
                 throw new IllegalArgumentException("Unknown function type: " + type);
         }
@@ -351,19 +354,46 @@ public class FunctionNode extends AstConditional {
         }
     }
 
-    private Object evalBeforeGC(List<EvalRow> rows) {
-        // Placeholder for before GC logic
-        return null;
+    private Object evalBeforeGC(EvalRow row, AstNode identifier, AstNode root) {
+        Evaluator evaluator = Evaluator.getInstance();
+        if (row == null) {
+            throw new IllegalArgumentException("EvalRow cannot be null");
+        }
+        Object ts = identifier.eval(row, root);
+        if (!(ts instanceof Instant)) {
+            throw new IllegalArgumentException("Identifier must evaluate to Instant for BEFORE_GC function");
+        }
+        Instant timestamp = (Instant) ts;
+        Object[] result = evaluator.evalGC(timestamp, root);
+        return result[0];
     }
 
-    private Object evalAfterGC(List<EvalRow> rows) {
-        // Placeholder for after GC logic
-        return null;
+    private Object evalAfterGC(EvalRow row, AstNode identifier, AstNode root) {
+        Evaluator evaluator = Evaluator.getInstance();
+        if (row == null) {
+            throw new IllegalArgumentException("EvalRow cannot be null");
+        }
+        Object ts = identifier.eval(row, root);
+        if (!(ts instanceof Instant)) {
+            throw new IllegalArgumentException("Identifier must evaluate to Instant for BEFORE_GC function");
+        }
+        Instant timestamp = (Instant) ts;
+        Object[] result = evaluator.evalGC(timestamp, root);
+        return result[1];
     }
 
-    private Object evalNearGC(List<EvalRow> rows) {
-        // Placeholder for near GC logic
-        return null;
+    private Object evalNearGC(EvalRow row, AstNode identifier, AstNode root) {
+        Evaluator evaluator = Evaluator.getInstance();
+        if (row == null) {
+            throw new IllegalArgumentException("EvalRow cannot be null");
+        }
+        Object ts = identifier.eval(row, root);
+        if (!(ts instanceof Instant)) {
+            throw new IllegalArgumentException("Identifier must evaluate to Instant for BEFORE_GC function");
+        }
+        Instant timestamp = (Instant) ts;
+        Object[] result = evaluator.evalGC(timestamp, root);
+        return result[2];
     }
 
     public FunctionType getType() {

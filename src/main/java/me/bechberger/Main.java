@@ -81,7 +81,7 @@ public class Main /* implements Callable<Integer> */ {
         } else {
             System.err.println("Neither query nor file specified, using as hard coded in main method");
             evaluator.setFile("src/main/java/me/bechberger/jfr/renaissance.jfr");
-            input = "@SELECT startTime, gcId, eventThread FROM [SELECT * FROM GarbageCollection] ORDER BY gcId DESC";
+            input = "@SELECT beforeGC(startTime), AVG(duration), COUNT() FROM [SELECT * FROM GCPhaseParallel] WHERE nearGC(startTime) > 9299 GROUP BY beforeGC(startTime)";
         }
         Lexer lexer = new Lexer(input);
         Parser parser = new Parser(lexer.tokenize(), input);

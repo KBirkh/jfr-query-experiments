@@ -46,7 +46,6 @@ public class EvalTable {
                 row.addField(column.getFullName(), null); // Initialize with null for existing rows
             }
         }
-        columns.add(column);
     }
 
     public void addColumnFirst(Column column) {

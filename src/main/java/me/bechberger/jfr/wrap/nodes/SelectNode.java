@@ -48,7 +48,10 @@ public class SelectNode extends AstNode {
         Evaluator evaluator = Evaluator.getInstance();
         for (AstNode column : columns) {
             if (column instanceof FunctionNode) {
-                evaluator.addAggregate(column, root);
+                FunctionType type = ((FunctionNode) column).getType();
+                if(type != FunctionType.BEFORE_GC && type != FunctionType.AFTER_GC && type != FunctionType.NEAR_GC) {
+                    evaluator.addAggregate(column, root);
+                }
             }
         }
         if(root instanceof QueryNode) {
@@ -57,6 +60,19 @@ public class SelectNode extends AstNode {
                 ((HavingNode) queryNode.getHaving()).findAggregates(root);
             }
         }
+    }
+
+    public void evalNonAggregates(AstNode root) {
+        Evaluator evaluator = Evaluator.getInstance();
+        for (AstNode column : columns) {
+            if (column instanceof FunctionNode) {
+                FunctionType type = ((FunctionNode) column).getType();
+                if(type == FunctionType.BEFORE_GC || type == FunctionType.AFTER_GC || type == FunctionType.NEAR_GC) {
+                    evaluator.addNonAggregate(column, root);
+                }
+            }
+        }
+        evaluator.evalNonAggregates(root);
     }
 
     @Override

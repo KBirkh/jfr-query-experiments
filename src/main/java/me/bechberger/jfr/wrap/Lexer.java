@@ -31,9 +31,9 @@ public class Lexer {
         Map.entry("P95", TokenType.FUNCTION),
         Map.entry("P99", TokenType.FUNCTION),
         Map.entry("P999", TokenType.FUNCTION),
-        Map.entry("beforeGc", TokenType.FUNCTION),
-        Map.entry("afterGc", TokenType.FUNCTION),
-        Map.entry("nearGc", TokenType.FUNCTION),
+        Map.entry("BEFOREGC", TokenType.FUNCTION),
+        Map.entry("AFTERGC", TokenType.FUNCTION),
+        Map.entry("NEARGC", TokenType.FUNCTION),
         Map.entry("in", TokenType.IN),
         // Map.entry("minTimeSlice", TokenType.MIN_TIME_SLICE),
         Map.entry("LIKE", TokenType.LIKE),
@@ -170,7 +170,7 @@ public class Lexer {
         while (Character.isLetterOrDigit(peek()) || peek() == '_') advance();
         String word = input.substring(start, pos).toUpperCase();
         String lexeme = input.substring(start, pos);
-        return new Token(keywords.getOrDefault(word, TokenType.IDENTIFIER), lexeme, start);
+        return new Token(keywords.getOrDefault(word.toUpperCase(), TokenType.IDENTIFIER), lexeme, start);
     }
 
     private Token readNumber() {
