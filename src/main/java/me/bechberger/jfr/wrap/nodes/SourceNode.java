@@ -75,10 +75,12 @@ public class SourceNode extends AstNode {
             AstNode assignment = (AstNode) evaluator.getAssignment(name);
             if(assignment != null) {
                 assignment.eval(assignment);
+                EvalTable copy = TableUtils.copyOf(evaluator.getTable(assignment));
                 if(alias != null && !alias.isEmpty()) {
-                    evaluator.switchTable(assignment, TableUtils.addAlias(evaluator.getTable(assignment), alias));
+                    evaluator.addTable(TableUtils.addAlias(copy, alias), root);
+                } else {
+                    evaluator.addTable(copy, root);
                 }
-                evaluator.addTable(new EvalTable(evaluator.getTable(assignment).getColumns(), evaluator.getTable(assignment).getRows()), root);
                 evaluator.moveNonSelected(assignment);
             } else {
                 evaluator.addTodo(name, evaluator.getCurrentRoot());

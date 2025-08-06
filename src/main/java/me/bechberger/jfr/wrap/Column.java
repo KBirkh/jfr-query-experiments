@@ -22,6 +22,14 @@ public class Column {
         this.alias = alias;
     }
 
+    public String getAlias() {
+        return alias;
+    }
+
+    public String getType() {
+        return type;
+    }
+
     public String getName() {
         return name;
     }

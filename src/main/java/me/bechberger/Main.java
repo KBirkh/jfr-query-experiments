@@ -81,7 +81,7 @@ public class Main /* implements Callable<Integer> */ {
         } else {
             System.err.println("Neither query nor file specified, using as hard coded in main method");
             evaluator.setFile("src/main/java/me/bechberger/jfr/voronoi2.jfr");
-            input = "@SELECT * FROM hi WHERE t.duration <= 10ns; hi = @SELECT * FROM [SELECT * FROM GCPhaseParallel] AS t";
+            input = "@SELECT * FROM hi AS y WHERE y.duration <= 10ns; hi = @SELECT * FROM [SELECT * FROM GCPhaseParallel] AS t";
         }
         Lexer lexer = new Lexer(input);
         Parser parser = new Parser(lexer.tokenize(), input);
