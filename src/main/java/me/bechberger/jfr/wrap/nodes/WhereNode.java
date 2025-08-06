@@ -1,5 +1,8 @@
 package me.bechberger.jfr.wrap.nodes;
 
+import java.util.ArrayList;
+import java.util.stream.Collectors;
+
 import me.bechberger.jfr.wrap.EvalTable;
 import me.bechberger.jfr.wrap.Evaluator;
 
@@ -40,7 +43,7 @@ public class WhereNode extends AstNode {
         EvalTable evalTable = evaluator.getTable(root);
         evalTable.rows = evalTable.getRows().parallelStream()
             .filter(row -> (Boolean) condition.eval(row, root) != null && (Boolean) condition.eval(row, root))
-            .toList();
+            .collect(Collectors.toCollection(ArrayList::new));
         return null;
     }
 

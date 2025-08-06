@@ -39,11 +39,14 @@ public class ProgramNode extends AstNode {
         }
         return sb.toString();
     }
+
     public Object eval() {
         Evaluator evaluator = Evaluator.getInstance();
         for (AstNode statement : statements) {
-            evaluator.setRoot(statement);
-            statement.eval(statement);
+            if(!statement.isEvaluated) {
+                evaluator.setRoot(statement);
+                statement.eval(statement);
+            }
         }
         evaluator.evalTodos();
         return null;

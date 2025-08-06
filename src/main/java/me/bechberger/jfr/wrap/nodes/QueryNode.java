@@ -123,7 +123,9 @@ public class QueryNode extends AstNode {
     public Object eval(AstNode root) {
         Evaluator evaluator = Evaluator.getInstance();
         evaluator.state = EvalState.FROM;
-        from.eval(root);
+        if(from.eval(root).equals(-1)) {
+            return null;
+        }
         evaluator.state = EvalState.WHERE;
         select.evalNonAggregates(root);
         if(where != null) {
@@ -150,6 +152,7 @@ public class QueryNode extends AstNode {
         evaluator.state = EvalState.SELECT;
         select.eval(root);
 
+        this.isEvaluated = true;
         return null;
     }
     

@@ -1,5 +1,6 @@
 package me.bechberger.jfr.wrap.nodes;
 
+import me.bechberger.jfr.wrap.EvalTable;
 import me.bechberger.jfr.wrap.Evaluator;
 import me.bechberger.jfr.wrap.TableUtils;
 
@@ -77,11 +78,14 @@ public class SourceNode extends AstNode {
                 if(alias != null && !alias.isEmpty()) {
                     evaluator.switchTable(assignment, TableUtils.addAlias(evaluator.getTable(assignment), alias));
                 }
+                evaluator.addTable(new EvalTable(evaluator.getTable(assignment).getColumns(), evaluator.getTable(assignment).getRows()), root);
+                evaluator.moveNonSelected(assignment);
             } else {
                 evaluator.addTodo(name, evaluator.getCurrentRoot());
+                return -1; // Indicating that this is a source node to be evaluated later
             }
         }
-        return null;
+        return 0;
     }
 
 }

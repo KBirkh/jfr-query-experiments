@@ -75,13 +75,13 @@ public class Main /* implements Callable<Integer> */ {
             input = args[0];
         } else if (args.length == 1) {
             System.err.println("No file specified, using default: src/main/java/me/bechberger/jfr/renaissance.jfr");
-            evaluator.setFile("src/main/java/me/bechberger/jfr/renaissance.jfr");
+            evaluator.setFile("src/main/java/me/bechberger/jfr/voronoi2.jfr");
             input = args[0];
 
         } else {
             System.err.println("Neither query nor file specified, using as hard coded in main method");
-            evaluator.setFile("src/main/java/me/bechberger/jfr/renaissance.jfr");
-            input = "@SELECT beforeGC(startTime), AVG(duration), COUNT() FROM [SELECT * FROM GCPhaseParallel] WHERE nearGC(startTime) > 9299 GROUP BY beforeGC(startTime)";
+            evaluator.setFile("src/main/java/me/bechberger/jfr/voronoi2.jfr");
+            input = "@SELECT * FROM hi WHERE t.duration <= 10ns; hi = @SELECT * FROM [SELECT * FROM GCPhaseParallel] AS t";
         }
         Lexer lexer = new Lexer(input);
         Parser parser = new Parser(lexer.tokenize(), input);
@@ -90,8 +90,23 @@ public class Main /* implements Callable<Integer> */ {
             res.eval();
             System.out.println(evaluator);
             /* System.out.println(res.toString(0)); */
-        } catch (ParseException e) {
-            e.printStackTrace();
+        } catch (Exception e) {
+            if(e instanceof ParseException) {
+                if(e.getCause() != null) {
+                    System.err.println("Error during parsing: " + e.getCause().getMessage());
+                } else {
+                    System.err.println("Error during parsing: " + e.getMessage());
+                }
+            } else {
+                if(e.getCause() != null) {
+                    System.err.println("Error during evaluation: " + e.getCause().getMessage());
+                } else {
+                    System.err.println("Error during evaluation: " + e.getMessage());
+                }
+                e.printStackTrace();
+            }
+        } finally {
+            evaluator.destruct();
         }   
     }
 }

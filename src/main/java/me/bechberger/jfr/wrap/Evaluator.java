@@ -24,6 +24,7 @@ public class Evaluator {
     private String pathToFile;
     private static Evaluator instance;
     private HashMap<AstNode, EvalTable> tables;
+    private HashMap<AstNode, EvalTable> nonSelected;
     private Map<AstNode, List<FunctionNode>> aggregates;
     private Map<AstNode, List<AstNode>> aggregateColumns;
     private Map<AstNode, List<AstNode>> nonAggregates;
@@ -37,6 +38,7 @@ public class Evaluator {
 
     private Evaluator() {
         this.tables = new HashMap<AstNode, EvalTable>();
+        this.nonSelected = new HashMap<AstNode, EvalTable>();
         this.aggregates = new HashMap<AstNode, List<FunctionNode>>();
         this.nonAggregates = new HashMap<AstNode, List<AstNode>>();
         this.groupings = new HashMap<AstNode, List<AstNode>>();
@@ -59,6 +61,16 @@ public class Evaluator {
     public void addTable(EvalTable table, AstNode root) {
         table.setQuery(root);
         tables.put(root, table);
+    }
+
+    public void moveNonSelected(AstNode root) {
+        if (tables.containsKey(root)) {
+            EvalTable table = tables.get(root);
+            nonSelected.put(root, table);
+            tables.remove(root);
+        } else {
+            throw new IllegalStateException("No table found for the given root node");
+        }
     }
 
     public void addToTable(EvalTable table, AstNode root) {
@@ -95,6 +107,9 @@ public class Evaluator {
     }
 
     public EvalTable getTable(AstNode root) {
+        if(!tables.containsKey(root)) {
+            return nonSelected.get(root);
+        }
         return tables.get(root);
     }
     

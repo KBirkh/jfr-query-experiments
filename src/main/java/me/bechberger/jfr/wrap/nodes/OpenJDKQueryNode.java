@@ -86,15 +86,16 @@ public class OpenJDKQueryNode extends AstNode {
         try {
             Table table = queryCommand.call();
             if(table == null) {
-                System.out.println("Query returned null table: " + query);
-                return null;
+                throw new UserDataException("Query returned null table: " + query);
             }
             EvalTable evalTable = TableUtils.toEvalTable(table);
             evaluator.addToTable(evalTable, root);
         } catch (UserSyntaxException | UserDataException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+            System.err.println("Error executing OpenJDK query: " + e.getMessage());
+            System.exit(1);
         }
+
+        this.isEvaluated = true;
         return null;
     }
     

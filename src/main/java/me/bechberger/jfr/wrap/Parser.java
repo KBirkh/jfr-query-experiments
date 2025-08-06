@@ -606,13 +606,13 @@ public class Parser {
         return false;
     }
 
-    private Token expect(TokenType... types) {
+    private Token expect(TokenType... types) throws ParseException{
         for (TokenType type : types) {
             if (peek().type == type) {
                 return advance();
             }
         }
-        throw new RuntimeException("Expected one of " + Arrays.toString(types) + " but found " + peek().type);
+        throw new ParseException("Expected one of " + Arrays.toString(types) + " but found " + peek().type, pos);
     }
 
     private boolean isIn(TokenType... types) {

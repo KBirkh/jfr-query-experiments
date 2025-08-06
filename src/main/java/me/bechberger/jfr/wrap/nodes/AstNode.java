@@ -4,6 +4,8 @@ import me.bechberger.jfr.wrap.EvalRow;
 
 public abstract class AstNode {
 
+    public boolean isEvaluated = false;
+
     public String toString(int indent) {
         StringBuilder sb = new StringBuilder();
         String dent = "  ".repeat(indent);

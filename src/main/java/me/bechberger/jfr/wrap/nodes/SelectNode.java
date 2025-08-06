@@ -98,6 +98,9 @@ public class SelectNode extends AstNode {
                 evaluator.removeCol(col, root);
             }
         }
+        if(table.getColumns().isEmpty()) {
+            throw new IllegalStateException("No columns left after evaluation, cannot proceed");
+        }
         return null;
     }
 

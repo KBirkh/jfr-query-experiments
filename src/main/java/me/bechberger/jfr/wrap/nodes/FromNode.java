@@ -42,9 +42,11 @@ public class FromNode extends AstNode {
     @Override
     public Object eval(AstNode root) {
         for(AstNode source : sources) {
-            source.eval(root);
+            if(((Integer) source.eval(root)) == -1) {
+                return -1; // Indicating that this is a source node to be evaluated later
+            }
         }
-        return null;
+        return 0;
     }
 
 }

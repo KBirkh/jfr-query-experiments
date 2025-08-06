@@ -375,7 +375,7 @@ public class FunctionNode extends AstConditional {
         }
         Object ts = identifier.eval(row, root);
         if (!(ts instanceof Instant)) {
-            throw new IllegalArgumentException("Identifier must evaluate to Instant for BEFORE_GC function");
+            throw new IllegalArgumentException("Identifier must evaluate to Instant for AFTER_GC function");
         }
         Instant timestamp = (Instant) ts;
         Object[] result = evaluator.evalGC(timestamp, root);
@@ -389,7 +389,7 @@ public class FunctionNode extends AstConditional {
         }
         Object ts = identifier.eval(row, root);
         if (!(ts instanceof Instant)) {
-            throw new IllegalArgumentException("Identifier must evaluate to Instant for BEFORE_GC function");
+            throw new IllegalArgumentException("Identifier must evaluate to Instant for NEAR_GC function");
         }
         Instant timestamp = (Instant) ts;
         Object[] result = evaluator.evalGC(timestamp, root);

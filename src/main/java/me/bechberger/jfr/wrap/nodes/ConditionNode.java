@@ -70,6 +70,10 @@ public class ConditionNode extends AstNode {
         Object leftValue = left.eval(row, root);
         Object rightValue = right.eval(row, root);
 
+        if(leftValue.getClass() != rightValue.getClass() && !(leftValue instanceof Number || rightValue instanceof Number)) {
+            throw new IllegalArgumentException(leftValue.getClass().getSimpleName() + " and " + rightValue.getClass().getSimpleName() + " types are not comparable");
+        }
+
         if(leftValue instanceof RecordedThread) {
             leftValue = ((RecordedThread) leftValue).getOSName();
         }  else if(leftValue instanceof Integer) {
