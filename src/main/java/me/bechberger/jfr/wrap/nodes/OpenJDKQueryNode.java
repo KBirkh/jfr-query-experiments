@@ -8,10 +8,21 @@ import me.bechberger.jfr.wrap.EvalTable;
 import me.bechberger.jfr.wrap.Evaluator;
 import me.bechberger.jfr.wrap.TableUtils;
 
+/*
+ * Represents a subquery which is evaluated by the
+ * OpenJDK-provided querying tool
+ */
 public class OpenJDKQueryNode extends AstNode {
     private String query;
     private int end;
 
+    /*
+     * Constructs an OpenJDKQueryNode from a string input
+     * The input String is the whole original query and 
+     * the start int is the index at which the OpenJDK Query begins.
+     * Removes leading and following Brackets.
+     * Stops when a char which acts as EOQ is found or when all Brackets are matched
+     */
     public OpenJDKQueryNode(String input, int start) {
         StringBuilder sb = new StringBuilder();
         int i = start;
@@ -53,6 +64,13 @@ public class OpenJDKQueryNode extends AstNode {
         sb.append("\n").append(dent).append(this.getClass().getSimpleName()).append(": ").append(query);
         return sb.toString();
     }
+
+    /*
+     * Calls the OpenJDK tool to evaluate the query
+     * If the query runs correctly convert the resulting table
+     * to another data structure which will be used in further
+     * evaluation
+     */
     @Override
     public Object eval(Object aliasObj, AstNode root) {
         String alias = (String) aliasObj;

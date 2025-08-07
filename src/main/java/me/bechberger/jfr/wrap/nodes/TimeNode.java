@@ -2,8 +2,11 @@ package me.bechberger.jfr.wrap.nodes;
 
 import java.time.Duration;
 
-import me.bechberger.jfr.wrap.EvalRow;
-
+/*
+ * Represents a duration of time e.g. 10ms, 1ns, ...
+ * Saves the timeValue as a double
+ * and the Unit in String representation
+ */
 public class TimeNode extends AstConditional {
 
     private double timeValue;
@@ -26,6 +29,11 @@ public class TimeNode extends AstConditional {
 
     }
 
+    /*
+     * Provides a value by which to multiply
+     * timeValue based on the Unit
+     * the Baseunit used are nanoseconds
+     */
     private long getUnitMultiplier() {
         switch (timeUnit.toLowerCase()) {
             case "ns":
@@ -47,11 +55,18 @@ public class TimeNode extends AstConditional {
         }
     }
 
+    /*
+     * Returns a Duration object
+     */
     @Override
     public Object eval(Object row, AstNode root) {
         return Duration.ofNanos((long) timeValue * getUnitMultiplier());
     }
 
+    /*
+     * Leaf of conditional clauses and is not an aggregate
+     * -> noop
+     */
     @Override
     public void findAggregates(AstNode root) {
         // No aggregates to find in TimeNode

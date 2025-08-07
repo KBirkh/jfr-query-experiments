@@ -4,6 +4,7 @@ public class ViewDefinitionNode extends AstNode {
     private String name;
     private QueryNode query;
 
+    //#TODO: remove functionality
     public ViewDefinitionNode(String name, AstNode query) {
         setName(name);
         setQuery(query);

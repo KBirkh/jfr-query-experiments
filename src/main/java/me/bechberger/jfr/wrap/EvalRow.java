@@ -5,6 +5,14 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import jdk.jfr.consumer.*;
 
+/*
+ * Represents a row of data
+ * A datapoint can be gotten via the column name
+ * which is used as the key for the hashmap
+ * A linked hashmap is used to preserve order and output
+ * the rows in the same order as the columns are specified in
+ * in the table
+ */
 public class EvalRow {
     LinkedHashMap<String, Object> fields;
 

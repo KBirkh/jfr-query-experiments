@@ -1,7 +1,8 @@
 package me.bechberger.jfr.wrap.nodes;
 
-import me.bechberger.jfr.wrap.EvalRow;
-
+/*
+ * Represents a String
+ */
 public class StringNode extends AstConditional {
     private String value;
 
@@ -24,6 +25,9 @@ public class StringNode extends AstConditional {
         return value;
     }
 
+    /*
+     * returns the String value
+     */
     @Override
     public Object eval(Object row, AstNode root) {
         if (value == null) {
@@ -44,6 +48,10 @@ public class StringNode extends AstConditional {
         return value != null ? value : "StringNode with no value";
     }
 
+    /*
+     * Is leaf of the conditional clauses and is not an aggregate
+     * function -> do nothing
+     */
     @Override
     public void findAggregates(AstNode root) {
         

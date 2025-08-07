@@ -1,5 +1,9 @@
 package me.bechberger.jfr.wrap;
 
+/*
+ * Used to store data about a column in the EvalTable class
+ * #TODO: either remove type or implement functionality for it
+ */
 public class Column {
     private String name;
     private String type;

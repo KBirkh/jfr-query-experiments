@@ -6,6 +6,11 @@ import java.util.List;
 import me.bechberger.jfr.wrap.EvalRow;
 import me.bechberger.jfr.wrap.Evaluator;
 
+/*
+ * Represents a GROUP BY clause in the abstract syntax tree.
+ * It contains a list of identifiers (columns or expressions) by which the results are grouped.
+ * Used in the GROUP BY clause of a query to aggregate results based on specified identifiers.
+ */
 public class GroupByNode extends AstNode {
     private List<AstNode> identifiers;
 
@@ -42,6 +47,10 @@ public class GroupByNode extends AstNode {
         return sb.toString();
     } 
 
+    /*
+     * Does not actually perform the grouping
+     * Just tells the Evaluator by which columns to group by
+     */
     public Object eval(EvalRow row, AstNode root) {
         Evaluator evaluator = Evaluator.getInstance();
         for(AstNode identifier : identifiers) {

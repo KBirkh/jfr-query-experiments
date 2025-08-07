@@ -69,16 +69,22 @@ public class Main /* implements Callable<Integer> */ {
     public static void main(String[] args) {
         Evaluator evaluator = Evaluator.getInstance();
         String input;
+        /*
+         * checks if both file and query are provided
+         * #TODO: switch file and query indexes for better usability
+         */
         if(args.length > 1) {
             System.out.println("Using file: " + args[1]);
             evaluator.setFile(args[1]);
             input = args[0];
         } else if (args.length == 1) {
+            // If only one argumnt given choose default file
             System.err.println("No file specified, using default: src/main/java/me/bechberger/jfr/renaissance.jfr");
             evaluator.setFile("src/main/java/me/bechberger/jfr/voronoi2.jfr");
             input = args[0];
 
         } else {
+            // If started in IDE/without arguments choose those specified here
             System.err.println("Neither query nor file specified, using as hard coded in main method");
             evaluator.setFile("src/main/java/me/bechberger/jfr/voronoi2.jfr");
             input = "@SELECT * FROM hi AS y WHERE y.duration <= 10ns; hi = @SELECT * FROM [SELECT * FROM GCPhaseParallel] AS t";

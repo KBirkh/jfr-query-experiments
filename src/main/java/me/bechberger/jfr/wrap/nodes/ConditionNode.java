@@ -1,9 +1,15 @@
 package me.bechberger.jfr.wrap.nodes;
 
 import jdk.jfr.consumer.RecordedThread;
-import me.bechberger.jfr.wrap.EvalRow;
 import me.bechberger.jfr.wrap.TokenType;
 
+/*
+ * Represents a condition in the abstract syntax tree.
+ * It contains an operator and two operands (left and right).
+ * The operator can be one of the comparison operators like EE, NEQ, GT, LT, GE, LE.
+ * Used in the WHERE clause of a query to filter results based on conditions.
+ * Always returns a boolean
+ */
 public class ConditionNode extends AstNode {
     private TokenType operator;
     private AstConditional left;
@@ -61,6 +67,23 @@ public class ConditionNode extends AstNode {
         sb.append("\n").append(dent).append("  Right: ").append(right.toString(indent + 1));
         return sb.toString();
     }
+
+    /*
+     * This method evaluates the condition node.
+     * It evaluates the left and right operands and compares them based on the operator.
+     * If the operator is EE, it checks for equality.
+     * If the operator is NEQ, it checks for inequality.
+     * If the operator is GT, it checks if the left operand is greater than the right
+     * operand.
+     * If the operator is LT, it checks if the left operand is less than the right
+     * operand.
+     * If the operator is GE, it checks if the left operand is greater than or equal
+     * to the right operand.
+     * If the operator is LE, it checks if the left operand is less than or equal
+     * to the right operand.
+     * If either operand is null it returns false
+     * Special case for RecordedThread and Integers
+     */
     @Override
     public Object eval(Object row, AstNode root) {
         if (left == null || right == null || operator == null) {

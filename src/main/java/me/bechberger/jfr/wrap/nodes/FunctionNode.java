@@ -9,7 +9,13 @@ import me.bechberger.jfr.wrap.EvalRow;
 import me.bechberger.jfr.wrap.EvalState;
 import me.bechberger.jfr.wrap.Evaluator;
 
-
+/*
+ * Represents a function call in the abstract syntax tree.
+ * It contains the function name, its type, and a list of arguments.
+ * The function can be an aggregate function like SUM, AVG, COUNT, etc.
+ * It also supports special functions like BEFORE_GC, AFTER_GC, and NEAR_GC
+ * Different functions are used in different parts of the query
+ */
 public class FunctionNode extends AstConditional {
     private String name;
     private FunctionType type;
@@ -50,6 +56,7 @@ public class FunctionNode extends AstConditional {
         setType();
     }
 
+    // Used to determine the type of function that this node represents
     private void setType() {
         switch(name.toUpperCase()) {
             case "SUM":
@@ -100,6 +107,7 @@ public class FunctionNode extends AstConditional {
         }
     }
 
+    // Adds functions that act as aggregates to the aggregates in the evaluator
     @Override
     public void findAggregates(AstNode root) {
         switch(type) {
@@ -145,6 +153,10 @@ public class FunctionNode extends AstConditional {
         arguments.add(expression);
     }
 
+    /*
+     * Delegates the evaluation of the node to different methods
+     * depending on which phase is currently being processed
+     */
     @Override
     public Object eval(Object obj, AstNode root) {
         Evaluator evaluator = Evaluator.getInstance();
@@ -160,6 +172,12 @@ public class FunctionNode extends AstConditional {
         }
     }
 
+    /*
+     * Evaluates functions used in the Having clause
+     * For the percentile functions it delegates to the evalWhere fucntion as they are always relative to those
+     * The GC correlations cannot be used in this context
+     * #TODO: check for problems concerning the delegation to evalWhere when the values have not yet been calculated
+     */
     private Object evalHaving(EvalRow row, AstNode root) {
         if (row == null) {
             throw new IllegalArgumentException("EvalRow cannot be null");

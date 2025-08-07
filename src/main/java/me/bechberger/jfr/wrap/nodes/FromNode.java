@@ -2,6 +2,10 @@ package me.bechberger.jfr.wrap.nodes;
 
 import java.util.List;
 
+/*
+ * Represents a FROM clause in the abstract syntax tree.
+ * It contains a list of sources (tables or subqueries) from which data is selected.
+ */
 public class FromNode extends AstNode {
     private List<AstNode> sources;
 
@@ -39,6 +43,11 @@ public class FromNode extends AstNode {
         return sb.toString();
     }
 
+    /*
+     * During evaluation of this node there can be a special case
+     * where the tables to be selected form may not exist yet
+     * In those cases it returns -1 and puts the root node as a ToDo
+     */
     @Override
     public Object eval(AstNode root) {
         for(AstNode source : sources) {

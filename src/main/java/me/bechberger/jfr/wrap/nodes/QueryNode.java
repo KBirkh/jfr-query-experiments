@@ -4,6 +4,10 @@ import me.bechberger.jfr.wrap.EvalRow;
 import me.bechberger.jfr.wrap.EvalState;
 import me.bechberger.jfr.wrap.Evaluator;
 
+/*
+ * Represents a query in the AST
+ * Contains all the clauses in a query
+ */
 public class QueryNode extends AstNode {
     private ColumnNode columns;
     private SelectNode select;
@@ -86,6 +90,7 @@ public class QueryNode extends AstNode {
     public AstNode getHaving() {
         return having;
     }
+
     @Override
     public String toString(int indent) {
         StringBuilder sb = new StringBuilder();
@@ -118,7 +123,22 @@ public class QueryNode extends AstNode {
         }
         return sb.toString();
     }
-
+    
+    /*
+     * Contains the "query execution plan"
+     * if a clause does not exist skip its evaluation
+     * Plan:
+     * 1. Evaluate FromNode
+     * 2. Evaluate the nonAggregates (GC correlations)
+     * 3. Evaluate WhereNode
+     * 4. find the aggregates
+     * 5. Group the table
+     * 6. Evaluate the HavingNode
+     * 7. Evaluate Ordering
+     * 8. Evaluate Limit
+     * 9. Perform projection
+     * 10. set isEvaluated flag to true
+     */
     @Override
     public Object eval(AstNode root) {
         Evaluator evaluator = Evaluator.getInstance();

@@ -1,5 +1,11 @@
 package me.bechberger.jfr.wrap.nodes;
 
+/*
+ * This Node represents a column which is later used for the Projection
+ * Represents the columns specified just after the SELECT keyword
+ * #TODO: find out if this Class is actually used in a useful way or could be leveraged in evaluation
+ * The tail is a reference to the next column if there is one
+ */
 public class ColumnNode extends AstNode {
     private String name;
     private ColumnNode columnTail;

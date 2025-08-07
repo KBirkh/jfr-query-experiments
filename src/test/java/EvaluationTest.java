@@ -7,7 +7,6 @@ import org.junit.jupiter.params.ParameterizedTest;
 import me.bechberger.jfr.wrap.EvalRow;
 import me.bechberger.jfr.wrap.TokenType;
 import me.bechberger.jfr.wrap.nodes.AndNode;
-import me.bechberger.jfr.wrap.nodes.ArithmeticNode;
 import me.bechberger.jfr.wrap.nodes.AssignmentNode;
 import me.bechberger.jfr.wrap.nodes.AstConditional;
 import me.bechberger.jfr.wrap.nodes.AstNode;
@@ -79,10 +78,6 @@ public class EvaluationTest {
 
     public AstConditional and(AstNode left, AstNode right) {
         return new AndNode(left, right);
-    }
-
-    public AstConditional arithmetic(String operator, AstNode left, AstNode right) {
-        return new ArithmeticNode(left, operator, right);
     }
 
     public AstNode assignment(AstNode variable, AstNode value) {

@@ -1,6 +1,10 @@
 package me.bechberger.jfr.wrap.nodes;
 
-import me.bechberger.jfr.wrap.EvalRow;
+/*
+ * AndNode represents a logical AND operation between two AST nodes.
+ * It evaluates to true if both left and right nodes evaluate to true.
+ * It evaluates the right side lazily
+ */
 
 public class AndNode extends AstConditional {
     private AstNode left;
@@ -42,6 +46,10 @@ public class AndNode extends AstConditional {
         return sb.toString();
     }
 
+    /*
+     * Findaggregates is a stage during the query execution plan in which aggregate functions are identified
+     * Aggregate functions may be used with the AndNode within the Having clause
+     */
     @Override
     public void findAggregates(AstNode root) {
         if (left != null) {
@@ -52,6 +60,14 @@ public class AndNode extends AstConditional {
         }
     }   
 
+
+    /*
+     * When this Node is evaluated during either the Where or Having stage, it will evaluate the left side first.
+     * If the left side evaluates to false, it will not evaluate the right side.
+     * This is known as short-circuit evaluation.
+     * If both sides evaluate to true, it will return true.
+     * It is expected that both sides are of type boolean, as the underlying ConditionNode only does comparisons
+     */
     @Override
     public Object eval(Object row, AstNode root) {
         if (left == null || right == null) {

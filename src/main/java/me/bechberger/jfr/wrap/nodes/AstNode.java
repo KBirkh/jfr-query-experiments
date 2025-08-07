@@ -1,7 +1,8 @@
 package me.bechberger.jfr.wrap.nodes;
 
-import me.bechberger.jfr.wrap.EvalRow;
-
+/*
+ * Generalization for the Nodes to be used in Functions and their return values
+ */
 public abstract class AstNode {
 
     public boolean isEvaluated = false;

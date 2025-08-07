@@ -1,7 +1,8 @@
 package me.bechberger.jfr.wrap.nodes;
 
-import me.bechberger.jfr.wrap.EvalRow;
-
+/*
+ * This node represents a boolean value
+ */
 public class BooleanNode extends AstConditional {
     private boolean value;
 

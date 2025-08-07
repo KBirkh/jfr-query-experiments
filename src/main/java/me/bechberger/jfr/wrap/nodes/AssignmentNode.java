@@ -1,9 +1,5 @@
 package me.bechberger.jfr.wrap.nodes;
 
-import java.security.interfaces.ECPrivateKey;
-
-import me.bechberger.jfr.wrap.Evaluator;
-
 public class AssignmentNode extends AstNode {
     private AstNode identifier;
     private AstNode node;

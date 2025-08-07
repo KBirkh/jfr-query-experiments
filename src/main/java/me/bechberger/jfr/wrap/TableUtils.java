@@ -2,17 +2,24 @@ package me.bechberger.jfr.wrap;
 
 import java.util.LinkedHashMap;
 import java.util.List;
-import java.security.cert.CollectionCertStoreParameters;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.stream.Collectors;
 
 import me.bechberger.jfr.query.Field;
 import me.bechberger.jfr.query.Row;
 import me.bechberger.jfr.query.Table;
 
+/*
+ * Utility class providing static utility
+ * methods for tables
+ */
 public class TableUtils {
 
+    /*
+     * converts a table from the OpneJDK spec
+     * to the EvalTable to be able to easily modify it
+     * in this case without an alias
+     */
     public static EvalTable toEvalTable(Table table) {
         List<Field> fields = table.getFields();
         List<Row> rows = table.getRows();
@@ -31,6 +38,9 @@ public class TableUtils {
         return new EvalTable(columns, evalRows);
     }
 
+    /*
+     * Same as before but also adds an alias
+     */
     public static EvalTable toEvalTable(Table table, String alias) {
         List<Field> fields = table.getFields();
         List<Row> rows = table.getRows();
@@ -49,6 +59,10 @@ public class TableUtils {
         return new EvalTable(columns, evalRows);
     }
 
+
+    /*
+     * This method can be called to add an alias to a table after its creation
+     */
     public static EvalTable addAlias(EvalTable table, String alias) {
         // Capture old column full names before alias change
         List<String> oldFullNames = table.columns.stream()
@@ -75,6 +89,10 @@ public class TableUtils {
         return table;
     }
 
+    /*
+     * Returns a deep copy of the given table.
+     * Used when assignments are used
+     */
     public static EvalTable copyOf(EvalTable table) {
         // Deep copy columns
         List<Column> cols = new ArrayList<>();

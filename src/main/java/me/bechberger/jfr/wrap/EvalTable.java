@@ -4,6 +4,14 @@ import java.util.List;
 
 import me.bechberger.jfr.wrap.nodes.AstNode;
 
+/*
+ * The class on which most of the processing is done
+ * Contains lists of both columns and rows
+ * Keeps a reference to the query root which
+ * the table is a result of
+ * Keeps record when the table is grouped to check
+ * if all original columns are available for projection
+ */
 public class EvalTable {
     public List<Column> columns;
     public List<EvalRow> rows;
@@ -36,6 +44,10 @@ public class EvalTable {
         rows.add(row);
     }
 
+    /*
+     * When adding a new column (e.g. for gc correlation or for aggregates)
+     * a column also has to be added to each row
+     */
     public void addColumn(Column column) {
         if (columns == null) {
             columns = new java.util.ArrayList<>();

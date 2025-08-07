@@ -4,6 +4,11 @@ import me.bechberger.jfr.wrap.EvalTable;
 import me.bechberger.jfr.wrap.Evaluator;
 import me.bechberger.jfr.wrap.TableUtils;
 
+/*
+ * Represents a source in the AST
+ * Can be a table or a subquery
+ * and can have an alias
+ */
 public class SourceNode extends AstNode {
     private String name;
     private String alias;
@@ -62,6 +67,14 @@ public class SourceNode extends AstNode {
         return sb.toString();
     }
 
+    /*
+     * Evaluates the source node
+     * If it is a subquery, it evaluates the subquery
+     * If it is not a subquery -> Some table is assigned to the identifier
+     * evaluate the assignment and create a copy of the result to preserve
+     * the table for the assignment.
+     * Afterwards add the alis if present and save in the evaluator
+     */
     @Override
     public Object eval(AstNode root) {
         if(isSubQuery) {

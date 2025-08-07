@@ -3,6 +3,11 @@ package me.bechberger.jfr.wrap.nodes;
 import me.bechberger.jfr.wrap.EvalTable;
 import me.bechberger.jfr.wrap.Evaluator;
 
+/*
+ * Represents a HAVING clause in the abstract syntax tree.
+ * It contains a condition that filters groups after aggregation.
+ * Used to specify conditions on aggregated data.
+ */
 public class HavingNode extends AstNode {
     private AstNode condition;
 
@@ -26,6 +31,9 @@ public class HavingNode extends AstNode {
         }
     }
 
+    /*
+     * Evaluates the condition for every row in the table to be filtered
+     */
     @Override
     public Object eval(AstNode root) {
         Evaluator evaluator = Evaluator.getInstance();

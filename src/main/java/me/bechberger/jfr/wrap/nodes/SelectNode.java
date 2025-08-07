@@ -7,6 +7,13 @@ import me.bechberger.jfr.wrap.Column;
 import me.bechberger.jfr.wrap.EvalTable;
 import me.bechberger.jfr.wrap.Evaluator;
 
+/*
+ * Represents a SELECT statement in the abstract syntax tree.
+ * It contains a list of columns to be selected, which can be either specific columns or a wildcard (*).
+ * The isStar flag indicates whether the selection is a wildcard selection.
+ * The columns are stored as a list of AstNode objects, which can represent various expressions.
+ * Used in the last stage of evaluation when a projection is built
+ */
 public class SelectNode extends AstNode {
     private List<AstNode> columns;
     public boolean isStar;
@@ -16,7 +23,7 @@ public class SelectNode extends AstNode {
     }
 
     public SelectNode(AstNode... columns) {
-        this();
+        this.columns = new java.util.ArrayList<AstNode>();
         if (columns == null || columns.length == 0) {
             throw new IllegalArgumentException("Columns cannot be null or empty");
         }
@@ -44,6 +51,11 @@ public class SelectNode extends AstNode {
         columns.add(expression);
     }
     
+    /*
+     * Entrypoint for the findAggregates phase
+     * Delegates search for aggregate functions to the columns
+     * If the query has a HAVING clause, it will also search for aggregates there
+     */
     public void findAggregates(AstNode root) {
         Evaluator evaluator = Evaluator.getInstance();
         for (AstNode column : columns) {
@@ -62,6 +74,9 @@ public class SelectNode extends AstNode {
         }
     }
 
+    /*
+     * Also searches for non-aggregates like the GC correlations
+     */
     public void evalNonAggregates(AstNode root) {
         Evaluator evaluator = Evaluator.getInstance();
         for (AstNode column : columns) {
@@ -75,6 +90,10 @@ public class SelectNode extends AstNode {
         evaluator.evalNonAggregates(root);
     }
 
+    /*
+     * Evaluates the projection
+     * If the selection is a wildcard (*), it keeps all columns in the EvalTable.
+     */
     @Override
     public Object eval(AstNode root) {
         Evaluator evaluator = Evaluator.getInstance();

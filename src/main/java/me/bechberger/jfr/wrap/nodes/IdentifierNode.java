@@ -3,6 +3,10 @@ package me.bechberger.jfr.wrap.nodes;
 import me.bechberger.jfr.wrap.EvalRow;
 import me.bechberger.jfr.wrap.Evaluator;
 
+/*
+ * This node represents an identifier in the abstract syntax tree.
+ * Logically seperates the table alias from the identifier name
+ */
 public class IdentifierNode extends AstConditional {
     private String identifier;
     private String tableAlias;
@@ -66,6 +70,10 @@ public class IdentifierNode extends AstConditional {
         return sb.toString();
     }
 
+    /*
+     * used to compare with other IdentifierNodes
+     * #TODO: check if this method is used anywhere
+     */
     public boolean compareTo(IdentifierNode identifier) {
         if(this.getIdentifier() == identifier.getIdentifier()) {
             if(this.hasTableAlias == identifier.hasTableAlias) {
@@ -102,6 +110,10 @@ public class IdentifierNode extends AstConditional {
         // No aggregates to find in IdentifierNode
     }
 
+    /*
+     * Takes a row of data and gets the value from the row
+     * which corresponds to the column of the identifier
+     */
     @Override
     public Object eval(Object row, AstNode root) {
         EvalRow evalrow = (EvalRow) row;
@@ -117,6 +129,8 @@ public class IdentifierNode extends AstConditional {
         return value;
     }
 
+    // This is often used to compare two IdentifierNodes instead of the compareTo method
+    // #TODO: maybe change that
     @Override
     public String getName() {
         return hasTableAlias ? tableAlias + "." + identifier : identifier;

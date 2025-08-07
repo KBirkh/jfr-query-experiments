@@ -1,5 +1,11 @@
 package me.bechberger.jfr.wrap.nodes;
 
+/*
+ * Represents a binary operation node in the abstract syntax tree.
+ * It contains an operator and two operands, which are also AST nodes.
+ * The operator is a string that defines the operation (e.g., "+", "-", "*", ...)
+ * 
+ */
 public class BinaryOpNode extends AstConditional {
     private String operator;
     private AstConditional leftOperand;
@@ -20,6 +26,9 @@ public class BinaryOpNode extends AstConditional {
         this.rightOperand = rightOperand;
     }
 
+    /*
+     * This node is also present in the findAggregates stage of evaluation
+     */
     @Override
     public void findAggregates(AstNode root) {
         if (leftOperand != null) {

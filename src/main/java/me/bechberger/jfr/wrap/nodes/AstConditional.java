@@ -1,6 +1,7 @@
 package me.bechberger.jfr.wrap.nodes;
 
-import me.bechberger.jfr.wrap.EvalRow;
-
+/*
+ * Should be removed in refactoring #TODO revert all classes extending this one to extend AstNode
+ */
 public class AstConditional extends AstNode {
 }

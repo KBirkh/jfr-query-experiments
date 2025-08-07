@@ -5,7 +5,10 @@ import java.util.List;
 
 import me.bechberger.jfr.wrap.Evaluator;
 
-
+/*
+ * Represents the root of the tree
+ * and contains all the queries or assignments
+ */
 public class ProgramNode extends AstNode {
     private List<AstNode> statements;
 
@@ -40,6 +43,10 @@ public class ProgramNode extends AstNode {
         return sb.toString();
     }
 
+    /*
+     * During evaluation evaluates all statements seperately
+     * as long as the isEvaluated flag is not set for the statement
+     */
     public Object eval() {
         Evaluator evaluator = Evaluator.getInstance();
         for (AstNode statement : statements) {

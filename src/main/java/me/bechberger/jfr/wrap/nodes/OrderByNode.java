@@ -8,6 +8,11 @@ import me.bechberger.jfr.wrap.EvalRow;
 import me.bechberger.jfr.wrap.EvalTable;
 import me.bechberger.jfr.wrap.Evaluator;
 
+/*
+ * Represents the ORDER BY clause in the query
+ * Contais two lists of the fields to be ordered by
+ * and one of the direction to be ordered in
+ */
 public class OrderByNode extends AstNode {
     private List<AstNode> identifiers;
     private List<String> directions;
@@ -71,6 +76,12 @@ public class OrderByNode extends AstNode {
         return sb.toString();
     }
 
+    /*
+     * Uses the Collections.sort method to order the rows
+     * Depending on direction specified in the same index of the field
+     * in the directions List orders the other way around
+     * Replaces table in evaluator after evaluating
+     */
     @Override
     public Object eval(AstNode root) {
         Evaluator evaluator = Evaluator.getInstance();
@@ -101,6 +112,10 @@ public class OrderByNode extends AstNode {
         return null;
     }
     
+    /*
+     * Same as before but the table is returned instead of persisting
+     * in the evaluator to preserve the original table
+     */
     public List<EvalRow> evalForPercentile(AstNode root) {
         Evaluator evaluator = Evaluator.getInstance();
         EvalTable table = evaluator.getTable(root);
@@ -128,6 +143,13 @@ public class OrderByNode extends AstNode {
         return rows;
     }
 
+    /*
+     * Used to compare values and uses a special
+     * exception for RecordedThreads where instead of a hash or
+     * implementing the Comparable interface uses the osName
+     * of the thread which is also the value being printed
+     * in the resulting table
+     */
     private int compareValues(Object val1, Object val2) {
         if (val1 == null && val2 == null) {
             return 0;

@@ -1,12 +1,12 @@
 package me.bechberger.jfr.wrap.nodes;
 
-import java.util.ArrayList;
-import java.util.Collections;
-
-import me.bechberger.jfr.wrap.EvalRow;
 import me.bechberger.jfr.wrap.EvalTable;
 import me.bechberger.jfr.wrap.Evaluator;
 
+/*
+ * This class represents a limit clause in the query
+ * Only supports numbers, not expressions
+ */
 public class LimitNode extends AstNode {
     private int count;
 
@@ -26,6 +26,7 @@ public class LimitNode extends AstNode {
         this.count = count;
     }
 
+    // Delegates the evaluation to the table to limit the rows
     @Override
     public Object eval(AstNode root) {
         Evaluator evaluator = Evaluator.getInstance();

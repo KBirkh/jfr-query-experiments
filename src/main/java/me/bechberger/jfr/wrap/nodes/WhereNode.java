@@ -6,6 +6,9 @@ import java.util.stream.Collectors;
 import me.bechberger.jfr.wrap.EvalTable;
 import me.bechberger.jfr.wrap.Evaluator;
 
+/*
+ * Represents a Where clause and contains the condition tree
+ */
 public class WhereNode extends AstNode {
     private AstNode condition;
 
@@ -37,6 +40,11 @@ public class WhereNode extends AstNode {
         }
         return sb.toString();
     }
+
+    /*
+     * Filters all rows of the table for this tree
+     * by whether the condition evaluates to true for the row
+     */
     @Override
     public Object eval(AstNode root) {
         Evaluator evaluator = Evaluator.getInstance();

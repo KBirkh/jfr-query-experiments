@@ -4,7 +4,6 @@ import java.text.ParseException;
 import java.util.*;
 
 import me.bechberger.jfr.wrap.nodes.AndNode;
-import me.bechberger.jfr.wrap.nodes.ArithmeticNode;
 import me.bechberger.jfr.wrap.nodes.AssignmentNode;
 import me.bechberger.jfr.wrap.nodes.AstConditional;
 import me.bechberger.jfr.wrap.nodes.AstNode;
@@ -87,6 +86,10 @@ public class Parser {
         }
     }
 
+    /*
+     * Already tells the evaluator that this identifier
+     * is part of an assignment for later evaluation
+     */
     private AstNode assignment() throws ParseException {
         AssignmentNode assignmentNode = new AssignmentNode();
         if(isIn(TokenType.IDENTIFIER)) {
@@ -114,6 +117,11 @@ public class Parser {
         }
     }
 
+    /*
+     * Special case when an OpenJDK query is detected in which
+     * the while original input is passed into the constructor of
+     * the OpenJDKQueryNode
+     */
     private AstNode query() throws ParseException {
         QueryNode queryNode = new QueryNode();
         if(isIn(TokenType.SELECT)) {
@@ -208,10 +216,6 @@ public class Parser {
             return stringNode;
         } else if(isIn(TokenType.PLUS, TokenType.MINUS, TokenType.LPAREN, TokenType.TIME_UNIT, TokenType.IDENTIFIER, TokenType.NUMBER, TokenType.FUNCTION)) {
             AstNode arithmetic = arithmetic();
-            if(isIn(TokenType.AS) && arithmetic instanceof ArithmeticNode) {
-                ArithmeticNode arithmeticNode = (ArithmeticNode) arithmetic;
-                alias(arithmeticNode);
-            }
             return arithmetic;
         } else if(isIn(TokenType.LSPAREN)) {
             AstNode subquery = query();
@@ -220,11 +224,6 @@ public class Parser {
         } else {
             throw new ParseException("Expected FUNCTION, IDENTIFIER, TIME_UNIT, BOOLEAN, STRING, PLUS, MINUS, LPAREN, NUMBER, LSPAREN, or AS, found " + peek().type, pos);
         }
-    }
-
-    private void alias(ArithmeticNode node) throws ParseException {
-        advance();
-        node.setAlias(expect(TokenType.IDENTIFIER).lexeme);
     }
 
     private FromNode from() throws ParseException {
@@ -330,6 +329,11 @@ public class Parser {
         return left;
     }
 
+    /*
+     * Special case where another token of lookahead is needed
+     * to determine if the identifier has an alias or could be used in an assignment
+     * #TODO: check if this is still necessary, especially assignments
+     */
     private AstNode condition() throws ParseException {
         if(isIn(TokenType.IDENTIFIER) && (lookahead(1).type != TokenType.DOT && lookahead(1).type != TokenType.ASSIGNMENT) || isIn(TokenType.NUMBER, TokenType.TIME_UNIT, TokenType.LPAREN, TokenType.PLUS, TokenType.MINUS, TokenType.FUNCTION)) {
             AstConditional left = arithmetic();

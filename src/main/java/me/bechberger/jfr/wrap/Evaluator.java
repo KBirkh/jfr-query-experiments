@@ -19,7 +19,25 @@ import me.bechberger.jfr.wrap.nodes.AstNode;
 import me.bechberger.jfr.wrap.nodes.FunctionNode;
 import me.bechberger.jfr.wrap.nodes.OrderByNode;
 
-
+/*
+ * Contains much of the evaluation logic
+ * and keeps track of everything during evaluation
+ * Is a singleton to ensure only one instance
+ * 
+ * Keeps track of the path to the jfr file
+ * Map of tables (key is the root node of the query)
+ * Map of nonSelected (Tables which are assigned to smth and not to be printed)
+ * Map of aggregates for a query
+ * Map of aggregate columns for a query #TODO: check if necessary
+ * Map of non aggregates for a query
+ * Map of groupings in a query
+ * State of evaluation for a query
+ * Map of percentiles for a Field in a Query (Identifier filed is key of inner map)
+ * Map of assignments for a query (Identifier is key)
+ * Map of todos for a query (Root node is key)
+ * Map of gc tables for a Time in a query (Uses TreeMap with Instant as key)
+ * Root node of the query being currently evaluated
+ */
 public class Evaluator {
     private String pathToFile;
     private static Evaluator instance;
@@ -63,6 +81,9 @@ public class Evaluator {
         tables.put(root, table);
     }
 
+    /*
+     * Moves a table to the nonSelected Map (called after assignment is evaluated)
+     */
     public void moveNonSelected(AstNode root) {
         if (tables.containsKey(root)) {
             EvalTable table = tables.get(root);
@@ -73,6 +94,10 @@ public class Evaluator {
         }
     }
 
+    /*
+     * Computes cross product
+     * #TODO: check if used at any point
+     */
     public void addToTable(EvalTable table, AstNode root) {
         if(!tables.containsKey(root)) {
             addTable(table, root);
@@ -113,6 +138,9 @@ public class Evaluator {
         return tables.get(root);
     }
     
+    /*
+     * Switch a table with a key with another one, preserving the key
+     */
     public void switchTable(AstNode root, EvalTable table) {
         if (tables.containsKey(root)) {
             tables.replace(root, table);
@@ -128,6 +156,9 @@ public class Evaluator {
         return instance;
     }
     
+    /*
+     * Destroy evaluator instance for testing purposes
+     */
     public void destruct() {
         instance = null;
     }
@@ -136,10 +167,16 @@ public class Evaluator {
         todos.put(todo, root);
     }
 
+    /*
+     * Evaluate all nodes in the Todo map
+     */
     public void evalTodos() {
         todos.forEach((String, node) -> node.eval(node));
     }
 
+    /*
+     * #TODO: check in here if aggregateColumns is necessary
+     */
     public void addAggregate(AstNode aggregate, AstNode root) {
         if(aggregates.get(root) == null) {
             aggregates.put(root, new ArrayList<FunctionNode>());
@@ -171,6 +208,10 @@ public class Evaluator {
         aggregateColumns.putIfAbsent(root, new ArrayList<AstNode>());
     }
     
+    /*
+     * Grouping logic
+     * Leverages the Collectors.groupingBy method provided by Java
+     */
     public void group(AstNode root) {
         // Ensure there is at least one table and groupings are defined
         if (tables.isEmpty() || (aggregates.isEmpty() && groupings.isEmpty())) {
@@ -270,6 +311,12 @@ public class Evaluator {
         this.percentiles.get(root).put(node, percentiles);
     }
     
+    /*
+     * Called from funcionNode to check if some field is in the percentile range
+     * If percentiles for that node in that query were already calculated
+     * get the values form the existing table
+     * else calculate them
+     */
     public Object[] getPercentiles(AstNode node, AstNode root) {
         if (this.percentiles.get(root) == null) {
             return calculatePercentiles(node, root);
@@ -277,6 +324,16 @@ public class Evaluator {
         return this.percentiles.get(root).get(node);
     }
     
+    /*
+     * Order a copy of the table corresponding to the root node by the node for which
+     * to evaluate the percentiles
+     * 
+     * Calculate indexes (inclusive) for the 99.9, 99, 95, 90 and 50 percentiles
+     * Get the rows at those indexes and evaluate the node for each of them
+     * Create an array with the values of the percentiles
+     * Add the array to the percentiles map for the node and root node
+     * Return the array
+     */
     private Object[] calculatePercentiles(AstNode node, AstNode root) {
         EvalTable table = tables.get(root);
         if (table == null || table.rows.isEmpty()) {
@@ -325,6 +382,18 @@ public class Evaluator {
         return this.currentRoot;
     }
 
+    /*
+     * Evaluates the GC correlation for a given timestamp
+     * if the table for the GCs is not present start a
+     * new query with all GCs in the file, convert it to a EvalTable
+     * then take the startTime and gcId from that table and cache those
+     * in a TreeMap.
+     * 
+     * Then take the given timestamp and get the floorEntry and ceilingEntry
+     * for previous and next gc.
+     * Then calculate the closest entry to the timestamp via the difference
+     * Return the gcId for each of those in an array
+     */
     public Object[] evalGC(Instant timestamp, AstNode root) {
         if (gcTables == null) {
             gcTables = new HashMap<>();
@@ -371,6 +440,11 @@ public class Evaluator {
         return new Object[] {beforeGc, afterGc, nearGc};
     }
     
+    /*
+     * Used in the projection stage
+     * Removes a specified column from the table
+     * belonging to the given root node
+     */
     public void removeCol(Column col, AstNode root) {
         if (col == null) {
             throw new IllegalArgumentException("Column cannot be null");
@@ -380,6 +454,7 @@ public class Evaluator {
             throw new IllegalStateException("No table found for the given root node");
         }
         String toSearch =  col.getName();
+        // Clone Column list, as it might be immutable in some cases #TODO: check if this is still true
         ArrayList<Column> mutable = new ArrayList<Column>(table.getColumns());
         mutable.removeIf(column -> column.getFullName().equals(toSearch));
         table.setColumns(mutable);
@@ -398,6 +473,11 @@ public class Evaluator {
         return sb.toString();
     }
 
+    /*
+     * If there are any non-aggregates (GC correlation)
+     * add a column for each, evaluate the value for each row
+     * and insert it into the new column
+     */
     public void evalNonAggregates(AstNode root) {
         EvalTable table = tables.get(root);
         List<AstNode> nonAggregatesList = nonAggregates.get(root);

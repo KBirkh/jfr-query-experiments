@@ -1,7 +1,8 @@
 package me.bechberger.jfr.wrap.nodes;
 
-import me.bechberger.jfr.wrap.EvalRow;
-
+/*
+ * Represents a number with a value
+ */
 public class NumberNode extends AstConditional {
     private String value;
 
@@ -16,6 +17,7 @@ public class NumberNode extends AstConditional {
         return sb.toString();
     }
 
+    // Returns the value as a double
     @Override
     public Object eval(Object row, AstNode root) {
         return value != null ? Double.parseDouble(value) : null;

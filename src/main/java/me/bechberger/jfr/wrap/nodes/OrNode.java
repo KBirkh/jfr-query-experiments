@@ -1,7 +1,8 @@
 package me.bechberger.jfr.wrap.nodes;
 
-import me.bechberger.jfr.wrap.EvalRow;
-
+/*
+ * Logical OR to be used in Where and Having clause
+ */
 public class OrNode extends AstConditional {
     private AstNode left;
     private AstNode right;
@@ -42,6 +43,10 @@ public class OrNode extends AstConditional {
         return sb.toString();
     }
 
+    /*
+     * Just as the AndNode does a "lazy" evaluation of the right side
+     * Always returns a boolean and expects booleans from the conditions
+     */
     @Override
     public Object eval(Object row, AstNode root) {
         if (left == null || right == null) {
@@ -59,6 +64,10 @@ public class OrNode extends AstConditional {
         }
     }
 
+    /*
+     * Also used during findAggregates Phase of evaluation
+     * and delegates to both conditions
+     */
     @Override
     public void findAggregates(AstNode root) {
         if(left != null) {
