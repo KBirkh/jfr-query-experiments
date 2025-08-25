@@ -44,7 +44,6 @@ public class Evaluator {
     private HashMap<AstNode, EvalTable> tables;
     private HashMap<AstNode, EvalTable> nonSelected;
     private Map<AstNode, List<FunctionNode>> aggregates;
-    private Map<AstNode, List<AstNode>> aggregateColumns;
     private Map<AstNode, List<AstNode>> nonAggregates;
     private Map<AstNode, List<AstNode>> groupings;
     public EvalState state = EvalState.INITIAL;
@@ -62,7 +61,6 @@ public class Evaluator {
         this.groupings = new HashMap<AstNode, List<AstNode>>();
         this.assignments = new HashMap<String, AstNode>();
         this.percentiles = new HashMap<AstNode, Map<AstNode, Object[]>>();
-        this.aggregateColumns = new HashMap<AstNode, List<AstNode>>();
         this.todos = new HashMap<String, AstNode>();
         this.gcTables = new HashMap<AstNode, TreeMap<Instant, Integer>>();
         this.currentRoot = null;
@@ -185,7 +183,6 @@ public class Evaluator {
             // Avoid adding the same aggregate multiple times
         } else {
             aggregates.get(root).add((FunctionNode) aggregate);
-            aggregateColumns.putIfAbsent(root, new ArrayList<AstNode>());
         }
     }
 
@@ -205,7 +202,6 @@ public class Evaluator {
             groupings.put(root, new ArrayList<AstNode>());
         }
         groupings.get(root).add(grouping);
-        aggregateColumns.putIfAbsent(root, new ArrayList<AstNode>());
     }
     
     /*
@@ -300,7 +296,7 @@ public class Evaluator {
         newTable.setGrouped(true);
         
         // Replace the existing table with the new grouped table
-        tables.clear();
+        tables.remove(root);
         tables.put(root, newTable);
     }
     
