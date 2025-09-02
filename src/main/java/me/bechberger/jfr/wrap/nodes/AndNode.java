@@ -18,9 +18,7 @@ public class AndNode extends AstConditional {
         this.right = right;
     }
 
-    public AndNode() {
-        
-    }
+    public AndNode() {}
 
     public void setLeft(AstNode left) {
         if (left == null) {
@@ -59,6 +57,16 @@ public class AndNode extends AstConditional {
             right.findAggregates(root);
         }
     }   
+
+    @Override
+    public void evalNonAggregates(AstNode root) {
+        if(left != null) {
+            left.evalNonAggregates(root);
+        }
+        if(right != null) {
+            right.evalNonAggregates(root);
+        }
+    }
 
 
     /*

@@ -26,11 +26,11 @@ public class EvalRow {
 
     public String toString() {
         StringBuilder sb = new StringBuilder();
-        sb.append("{");
+        sb.append("| ");
         boolean first = true;
         for (Map.Entry<String, Object> entry : fields.entrySet()) {
             if (!first) {
-                sb.append(", ");
+                sb.append(" | ");
             }
             Object value = entry.getValue();
             if(value instanceof RecordedThread) {
@@ -57,7 +57,7 @@ public class EvalRow {
             sb.append(value);
             first = false;
         }
-        sb.append("}");
+        sb.append(" |");
         return sb.toString();
     }
     

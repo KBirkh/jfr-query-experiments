@@ -30,4 +30,8 @@ public abstract class AstNode {
     public void findAggregates(AstNode root) {
         throw new UnsupportedOperationException("findAggregates(AstNode root) not implemented for " + this.getClass().getSimpleName());
     }
+
+    public void evalNonAggregates(AstNode root) {
+        throw new UnsupportedOperationException("evalNonAggregates(AstNode root) not implemented for " + this.getClass().getSimpleName());
+    }
 }

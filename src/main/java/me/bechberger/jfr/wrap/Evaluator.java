@@ -420,12 +420,12 @@ public class Evaluator {
         Map.Entry<Instant, Integer> floorEntry = treemap.floorEntry(timestamp);
         Map.Entry<Instant, Integer> ceilingEntry = treemap.ceilingEntry(timestamp);
         Map.Entry<Instant, Integer> closestEntry;
-        if(floorEntry == null) {
-            closestEntry = ceilingEntry;
-        }
-        if (ceilingEntry == null) {
-            closestEntry = null;
+        if(floorEntry == null && ceilingEntry == null) {
             return new Object[] {null, null, null};
+        } else if(floorEntry == null) {
+            return new Object[] {null, ceilingEntry.getValue(), ceilingEntry.getValue()};
+        } else if (ceilingEntry == null) {
+            return new Object[] {floorEntry.getValue(), null, floorEntry.getValue()};
         } else {
             // Choose the closest entry based on the timestamp
             closestEntry = Duration.between(timestamp, floorEntry.getKey()).compareTo(Duration.between(timestamp, ceilingEntry.getKey())) < 0 ? floorEntry : ceilingEntry;
@@ -449,7 +449,7 @@ public class Evaluator {
         if (table == null) {
             throw new IllegalStateException("No table found for the given root node");
         }
-        String toSearch =  col.getName();
+        String toSearch =  col.getFullName();
         // Clone Column list, as it might be immutable in some cases #TODO: check if this is still true
         ArrayList<Column> mutable = new ArrayList<Column>(table.getColumns());
         mutable.removeIf(column -> column.getFullName().equals(toSearch));
@@ -459,8 +459,7 @@ public class Evaluator {
         }
     }
 
-    @Override
-    public String toString() {
+    public String getOutput() {
         StringBuilder sb = new StringBuilder();
         for (Map.Entry<AstNode, EvalTable> entry : tables.entrySet()) {
             EvalTable table = entry.getValue();

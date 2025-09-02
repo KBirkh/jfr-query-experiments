@@ -55,4 +55,11 @@ public class WhereNode extends AstNode {
         return null;
     }
 
+   @Override 
+    public void evalNonAggregates(AstNode root) {
+        if(condition != null) {
+            condition.evalNonAggregates(root);
+        }
+    }
+
 }

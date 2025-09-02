@@ -1,6 +1,7 @@
 package me.bechberger.jfr.wrap.nodes;
 
 import jdk.jfr.consumer.RecordedThread;
+import me.bechberger.jfr.wrap.Evaluator;
 import me.bechberger.jfr.wrap.TokenType;
 
 /*
@@ -66,6 +67,17 @@ public class ConditionNode extends AstNode {
         sb.append("\n").append(dent).append("  Left: ").append(left.toString(indent + 1));
         sb.append("\n").append(dent).append("  Right: ").append(right.toString(indent + 1));
         return sb.toString();
+    }
+
+    @Override
+    public void evalNonAggregates(AstNode root) {
+        Evaluator evaluator = Evaluator.getInstance();
+        if(left != null && left instanceof FunctionNode) {
+            evaluator.addNonAggregate(left, root);
+        }
+        if(right != null && right instanceof FunctionNode) {
+            evaluator.addNonAggregate(right, root);
+        }
     }
 
     /*

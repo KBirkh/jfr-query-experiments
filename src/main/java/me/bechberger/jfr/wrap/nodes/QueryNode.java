@@ -149,6 +149,7 @@ public class QueryNode extends AstNode {
         evaluator.state = EvalState.WHERE;
         select.evalNonAggregates(root);
         if(where != null) {
+            where.evalNonAggregates(root);
             where.eval(root);
         }
         evaluator.state = EvalState.GROUP_BY;

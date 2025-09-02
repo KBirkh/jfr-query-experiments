@@ -74,9 +74,9 @@ public class Main /* implements Callable<Integer> */ {
          * #TODO: switch file and query indexes for better usability
          */
         if(args.length > 1) {
-            System.out.println("Using file: " + args[1]);
-            evaluator.setFile(args[1]);
-            input = args[0];
+            System.out.println("Using file: " + args[0]);
+            evaluator.setFile(args[0]);
+            input = args[1];
         } else if (args.length == 1) {
             // If only one argumnt given choose default file
             System.err.println("No file specified, using default: src/main/java/me/bechberger/jfr/renaissance.jfr");
@@ -87,14 +87,14 @@ public class Main /* implements Callable<Integer> */ {
             // If started in IDE/without arguments choose those specified here
             System.err.println("Neither query nor file specified, using as hard coded in main method");
             evaluator.setFile("src/main/java/me/bechberger/jfr/voronoi2.jfr");
-            input = "@SELECT * FROM hi AS y WHERE y.duration <= 10ns; hi = @SELECT * FROM [SELECT * FROM GCPhaseParallel] AS t; @SELECT AVG(t.duration) FROM hi";
+            input = "@SELECT beforeGC(x.startTime), beforeGC(y.startTime) FROM [SELECT * FROM GCPhaseParallel] AS x, [SELECT * FROM StringFlag] AS y";
         }
         Lexer lexer = new Lexer(input);
         Parser parser = new Parser(lexer.tokenize(), input);
         try {
             ProgramNode res = parser.parse();
             res.eval();
-            System.out.println(evaluator);
+            System.out.println(evaluator.getOutput());
             /* System.out.println(res.toString(0)); */
         } catch (Exception e) {
             if(e instanceof ParseException) {

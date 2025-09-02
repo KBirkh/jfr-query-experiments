@@ -11,8 +11,6 @@ public class Lexer {
         Map.entry("SELECT", TokenType.SELECT),
         Map.entry("FROM", TokenType.FROM),
         Map.entry("WHERE", TokenType.WHERE),
-        Map.entry("JOIN", TokenType.JOIN),
-        Map.entry("ON", TokenType.ON),
         Map.entry("GROUP", TokenType.GROUP_BY),   // Handle "GROUP BY"
         Map.entry("BY", TokenType.GROUP_BY),      // merged later
         Map.entry("ORDER", TokenType.ORDER_BY),
@@ -34,7 +32,6 @@ public class Lexer {
         Map.entry("BEFOREGC", TokenType.FUNCTION),
         Map.entry("AFTERGC", TokenType.FUNCTION),
         Map.entry("NEARGC", TokenType.FUNCTION),
-        Map.entry("in", TokenType.IN),
         // Map.entry("minTimeSlice", TokenType.MIN_TIME_SLICE),
         Map.entry("LIKE", TokenType.LIKE),
         Map.entry("IN", TokenType.IN_OPERATOR),

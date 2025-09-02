@@ -46,8 +46,8 @@ public class QueryTest {
         row.addField("COUNT()", "59");
         rows.add(row);
         EvalTable expected = new EvalTable(columns, rows);
-        String result = evaluator.toString();
-        assertEquals(expected.toString(), result.toString(), "Expected and actual results do not match");
+        String result = evaluator.getOutput();
+        assertEquals(expected.toString(), result, "Expected and actual results do not match");
         evaluator.destruct();
     }
 
@@ -74,8 +74,8 @@ public class QueryTest {
         rows.add(new EvalRow().addField("eventThread", "GC Thread#6"));
         EvalTable expected = new EvalTable(columns, rows);
     
-        String result = evaluator.toString();
-        assertEquals(expected.toString(), result.toString(), "Row count or eventThread values do not match");
+        String result = evaluator.getOutput();
+        assertEquals(expected.toString(), result, "Row count or eventThread values do not match");
         evaluator.destruct();
     }
     
@@ -102,8 +102,8 @@ public class QueryTest {
         rows.add(new EvalRow().addField("eventThread", "VM Thread"));
         EvalTable expected = new EvalTable(columns, rows);
     
-        String result = evaluator.toString();
-        assertEquals(expected.toString(), result.toString(), "Order of eventThread values is not deterministic");
+        String result = evaluator.getOutput();
+        assertEquals(expected.toString(), result, "Order of eventThread values is not deterministic");
         evaluator.destruct();
     }
     
@@ -123,8 +123,8 @@ public class QueryTest {
         rows.add(new EvalRow().addField("SUM(duration)", Duration.ofNanos(9846999)));
         EvalTable expected = new EvalTable(columns, rows);
     
-        String result = evaluator.toString();
-        assertEquals(expected.toString(), result.toString(), "SUM aggregate result does not match expected value");
+        String result = evaluator.getOutput();
+        assertEquals(expected.toString(), result, "SUM aggregate result does not match expected value");
         evaluator.destruct();
     }
 
@@ -143,8 +143,8 @@ public class QueryTest {
         rows.add(new EvalRow().addField("COUNT()", "395")); // Adjust based on your data
         EvalTable expected = new EvalTable(columns, rows);
     
-        String result = evaluator.toString();
-        assertEquals(expected.toString(), result.toString(), "COUNT aggregate result does not match expected value");
+        String result = evaluator.getOutput();
+        assertEquals(expected.toString(), result, "COUNT aggregate result does not match expected value");
         evaluator.destruct();
     }
 
@@ -169,7 +169,7 @@ public class QueryTest {
         rows.add(new EvalRow().addField("eventThread", "GC Thread#6").addField("COUNT()", "7"));
         rows.add(new EvalRow().addField("eventThread", "VM Thread").addField("COUNT()", "54"));
         EvalTable expected = new EvalTable(columns, rows);
-        assertEquals(expected.toString(), evaluator.toString(), "Group by with having result does not match expected value");
+        assertEquals(expected.toString(), evaluator.getOutput(), "Group by with having result does not match expected value");
         evaluator.destruct();
     }
 }
