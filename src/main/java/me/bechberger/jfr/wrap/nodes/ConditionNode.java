@@ -104,6 +104,13 @@ public class ConditionNode extends AstNode {
 
         Object leftValue = left.eval(row, root);
         Object rightValue = right.eval(row, root);
+        
+        if(leftValue == null && rightValue == null) {
+            return true; // Both null is considered equal
+        }
+        if(leftValue == null || rightValue == null) {
+            return false;
+        }
 
         if(leftValue.getClass() != rightValue.getClass() && !(leftValue instanceof Number || rightValue instanceof Number)) {
             throw new IllegalArgumentException(leftValue.getClass().getSimpleName() + " and " + rightValue.getClass().getSimpleName() + " types are not comparable");
