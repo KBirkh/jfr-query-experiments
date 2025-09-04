@@ -28,4 +28,5 @@ replay_pid*
 
 # potentially very large files with query data
 *.jfr
+
 /target

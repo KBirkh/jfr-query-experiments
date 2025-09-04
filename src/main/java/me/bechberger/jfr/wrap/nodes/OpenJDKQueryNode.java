@@ -88,7 +88,6 @@ public class OpenJDKQueryNode extends AstNode {
             EvalTable evalTable = TableUtils.toEvalTable(table, alias);
             evaluator.addToTable(evalTable, root);
         } catch (UserSyntaxException | UserDataException e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
         }
         return null;

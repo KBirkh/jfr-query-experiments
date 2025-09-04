@@ -9,7 +9,6 @@ import me.bechberger.jfr.wrap.Evaluator;
  * Contains all the clauses in a query
  */
 public class QueryNode extends AstNode {
-    private ColumnNode columns;
     private SelectNode select;
     private FromNode from;
     private WhereNode where;
@@ -83,10 +82,6 @@ public class QueryNode extends AstNode {
         }
     }
 
-    public void setColumn(AstNode columns) {
-        this.columns = (ColumnNode) columns;
-    }
-
     public AstNode getHaving() {
         return having;
     }
@@ -97,9 +92,6 @@ public class QueryNode extends AstNode {
         String dent = "  ".repeat(indent);
         sb.append("\n").append(dent).append(this.getClass().getSimpleName()).append(":");
         sb.append("\n").append(dent).append("  Has @: ").append(hasAt);
-        if (columns != null) {
-            sb.append(columns.toString(indent + 1));
-        }
         if (select != null) {
             sb.append(select.toString(indent + 1));
         }

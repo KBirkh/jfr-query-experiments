@@ -12,7 +12,6 @@ import me.bechberger.jfr.wrap.nodes.AstConditional;
 import me.bechberger.jfr.wrap.nodes.AstNode;
 import me.bechberger.jfr.wrap.nodes.BinaryOpNode;
 import me.bechberger.jfr.wrap.nodes.BooleanNode;
-import me.bechberger.jfr.wrap.nodes.ColumnNode;
 import me.bechberger.jfr.wrap.nodes.ConditionNode;
 import me.bechberger.jfr.wrap.nodes.FromNode;
 import me.bechberger.jfr.wrap.nodes.FunctionNode;
@@ -31,7 +30,6 @@ import me.bechberger.jfr.wrap.nodes.SourceNode;
 import me.bechberger.jfr.wrap.nodes.StringNode;
 import me.bechberger.jfr.wrap.nodes.TimeNode;
 import me.bechberger.jfr.wrap.nodes.UnaryOpNode;
-import me.bechberger.jfr.wrap.nodes.ViewDefinitionNode;
 import me.bechberger.jfr.wrap.nodes.WhereNode;
 
 public class EvaluationTest {
@@ -96,14 +94,6 @@ public class EvaluationTest {
         return new BooleanNode(value);
     }
 
-    public AstNode column(String... names) {
-        ColumnNode col = new ColumnNode();
-        for (String name : names) {
-            col.addColumn(name);
-        }
-        return col;
-    }
-
     public AstNode condition(TokenType operator, AstConditional left, AstConditional right) {
         return new ConditionNode(operator, left, right);
     }
@@ -142,10 +132,6 @@ public class EvaluationTest {
             sourceNode.setAlias(alias);
         }
         return sourceNode;
-    }
-    
-    public AstNode viewDefinition(String name, AstNode query) {
-        return new ViewDefinitionNode(name, query);
     }
     
     public AstConditional number(String value) {

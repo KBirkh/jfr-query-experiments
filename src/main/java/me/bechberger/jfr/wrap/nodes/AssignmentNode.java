@@ -11,9 +11,7 @@ public class AssignmentNode extends AstNode {
         this.identifier = identifier;
     }
 
-    public AssignmentNode() {
-
-    }
+    public AssignmentNode() {}
 
     public AssignmentNode(AstNode identifier, AstNode expression) {
         setIdentifier(identifier);
@@ -48,7 +46,6 @@ public class AssignmentNode extends AstNode {
 
     @Override
     public Object eval(Object row, AstNode root) {
-        this.isEvaluated = true;
         return node.eval(row, root);
     }
 

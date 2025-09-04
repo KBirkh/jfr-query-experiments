@@ -94,7 +94,7 @@ public class SourceNode extends AstNode {
                 } else {
                     evaluator.addTable(copy, root);
                 }
-                evaluator.moveNonSelected(assignment);
+                evaluator.moveDataSource(assignment);
             } else {
                 evaluator.addTodo(name, evaluator.getCurrentRoot());
                 return -1; // Indicating that this is a source node to be evaluated later

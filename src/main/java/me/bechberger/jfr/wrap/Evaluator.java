@@ -26,9 +26,8 @@ import me.bechberger.jfr.wrap.nodes.OrderByNode;
  * 
  * Keeps track of the path to the jfr file
  * Map of tables (key is the root node of the query)
- * Map of nonSelected (Tables which are assigned to smth and not to be printed)
+ * Map of dataSource (Tables which are assigned to smth and not to be printed)
  * Map of aggregates for a query
- * Map of aggregate columns for a query #TODO: check if necessary
  * Map of non aggregates for a query
  * Map of groupings in a query
  * State of evaluation for a query
@@ -41,8 +40,8 @@ import me.bechberger.jfr.wrap.nodes.OrderByNode;
 public class Evaluator {
     private String pathToFile;
     private static Evaluator instance;
-    private HashMap<AstNode, EvalTable> tables;
-    private HashMap<AstNode, EvalTable> nonSelected;
+    private Map<AstNode, EvalTable> tables;
+    private Map<AstNode, EvalTable> dataSource;
     private Map<AstNode, List<FunctionNode>> aggregates;
     private Map<AstNode, List<AstNode>> nonAggregates;
     private Map<AstNode, List<AstNode>> groupings;
@@ -55,7 +54,7 @@ public class Evaluator {
 
     private Evaluator() {
         this.tables = new HashMap<AstNode, EvalTable>();
-        this.nonSelected = new HashMap<AstNode, EvalTable>();
+        this.dataSource = new HashMap<AstNode, EvalTable>();
         this.aggregates = new HashMap<AstNode, List<FunctionNode>>();
         this.nonAggregates = new HashMap<AstNode, List<AstNode>>();
         this.groupings = new HashMap<AstNode, List<AstNode>>();
@@ -80,12 +79,12 @@ public class Evaluator {
     }
 
     /*
-     * Moves a table to the nonSelected Map (called after assignment is evaluated)
+     * Moves a table to the dataSource Map (called after assignment is evaluated)
      */
-    public void moveNonSelected(AstNode root) {
+    public void moveDataSource(AstNode root) {
         if (tables.containsKey(root)) {
             EvalTable table = tables.get(root);
-            nonSelected.put(root, table);
+            dataSource.put(root, table);
             tables.remove(root);
         } else {
             throw new IllegalStateException("No table found for the given root node");
@@ -94,7 +93,7 @@ public class Evaluator {
 
     /*
      * Computes cross product
-     * #TODO: check if used at any point
+     * Inserts new table if none exist yet within the same query
      */
     public void addToTable(EvalTable table, AstNode root) {
         if(!tables.containsKey(root)) {
@@ -131,7 +130,7 @@ public class Evaluator {
 
     public EvalTable getTable(AstNode root) {
         if(!tables.containsKey(root)) {
-            return nonSelected.get(root);
+            return dataSource.get(root);
         }
         return tables.get(root);
     }
@@ -172,9 +171,6 @@ public class Evaluator {
         todos.forEach((String, node) -> node.eval(node));
     }
 
-    /*
-     * #TODO: check in here if aggregateColumns is necessary
-     */
     public void addAggregate(AstNode aggregate, AstNode root) {
         if(aggregates.get(root) == null) {
             aggregates.put(root, new ArrayList<FunctionNode>());

@@ -332,17 +332,18 @@ public class FunctionNode extends AstConditional {
         if(rows.isEmpty()) {
             return 0.0;
         }
-        if (arg.eval(rows.get(0), root) instanceof Number) {
+        Object type = arg.eval(rows.get(0), root);
+        if (type instanceof Number) {
             return rows.stream()
                 .mapToDouble(row -> ((Number) arg.eval(row, root)).doubleValue())
                 .min()
                 .orElse(Double.NaN);
-        } else if (arg.eval(rows.get(0), root) instanceof Duration) {
+        } else if (type instanceof Duration) {
             return rows.stream()
                 .map(row -> (Duration) arg.eval(row, root))
                 .min(Duration::compareTo)
                 .orElse(Duration.ZERO);
-        } else if(arg.eval(rows.get(0), root) instanceof Instant) {
+        } else if(type instanceof Instant) {
             return rows.stream()
                 .map(row -> (Instant) arg.eval(row, root))
                 .min(Instant::compareTo)
