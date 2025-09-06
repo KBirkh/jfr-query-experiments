@@ -10,6 +10,7 @@ import java.util.Map;
 import java.util.TreeMap;
 import java.util.stream.Collectors;
 
+import jdk.jfr.consumer.RecordedThread;
 import me.bechberger.jfr.query.Table;
 import me.bechberger.jfr.tool.ConfigOptions;
 import me.bechberger.jfr.tool.QueryCommand;
@@ -49,7 +50,7 @@ public class Evaluator {
     private Map<AstNode, Map<AstNode, Object[]>> percentiles;
     private Map<String, AstNode> assignments;
     private Map<String, AstNode> todos;
-    private Map<AstNode, TreeMap<Instant, Integer>> gcTables;
+    private TreeMap<Instant, GCEvent> gcTable;
     private AstNode currentRoot;
 
     private Evaluator() {
@@ -61,7 +62,6 @@ public class Evaluator {
         this.assignments = new HashMap<String, AstNode>();
         this.percentiles = new HashMap<AstNode, Map<AstNode, Object[]>>();
         this.todos = new HashMap<String, AstNode>();
-        this.gcTables = new HashMap<AstNode, TreeMap<Instant, Integer>>();
         this.currentRoot = null;
     }
 
@@ -386,36 +386,48 @@ public class Evaluator {
      * Then calculate the closest entry to the timestamp via the difference
      * Return the gcId for each of those in an array
      */
-    public Object[] evalGC(Instant timestamp, AstNode root) {
-        if (gcTables == null) {
-            gcTables = new HashMap<>();
-        }
-        if (!gcTables.containsKey(root)) {
+    public Object[] evalGC(Instant timestamp) {
+        if (gcTable == null) {
+            gcTable = new TreeMap<>();
             EvalTable evalTable = new EvalTable(new ArrayList<Column>(), new ArrayList<EvalRow>());
             QueryCommand queryCommand = new QueryCommand();
-            queryCommand.setView("SELECT startTime, gcId FROM GarbageCollection");
+            queryCommand.setView("SELECT * FROM GarbageCollection");
             queryCommand.setFile(getFile());
             queryCommand.setConfigOptions(new ConfigOptions());
             try {
                 Table table = queryCommand.call();
                 evalTable = TableUtils.toEvalTable(table);
             } catch (UserSyntaxException | UserDataException e) {
-                // TODO Auto-generated catch block
+                // Not reachable, as the query is hardcoded and available for each jfr file
                 e.printStackTrace();
             }
             for(EvalRow row : evalTable.rows) {
-                Instant startTime = (Instant) row.getFields().get("startTime");
-                int gcId = (int) row.getFields().get("gcId");
-                gcTables.computeIfAbsent(root, k -> new TreeMap<>()).put(startTime, gcId);
+                HashMap<String, Object> fields = row.getFields();
+                GCEvent gc = new GCEvent();
+                Instant startTime = (Instant) fields.get("startTime");
+                gc.startTime = startTime;
+                int gcId = (int) fields.get("gcId");
+                gc.gcId = gcId;
+                String name = (String) fields.get("name");
+                gc.name = name;
+                Duration duration = (Duration) fields.get("duration");
+                gc.duration = duration;
+                RecordedThread eventThread = (RecordedThread) fields.get("eventThread");
+                gc.eventThread = eventThread;
+                String cause = (String) fields.get("cause");
+                gc.cause = cause;
+                Duration sumOfPauses = (Duration) fields.get("sumOfPauses");
+                gc.sumOfPauses = sumOfPauses;
+                Duration longestPause = (Duration) fields.get("longestPause");
+                gc.longestPause = longestPause;
+
+                gcTable.putIfAbsent(startTime, gc);
             }
         }
-        TreeMap<Instant, Integer> treemap = gcTables.get(root);
-        if (treemap == null) {
-            throw new IllegalStateException("No GC table found for the given root node");
-        }
-        Map.Entry<Instant, Integer> floorEntry = treemap.floorEntry(timestamp);
-        Map.Entry<Instant, Integer> ceilingEntry = treemap.ceilingEntry(timestamp);
-        Map.Entry<Instant, Integer> closestEntry;
+        TreeMap<Instant, GCEvent> treemap = gcTable;
+        Map.Entry<Instant, GCEvent> floorEntry = treemap.floorEntry(timestamp);
+        Map.Entry<Instant, GCEvent> ceilingEntry = treemap.ceilingEntry(timestamp);
+        Map.Entry<Instant, GCEvent> closestEntry;
         if(floorEntry == null && ceilingEntry == null) {
             return new Object[] {null, null, null};
         } else if(floorEntry == null) {
@@ -424,11 +436,13 @@ public class Evaluator {
             return new Object[] {floorEntry.getValue(), null, floorEntry.getValue()};
         } else {
             // Choose the closest entry based on the timestamp
-            closestEntry = Duration.between(timestamp, floorEntry.getKey()).compareTo(Duration.between(timestamp, ceilingEntry.getKey())) < 0 ? floorEntry : ceilingEntry;
+            Duration toFloor = Duration.between(timestamp, floorEntry.getKey()).abs();
+            Duration toCeiling = Duration.between(timestamp, ceilingEntry.getKey()).abs();
+            closestEntry = toFloor.compareTo(toCeiling) < 0 ? floorEntry : ceilingEntry;
         }
-        Integer beforeGc = floorEntry.getValue();
-        Integer afterGc = ceilingEntry.getValue();
-        Integer nearGc = closestEntry.getValue();
+        GCEvent beforeGc = floorEntry.getValue();
+        GCEvent afterGc = ceilingEntry.getValue();
+        GCEvent nearGc = closestEntry.getValue();
         return new Object[] {beforeGc, afterGc, nearGc};
     }
     

@@ -133,6 +133,9 @@ public class QueryNode extends AstNode {
      */
     @Override
     public Object eval(AstNode root) {
+        if(isEvaluated) {
+            return null;
+        }
         Evaluator evaluator = Evaluator.getInstance();
         evaluator.state = EvalState.FROM;
         if(from.eval(root).equals(-1)) {

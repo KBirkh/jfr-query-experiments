@@ -134,6 +134,11 @@ public class FunctionNode extends AstConditional {
     }
 
     @Override
+    public void evalNonAggregates(AstNode root) {
+        return;
+    }
+
+    @Override
     public String toString(int indent) {
         StringBuilder sb = new StringBuilder();
         String dent = "  ".repeat(indent);
@@ -383,7 +388,7 @@ public class FunctionNode extends AstConditional {
             throw new IllegalArgumentException("Identifier must evaluate to Instant for BEFORE_GC function");
         }
         Instant timestamp = (Instant) ts;
-        Object[] result = evaluator.evalGC(timestamp, root);
+        Object[] result = evaluator.evalGC(timestamp);
         return result[0];
     }
 
@@ -397,7 +402,7 @@ public class FunctionNode extends AstConditional {
             throw new IllegalArgumentException("Identifier must evaluate to Instant for AFTER_GC function");
         }
         Instant timestamp = (Instant) ts;
-        Object[] result = evaluator.evalGC(timestamp, root);
+        Object[] result = evaluator.evalGC(timestamp);
         return result[1];
     }
 
@@ -411,7 +416,7 @@ public class FunctionNode extends AstConditional {
             throw new IllegalArgumentException("Identifier must evaluate to Instant for NEAR_GC function");
         }
         Instant timestamp = (Instant) ts;
-        Object[] result = evaluator.evalGC(timestamp, root);
+        Object[] result = evaluator.evalGC(timestamp);
         return result[2];
     }
 

@@ -10,6 +10,7 @@ import picocli.CommandLine;
 
 import java.text.ParseException;
 import java.util.Arrays;
+import java.util.List;
 import java.util.concurrent.Callable;
 
 /* @CommandLine.Command(
@@ -86,16 +87,16 @@ public class Main /* implements Callable<Integer> */ {
         } else {
             // If started in IDE/without arguments choose those specified here
             System.err.println("Neither query nor file specified, using as hard coded in main method");
-            evaluator.setFile("src/main/java/me/bechberger/jfr/voronoi2.jfr");
-            input = "@SELECT x.eventThread, AVG(x.duration) FROM [SELECT * FROM GCPhaseParallel] AS x GROUP BY x.eventThread HAVING AVG(x.duration) > 10us";
+            evaluator.setFile("src/main/java/me/bechberger/jfr/renaissance.jfr");
+            input = "@SELECT startTime, beforeGC(startTime), duration FROM [SELECT * FROM GarbageCollection]";
         }
         Lexer lexer = new Lexer(input);
-        Parser parser = new Parser(lexer.tokenize(), input);
+        List<Token> tokens = lexer.tokenize();
+        Parser parser = new Parser(tokens, input);
         try {
             ProgramNode res = parser.parse();
             res.eval();
             System.out.println(evaluator.getOutput());
-            /* System.out.println(res.toString(0)); */
         } catch (Exception e) {
             if(e instanceof ParseException) {
                 if(e.getCause() != null) {

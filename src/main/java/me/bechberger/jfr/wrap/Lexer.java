@@ -227,12 +227,12 @@ public class Lexer {
         List<Token> merged = new ArrayList<>();
         for (int i = 0; i < tokens.size(); i++) {
             if (i + 1 < tokens.size()) {
-                if (tokens.get(i).type == TokenType.GROUP_BY && tokens.get(i + 1).lexeme.equals("BY")) {
+                if (tokens.get(i).type == TokenType.GROUP_BY && tokens.get(i + 1).lexeme.toUpperCase().equals("BY")) {
                     merged.add(new Token(TokenType.GROUP_BY, "GROUP BY", tokens.get(i).pos));
                     i++;
                     continue;
                 }
-                if (tokens.get(i).type == TokenType.ORDER_BY && tokens.get(i + 1).lexeme.equals("BY")) {
+                if (tokens.get(i).type == TokenType.ORDER_BY && tokens.get(i + 1).lexeme.toUpperCase().equals("BY")) {
                     merged.add(new Token(TokenType.ORDER_BY, "ORDER BY", tokens.get(i).pos));
                     i++;
                     continue;

@@ -46,7 +46,9 @@ public class AssignmentNode extends AstNode {
 
     @Override
     public Object eval(Object row, AstNode root) {
-        return node.eval(row, root);
+        Object res = node.eval(row, root);
+        node.isEvaluated = true;
+        return res;
     }
 
 }

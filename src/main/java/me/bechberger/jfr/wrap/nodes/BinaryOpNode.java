@@ -1,5 +1,7 @@
 package me.bechberger.jfr.wrap.nodes;
 
+import java.time.Duration;
+
 import me.bechberger.jfr.wrap.Evaluator;
 
 /*
@@ -10,10 +12,10 @@ import me.bechberger.jfr.wrap.Evaluator;
  */
 public class BinaryOpNode extends AstConditional {
     private String operator;
-    private AstConditional leftOperand;
-    private AstConditional rightOperand;
+    private AstNode leftOperand;
+    private AstNode rightOperand;
 
-    public BinaryOpNode(String operator, AstConditional leftOperand, AstConditional rightOperand) {
+    public BinaryOpNode(String operator, AstNode leftOperand, AstNode rightOperand) {
         if (operator == null || operator.isEmpty()) {
             throw new IllegalArgumentException("Operator cannot be null or empty");
         }
@@ -54,6 +56,64 @@ public class BinaryOpNode extends AstConditional {
         } else if(rightOperand != null) {
             rightOperand.evalNonAggregates(root);
         }
+    }
+
+    /*
+     * #TODO: handle nulls, maybe implement special type for gc-correlation
+     */
+    @Override
+    public Object eval(Object row, AstNode root) {
+        Object leftValue = leftOperand.eval(row, root);
+        Object rightValue = rightOperand.eval(row, root);
+        if(leftValue instanceof Integer) {
+            leftValue = (Double) leftValue;
+        }
+        if(rightValue instanceof Integer) {
+            rightValue = (Double) rightValue;
+        }  
+        if(leftValue.getClass() != rightValue.getClass()) {
+            throw new IllegalArgumentException("Left and right operand must be of the same type");
+        }
+        switch (operator) {
+            case "+":
+                if (leftValue instanceof Double && rightValue instanceof Double) {
+                    return (Double) leftValue + (Double) rightValue;
+                } else if(leftValue instanceof Duration && rightValue instanceof Duration) {
+                    return ((Duration) leftValue).plus((Duration) rightValue);
+                } else if (leftValue instanceof String || rightValue instanceof String) {
+                    return String.valueOf(leftValue) + String.valueOf(rightValue);
+                } else throw new IllegalArgumentException("Unsupported operand types for +: " + leftValue.getClass() + " and " + rightValue.getClass());
+            case "-":
+                if (leftValue instanceof Double && rightValue instanceof Double) {
+                    return (Double) leftValue - (Double) rightValue;
+                } else if(leftValue instanceof Duration && rightValue instanceof Duration) {
+                    return ((Duration) leftValue).minus((Duration) rightValue);
+                } else throw new IllegalArgumentException("Unsupported operand types for -: " + leftValue.getClass() + " and " + rightValue.getClass());
+            case "*":
+                if (leftValue instanceof Double && rightValue instanceof Double) {
+                    return (Double) leftValue * (Double) rightValue;
+                } else throw new IllegalArgumentException("Unsupported operand types for *: " + leftValue.getClass() + " and " + rightValue.getClass());
+            case "/":
+                if (leftValue instanceof Double && rightValue instanceof Double) {
+                    if((Double) rightValue == 0.0) {
+                        throw new ArithmeticException("Division by zero");   
+                    }
+                    return (Double) leftValue / (Double) rightValue;
+                } else throw new IllegalArgumentException("Unsupported operand types for /: " + leftValue.getClass() + " and " + rightValue.getClass());
+            case "%":
+                if (leftValue instanceof Double && rightValue instanceof Double) {
+                    if((Double) rightValue == 0.0) {
+                        throw new ArithmeticException("Division by zero");
+                    }
+                    return (Double) leftValue % (Double) rightValue;
+                } else throw new IllegalArgumentException("Unsupported operand types for %: " + leftValue.getClass() + " and " + rightValue.getClass());
+            case "^":
+                if (leftValue instanceof Double && rightValue instanceof Double) {
+                    return Math.pow((Double) leftValue, (Double) rightValue);
+                } else throw new IllegalArgumentException("Unsupported operand types for ^: " + leftValue.getClass() + " and " + rightValue.getClass());
+            default:
+                throw new IllegalArgumentException("Unsupported operator: " + operator);
+        } 
     }
 
     @Override

@@ -2,6 +2,7 @@ package me.bechberger.jfr.wrap.nodes;
 
 import jdk.jfr.consumer.RecordedThread;
 import me.bechberger.jfr.wrap.Evaluator;
+import me.bechberger.jfr.wrap.GCEvent;
 import me.bechberger.jfr.wrap.TokenType;
 
 /*
@@ -104,7 +105,7 @@ public class ConditionNode extends AstNode {
 
         Object leftValue = left.eval(row, root);
         Object rightValue = right.eval(row, root);
-        
+
         if(leftValue == null && rightValue == null) {
             return true; // Both null is considered equal
         }
@@ -116,10 +117,19 @@ public class ConditionNode extends AstNode {
             throw new IllegalArgumentException(leftValue.getClass().getSimpleName() + " and " + rightValue.getClass().getSimpleName() + " types are not comparable");
         }
 
-        if(leftValue instanceof RecordedThread) {
+        if(leftValue instanceof GCEvent) {
+            leftValue = ((GCEvent) leftValue).gcId;
+        } else if(leftValue instanceof RecordedThread) {
             leftValue = ((RecordedThread) leftValue).getOSName();
         }  else if(leftValue instanceof Integer) {
             leftValue = Double.parseDouble(leftValue.toString());
+        }
+        if(rightValue instanceof GCEvent) {
+            rightValue = ((GCEvent) rightValue).gcId;
+        } else if(rightValue instanceof RecordedThread) {
+            rightValue = ((RecordedThread) rightValue).getOSName();
+        }  else if(rightValue instanceof Integer) {
+            rightValue = Double.parseDouble(rightValue.toString());
         }
         if (leftValue == null || rightValue == null) {
             return false; // Handle null values as false
