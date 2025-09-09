@@ -477,6 +477,15 @@ public class Evaluator {
         }
         return sb.toString();
     }
+    
+    public String getJsonOutput() {
+        StringBuilder sb = new StringBuilder();
+        for (Map.Entry<AstNode, EvalTable> entry : tables.entrySet()) {
+            EvalTable table = entry.getValue();
+            sb.append(table.toJson());
+        }
+        return sb.toString();
+    }
 
     /*
      * If there are any non-aggregates (GC correlation)

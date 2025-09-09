@@ -56,6 +56,19 @@ public class Main /* implements Callable<Integer> */ {
             
             For more information about available commands, use 'help'
             
+            Usage:
+                [--json] [file] query
+                
+            Options:
+                --json      Output results in JSON format instead of table format.
+                           Durations are output as nanoseconds, RecordedThread 
+                           objects are formatted as JSON objects with proper structure.
+                           Data rows are formatted as objects with column names as keys.
+            
+            Examples:
+                query.jar "SELECT * FROM GCPhaseParallel LIMIT 5"
+                query.jar --json recording.jfr "SELECT gcId, duration, name FROM GCPhaseParallel"
+            
             """;
 
     @Override
@@ -70,9 +83,18 @@ public class Main /* implements Callable<Integer> */ {
     public static void main(String[] args) {
         Evaluator evaluator = Evaluator.getInstance();
         String input;
+        boolean jsonOutput = false;
+        
+        // Check for --json flag
+        if (args.length > 0 && "--json".equals(args[0])) {
+            jsonOutput = true;
+            // Remove --json flag from args
+            String[] newArgs = new String[args.length - 1];
+            System.arraycopy(args, 1, newArgs, 0, args.length - 1);
+            args = newArgs;
+        }
         /*
          * checks if both file and query are provided
-         * #TODO: switch file and query indexes for better usability
          */
         if(args.length > 1) {
             System.out.println("Using file: " + args[0]);
@@ -96,7 +118,11 @@ public class Main /* implements Callable<Integer> */ {
         try {
             ProgramNode res = parser.parse();
             res.eval();
-            System.out.println(evaluator.getOutput());
+            if (jsonOutput) {
+                System.out.println(evaluator.getJsonOutput());
+            } else {
+                System.out.println(evaluator.getOutput());
+            }
         } catch (Exception e) {
             if(e instanceof ParseException) {
                 if(e.getCause() != null) {
