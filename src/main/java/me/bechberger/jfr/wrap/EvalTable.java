@@ -1,7 +1,13 @@
 package me.bechberger.jfr.wrap;
 
+import java.time.Duration;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
+import jdk.jfr.consumer.RecordedEvent;
+import jdk.jfr.consumer.RecordedObject;
+import jdk.jfr.consumer.RecordedThread;
 import me.bechberger.jfr.wrap.nodes.AstNode;
 
 /*
@@ -100,15 +106,104 @@ public class EvalTable {
 
     @Override
     public String toString() {
-        StringBuilder sb = new StringBuilder();
-        sb.append("Rows:\n");
-        for (EvalRow row : rows) {
-            sb.append(row).append("\n");
+        if (rows == null || rows.isEmpty() || columns == null || columns.isEmpty()) {
+            return "Empty table";
         }
-        sb.append("\nColumns: ");
+
+        // Calculate column widths based on formatted content
+        Map<String, Integer> columnWidths = new LinkedHashMap<>();
+        
+        // Initialize with column header lengths
         for (Column column : columns) {
-            sb.append(column.getFullName()).append(", ");
+            columnWidths.put(column.getFullName(), column.getFullName().length());
         }
-        return sb.append("\n").toString();
+        
+        // Check each row's formatted values
+        for (EvalRow row : rows) {
+            for (Column column : columns) {
+                String columnName = column.getFullName();
+                Object value = row.getFields().get(columnName);
+                String formattedValue = formatValue(value);
+                int currentWidth = columnWidths.get(columnName);
+                columnWidths.put(columnName, Math.max(currentWidth, formattedValue.length()));
+            }
+        }
+
+        StringBuilder sb = new StringBuilder();
+        
+        // Build top border
+        sb.append("\u250F");
+        for (Column column : columns) {
+            int width = columnWidths.get(column.getFullName());
+            sb.append("\u2501".repeat(width + 2)).append("\u2533");
+        }
+        sb.replace(sb.length()-1, sb.length(), "\u2513");
+        sb.append("\n");
+        
+        // Build header
+        sb.append("\u2503");
+        for (Column column : columns) {
+            String columnName = column.getFullName();
+            int width = columnWidths.get(columnName);
+            sb.append(String.format(" %-" + width + "s \u2503", columnName));
+        }
+        sb.append("\n");
+        
+        // Build separator
+        sb.append("\u2523");
+        for (Column column : columns) {
+            int width = columnWidths.get(column.getFullName());
+            sb.append("\u2501".repeat(width + 2)).append("\u254B");
+        }
+        sb.replace(sb.length()-1, sb.length(), "\u252B");
+        sb.append("\n");
+        
+        // Build data rows
+        for (EvalRow row : rows) {
+            sb.append("\u2503");
+            for (Column column : columns) {
+                String columnName = column.getFullName();
+                Object value = row.getFields().get(columnName);
+                String formattedValue = formatValue(value);
+                int width = columnWidths.get(columnName);
+                sb.append(String.format(" %-" + width + "s \u2503", formattedValue));
+            }
+            sb.append("\n");
+        }
+        
+        // Build bottom border
+        sb.append("\u2517");
+        for (Column column : columns) {
+            int width = columnWidths.get(column.getFullName());
+            sb.append("\u2501".repeat(width + 2)).append("\u253B");
+        }
+        sb.replace(sb.length()-1, sb.length(), "\u251B");
+        
+        return sb.toString();
+    }
+
+    private String formatValue(Object value) {
+        if(value instanceof RecordedThread) {
+            return ((RecordedThread) value).getOSName(); 
+        } else if(value instanceof Duration) {
+            long durationNanos = ((Duration) value).toNanos();
+            if(durationNanos < 1000) {
+                return durationNanos + " ns";
+            } else if(durationNanos < 1_000_000) {
+                return durationNanos / 1_000F + " μs";
+            } else if(durationNanos < 1_000_000_000) {
+                return (durationNanos / 1_000_000F) + " ms";
+            } else {
+                return (durationNanos / 1_000_000_000F) + " s";
+            }
+        } else if (value instanceof RecordedEvent) {
+            return ((RecordedEvent) value).getEventType().getName();
+        } else if (value instanceof RecordedObject) {
+            return ((RecordedObject) value).getClass().getSimpleName();
+        } else if (value == null) {
+            return "null";
+        } else {
+            return value.toString();
+        }
     }
 }

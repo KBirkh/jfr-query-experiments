@@ -15,9 +15,19 @@ import jdk.jfr.consumer.*;
  */
 public class EvalRow {
     LinkedHashMap<String, Object> fields;
+    LinkedHashMap<String, Integer> fieldSize;
 
     public EvalRow(LinkedHashMap<String, Object> fields) {
         this.fields = fields;
+        for(Map.Entry<String, Object> entry : fields.entrySet()) {
+            if(fieldSize == null) {
+                fieldSize = new LinkedHashMap<>();
+            }
+            String key = entry.getKey();
+            Object value = entry.getValue();
+            int length = value != null ? value.toString().length() : 4; // "null" has length 4
+            fieldSize.put(key, length);
+        }
     }
 
     public EvalRow() {
@@ -26,11 +36,11 @@ public class EvalRow {
 
     public String toString() {
         StringBuilder sb = new StringBuilder();
-        sb.append("| ");
+        sb.append("{");
         boolean first = true;
         for (Map.Entry<String, Object> entry : fields.entrySet()) {
             if (!first) {
-                sb.append(" | ");
+                sb.append(", ");
             }
             Object value = entry.getValue();
             if(value instanceof RecordedThread) {
@@ -42,7 +52,7 @@ public class EvalRow {
                 } else if(durationNanos < 1_000_000) {
                     value = durationNanos / 1_000F + " μs"; // Convert Duration to microseconds
                 } else {
-                    value = (durationNanos / 1_000_000F) + " ms"; // Convert Duration to picoseconds
+                    value = (durationNanos / 1_000_000F) + " ms"; // Convert Duration to milliseconds
                 }
             } else if (value instanceof RecordedEvent) {
                 value = ((RecordedEvent) value).getEventType().getName(); // Use event type name for RecordedEvent
@@ -57,7 +67,7 @@ public class EvalRow {
             sb.append(value);
             first = false;
         }
-        sb.append(" |");
+        sb.append("}");
         return sb.toString();
     }
     
@@ -66,6 +76,11 @@ public class EvalRow {
             fields = new LinkedHashMap<>();
         }
         fields.put(name, value);
+        if(fieldSize == null) {
+            fieldSize = new LinkedHashMap<>();
+        }
+        int length = value != null ? value.toString().length() : 4; // "null" has length 4
+        fieldSize.put(name, length);
         return this;
     }
 
@@ -77,9 +92,24 @@ public class EvalRow {
         newFields.put(name, value);
         newFields.putAll(fields);
         fields = newFields;
+        if(fieldSize == null) {
+            fieldSize = new LinkedHashMap<>();
+        }
+        int length = value != null ? value.toString().length() : 4; // "null" has length 4
+        LinkedHashMap<String, Integer> newFieldSize = new LinkedHashMap<>();
+        newFieldSize.put(name, length);
+        newFieldSize.putAll(fieldSize);
+        fieldSize = newFieldSize;
     }
 
     public LinkedHashMap<String, Object> getFields() {
         return fields;
+    }
+
+    public Integer getFieldSize(String name) {
+        if(fieldSize == null) {
+            return null;
+        }
+        return fieldSize.get(name);
     }
 }

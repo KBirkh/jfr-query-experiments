@@ -121,14 +121,16 @@ public class ConditionNode extends AstNode {
             leftValue = ((GCEvent) leftValue).gcId;
         } else if(leftValue instanceof RecordedThread) {
             leftValue = ((RecordedThread) leftValue).getOSName();
-        }  else if(leftValue instanceof Integer) {
+        } 
+        if(leftValue instanceof Integer) {
             leftValue = Double.parseDouble(leftValue.toString());
         }
         if(rightValue instanceof GCEvent) {
             rightValue = ((GCEvent) rightValue).gcId;
         } else if(rightValue instanceof RecordedThread) {
             rightValue = ((RecordedThread) rightValue).getOSName();
-        }  else if(rightValue instanceof Integer) {
+        }
+        if(rightValue instanceof Integer) {
             rightValue = Double.parseDouble(rightValue.toString());
         }
         if (leftValue == null || rightValue == null) {

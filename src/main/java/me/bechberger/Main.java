@@ -88,7 +88,7 @@ public class Main /* implements Callable<Integer> */ {
             // If started in IDE/without arguments choose those specified here
             System.err.println("Neither query nor file specified, using as hard coded in main method");
             evaluator.setFile("src/main/java/me/bechberger/jfr/renaissance.jfr");
-            input = "@SELECT startTime, beforeGC(startTime), duration FROM [SELECT * FROM GarbageCollection]";
+            input = "@SELECT * FROM [SELECT * FROM GCPhaseParallel] WHERE P99(duration) AND beforeGC(startTime) == 7856 - 1 LIMIT 100";
         }
         Lexer lexer = new Lexer(input);
         List<Token> tokens = lexer.tokenize();

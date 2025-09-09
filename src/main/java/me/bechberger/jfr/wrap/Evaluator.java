@@ -216,8 +216,8 @@ public class Evaluator {
         Map<List<Object>, List<EvalRow>> groupedRows = new LinkedHashMap<>();
         if(!groupings.isEmpty()) {
             // Group rows by the fields in the groupings list
-            groupedRows = table.rows.stream()
-            .collect(Collectors.groupingBy(row -> groupings.get(root).stream()
+            groupedRows = table.rows.parallelStream()
+            .collect(Collectors.groupingBy(row -> groupings.get(root).parallelStream()
             .map(grouping -> grouping.eval(row, root)) // Evaluate each grouping field
             .collect(Collectors.toList()),
             LinkedHashMap::new,
@@ -279,7 +279,7 @@ public class Evaluator {
             // If no aggregates are defined, just add the original columns
             EvalTable originalTable = tables.get(root);
             for (Column col : originalTable.getColumns()) {
-                if (!newColumns.stream().anyMatch(c -> c.getFullName().equals(col.getFullName()))) {
+                if (!newColumns.parallelStream().anyMatch(c -> c.getFullName().equals(col.getFullName()))) {
                     newColumns.add(col); // Add original columns that are not grouping or aggregate columns
                 }
             }

@@ -105,7 +105,7 @@ public class SelectNode extends AstNode {
             return null;
         } else {
             for(AstNode col : columns) {
-                table.getColumns().stream()
+                table.getColumns().parallelStream()
                     .filter(c -> c.getName().equals(col.getName()))
                     .findFirst()
                     .ifPresent(keep::add);

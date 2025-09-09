@@ -28,6 +28,7 @@ public class FunctionNode extends AstConditional {
         }
         this.name = name;
         this.arguments = arguments;
+        setType(); // Set the function type based on the name
     }
 
     public FunctionNode() {
@@ -46,6 +47,7 @@ public class FunctionNode extends AstConditional {
             }
             this.arguments.add(arg);
         }
+        setType(); // Set the function type based on the name
     }
 
     public void setName(String name) {
@@ -163,7 +165,7 @@ public class FunctionNode extends AstConditional {
      * depending on which phase is currently being processed
      */
     @Override
-    public Object eval(Object obj, AstNode root) {
+    public synchronized Object eval(Object obj, AstNode root) {
         Evaluator evaluator = Evaluator.getInstance();
         if(evaluator.state == EvalState.GROUP_BY) {
             if(obj instanceof EvalRow) {
@@ -296,11 +298,11 @@ public class FunctionNode extends AstConditional {
         }
     
         if (arg.eval(rows.get(0), root) instanceof Number) {
-            return rows.stream()
+            return rows.parallelStream()
                 .mapToDouble(row -> ((Number) arg.eval(row, root)).doubleValue())
                 .sum();
         } else if (arg.eval(rows.get(0), root) instanceof Duration) {
-            return rows.stream()
+            return rows.parallelStream()
                 .map(row -> (Duration) arg.eval(row, root))
                 .reduce(Duration.ZERO, Duration::plus);
         } else {
@@ -314,12 +316,12 @@ public class FunctionNode extends AstConditional {
             return 0.0;
         }
         if (arg.eval(rows.get(0), root) instanceof Number) {
-            return rows.stream()
+            return rows.parallelStream()
                 .mapToDouble(row -> ((Number) arg.eval(row, root)).doubleValue())
                 .average()
                 .orElse(0.0);
         } else if (arg.eval(rows.get(0), root) instanceof Duration) {
-            Duration total = rows.stream()
+            Duration total = rows.parallelStream()
                 .map(row -> (Duration) arg.eval(row, root))
                 .reduce(Duration.ZERO, Duration::plus);
             return total.dividedBy(rows.size());
@@ -339,17 +341,17 @@ public class FunctionNode extends AstConditional {
         }
         Object type = arg.eval(rows.get(0), root);
         if (type instanceof Number) {
-            return rows.stream()
+            return rows.parallelStream()
                 .mapToDouble(row -> ((Number) arg.eval(row, root)).doubleValue())
                 .min()
                 .orElse(Double.NaN);
         } else if (type instanceof Duration) {
-            return rows.stream()
+            return rows.parallelStream()
                 .map(row -> (Duration) arg.eval(row, root))
                 .min(Duration::compareTo)
                 .orElse(Duration.ZERO);
         } else if(type instanceof Instant) {
-            return rows.stream()
+            return rows.parallelStream()
                 .map(row -> (Instant) arg.eval(row, root))
                 .min(Instant::compareTo)
                 .orElse(Instant.ofEpochMilli(0));
@@ -364,12 +366,12 @@ public class FunctionNode extends AstConditional {
             return 0.0;
         }
         if (arg.eval(rows.get(0), root) instanceof Number) {
-            return rows.stream()
+            return rows.parallelStream()
                 .mapToDouble(row -> ((Number) arg.eval(row, root)).doubleValue())
                 .max()
                 .orElse(Double.NaN);
         } else if (arg.eval(rows.get(0), root) instanceof Duration) {
-            return rows.stream()
+            return rows.parallelStream()
                 .map(row -> (Duration) arg.eval(row, root))
                 .max(Duration::compareTo)
                 .orElse(Duration.ZERO);
