@@ -9,7 +9,7 @@ The extensions include:
 - Comparisons for equality, inequality, greater/less than
 - Percentiles for comparable Values (e.g. P95(identifier))
 - Correlation to Garbage Collection events using beforeGC(timestamp), nearGC(...), afterGC(...)
-- Evaluation of multiple queries in one program
+- Evaluation of multiple queries in one program seperated by ```;``` or an empty line
 - Assignment of queries to an identifier to be used in other queries
 
 Currently the web UI is not available due to these changes.
