@@ -3,24 +3,28 @@ JFR Query Experiments
 
 Experiments with `jfr` tool code and JFR queries.
 
-It's essentially a standalone version of the `jfr view` command,
-based, currently, on the [JDK 21](https://github.com/openjdk/jdk21u) code.
+This tool privides an extended syntax derived from and still using the [JDK 21](https://github.com/openjdk/jdk21u) code at its core.
 
-And it has a (highly experimental) web mode to easily test JFR queries:
+The extensions include:
+- Comparisons for equality, inequality, greater/less than
+- Percentiles for comparable Values (e.g. P95(identifier))
+- Correlation to Garbage Collection events using beforeGC(timestamp), nearGC(...), afterGC(...)
+- Evaluation of multiple queries in one program
+- Assignment of queries to an identifier to be used in other queries
 
-```shell
+Currently the web UI is not available due to these changes.
+
+<!-- ```shell
 java -jar target/query.jar web recording.jfr
 -> starts a web server on port 8080
 -> open http://localhost:8080
-```
-
-![Screenshot of the web UI](img/tool.png)
+``` -->
 
 Build
 -----
 
 ```shell
-git clone https://github.com/parttimenerd/jfr-query-experiments
+git clone https://github.com/KBirkh/jfr-query-experiments
 cd jfr-query-experiments
 mvn clean package
 ```
