@@ -85,6 +85,20 @@ public class Main /* implements Callable<Integer> */ {
         String input;
         boolean jsonOutput = false;
         
+        // Temporary for API-Development
+        if(args.length == 0) {
+          JFRAPI api = new JFRAPI("src/main/java/me/bechberger/jfr/minecraft.jfr");
+          api.start();
+          return;
+        }
+
+
+
+        if(args.length == 2 && args[0].equals("web")) {
+            JFRAPI api = new JFRAPI(args[1]);  // or new JFRAPI() for default port
+            api.start();
+            return;
+        }
         // Check for --json flag
         if (args.length > 0 && "--json".equals(args[0])) {
             jsonOutput = true;
@@ -109,14 +123,15 @@ public class Main /* implements Callable<Integer> */ {
         } else {
             // If started in IDE/without arguments choose those specified here
             System.err.println("Neither query nor file specified, using as hard coded in main method");
-            evaluator.setFile("src/main/java/me/bechberger/jfr/renaissance.jfr");
-            input = "@SELECT * FROM [SELECT * FROM GCPhaseParallel] WHERE P99(duration) AND beforeGC(startTime) == 7856 - 1 LIMIT 100";
+            evaluator.setFile("src/main/java/me/bechberger/jfr/minecraft.jfr");
+            input = "@SELECT eventThread, AVG(duration) FROM X GROUP BY eventThread HAVING AVG(duration) > 16ms; X = SELECT * FROM GCPhaseParallel;";
         }
         Lexer lexer = new Lexer(input);
         List<Token> tokens = lexer.tokenize();
         Parser parser = new Parser(tokens, input);
         try {
             ProgramNode res = parser.parse();
+            /* System.out.println(res.toString(0)); */
             res.eval();
             if (jsonOutput) {
                 System.out.println(evaluator.getJsonOutput());
