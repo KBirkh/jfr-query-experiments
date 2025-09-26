@@ -151,7 +151,6 @@ public class Main /* implements Callable<Integer> */ {
                 } else {
                     System.err.println("Error during evaluation: " + e.getMessage());
                 }
-                e.printStackTrace();
             }
         } finally {
             evaluator.destruct();

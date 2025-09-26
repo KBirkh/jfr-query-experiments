@@ -134,4 +134,8 @@ public final class QueryCommand implements Callable<Table>, Footerable {
     public void setConfigOptions(ConfigOptions cfg) {
         this.configOptions = cfg;
     }
+
+    public void setMaxSize(String maxSize) {
+        this.maxSize = maxSize;
+    }
 }

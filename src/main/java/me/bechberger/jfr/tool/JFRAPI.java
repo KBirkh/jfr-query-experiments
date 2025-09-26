@@ -39,7 +39,9 @@ public class JFRAPI {
         
         // Add the query endpoint
         app.post("/query", this::handleQuery);
-        app.get("/query", this::handleQuery);
+
+        // Add endpoint to check semantic ba reducing maxsize in the QueryCommand instance
+        app.post("/semanticCheck", this::checkSemantic);
         
         // Add a simple health check endpoint
         app.get("/health", ctx -> ctx.result("JFR API Server is running"));
@@ -161,6 +163,12 @@ public class JFRAPI {
             
             // Process the query using the evaluator
             String result = processQuery(query);
+            if(evaluator.semanticCheck && !evaluator.passed) {
+              ctx.status(HttpStatus.BAD_REQUEST).result("Semantic check failed");
+              evaluator.semanticCheck = false;
+              evaluator.passed = true;
+              return;
+            }
             ctx.status(HttpStatus.OK).contentType("application/json").result(result);
             
         } catch (Exception e) {
@@ -195,21 +203,118 @@ public class JFRAPI {
         
         return null;
     }
+
+    private void checkSemantic(Context ctx) {
+      evaluator = Evaluator.getInstance();
+      evaluator.semanticCheck = true;
+      handleQuery(ctx);
+    }
     
     private String extractQueryFromJson(String jsonBody) {
-        // Simple JSON parsing for {"query": "value"} format
-        if (jsonBody.trim().startsWith("{") && jsonBody.trim().endsWith("}")) {
-          String content = jsonBody.trim().substring(1, jsonBody.trim().length() - 1);
-          String[] keyValue = content.split(":", 2);
-            if (keyValue.length == 2) {
-              String key = keyValue[0].trim().replaceAll("\"", "");
-              String value = keyValue[1].trim().replaceAll("\"", "");
-              if ("query".equals(key)) {
-                  return value;
-              }
+        if (jsonBody == null) return null;
+
+        // Find the "query" key (simple, case-sensitive) and parse its JSON string value.
+        int idx = 0;
+        while (true) {
+            int keyPos = jsonBody.indexOf("\"query\"", idx);
+            if (keyPos == -1) return null;
+            int colonPos = jsonBody.indexOf(':', keyPos + 7);
+            if (colonPos == -1) return null;
+            int i = colonPos + 1;
+            // skip whitespace
+            while (i < jsonBody.length() && Character.isWhitespace(jsonBody.charAt(i))) i++;
+            if (i >= jsonBody.length()) return null;
+
+            if (jsonBody.charAt(i) == '"') {
+                // parse JSON string literal starting at i
+                int endQuote = findStringEnd(jsonBody, i);
+                if (endQuote == -1) return null;
+                String raw = jsonBody.substring(i + 1, endQuote);
+                return unescapeJsonString(raw);
+            } else {
+                // Not a string value: read until comma or closing brace
+                int j = i;
+                while (j < jsonBody.length() && jsonBody.charAt(j) != ',' && jsonBody.charAt(j) != '}') j++;
+                String value = jsonBody.substring(i, j).trim();
+                // strip surrounding quotes if present
+                if (value.startsWith("\"") && value.endsWith("\"") && value.length() >= 2) {
+                    value = value.substring(1, value.length() - 1);
+                    return unescapeJsonString(value);
+                }
+                return value;
             }
         }
-        return null;
+    }
+
+    // Find the matching closing quote for a JSON string starting at quoteIndex (which points to opening '"')
+    private int findStringEnd(String s, int quoteIndex) {
+        int i = quoteIndex + 1;
+        while (i < s.length()) {
+            char c = s.charAt(i);
+            if (c == '\\') {
+                // skip escaped char
+                i++;
+                if (i < s.length()) {
+                    char esc = s.charAt(i);
+                    if (esc == 'u') {
+                        // unicode escape, skip 4 hex digits
+                        i += 4;
+                    }
+                }
+            } else if (c == '"') {
+                return i;
+            }
+            i++;
+        }
+        return -1; // not found
+    }
+
+    // Unescape JSON string content (without surrounding quotes)
+    private String unescapeJsonString(String s) {
+        StringBuilder sb = new StringBuilder(s.length());
+        for (int i = 0; i < s.length(); i++) {
+            char c = s.charAt(i);
+            if (c == '\\' && i + 1 < s.length()) {
+                char next = s.charAt(i + 1);
+                switch (next) {
+                    case '"': sb.append('"'); i++; break;
+                    case '\\': sb.append('\\'); i++; break;
+                    case '/': sb.append('/'); i++; break;
+                    case 'b': sb.append('\b'); i++; break;
+                    case 'f': sb.append('\f'); i++; break;
+                    case 'n': sb.append('\n'); i++; break;
+                    case 'r': sb.append('\r'); i++; break;
+                    case 't': sb.append('\t'); i++; break;
+                    case 'u':
+                        // unicode escape \\uXXXX
+                        if (i + 5 < s.length()) {
+                            String hex = s.substring(i + 2, i + 6);
+                            try {
+                                int code = Integer.parseInt(hex, 16);
+                                sb.append((char) code);
+                                i += 5;
+                            } catch (NumberFormatException ex) {
+                                // invalid; append literally
+                                sb.append('u');
+                                i++;
+                            }
+                        } else {
+                            // truncated unicode escape; append literally
+                            sb.append('u');
+                            i++;
+                        }
+                        break;
+                    default:
+                        // unknown escape, keep next char
+                        sb.append(next);
+                        i++;
+                        break;
+                }
+            } else {
+                sb.append(c);
+            }
+        }
+        return sb.toString();
     }
     
     private String processQuery(String query) {

@@ -97,6 +97,9 @@ public class OpenJDKQueryNode extends AstNode {
     public Object eval(AstNode root) {
         Evaluator evaluator = Evaluator.getInstance();
         QueryCommand queryCommand = new QueryCommand();
+        if(evaluator.semanticCheck) {
+            queryCommand.setMaxSize("1M");
+        }
         queryCommand.setView(query);
         queryCommand.setFile(evaluator.getFile());
         queryCommand.setConfigOptions(new ConfigOptions());
@@ -109,7 +112,8 @@ public class OpenJDKQueryNode extends AstNode {
             evaluator.addToTable(evalTable, root);
         } catch (UserSyntaxException | UserDataException e) {
             System.err.println("Error executing OpenJDK query: " + e.getMessage());
-            System.exit(1);
+            evaluator.passed = false;
+            return null;
         }
 
         this.isEvaluated = true;

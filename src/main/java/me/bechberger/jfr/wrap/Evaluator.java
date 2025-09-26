@@ -52,6 +52,8 @@ public class Evaluator {
     private Map<String, AstNode> todos;
     private TreeMap<Instant, GCEvent> gcTable;
     private AstNode currentRoot;
+    public boolean semanticCheck = false;
+    public boolean passed = true;
 
     private Evaluator() {
         this.tables = new HashMap<AstNode, EvalTable>();
